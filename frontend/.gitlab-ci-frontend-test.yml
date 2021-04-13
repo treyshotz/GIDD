@@ -1,0 +1,38 @@
+image: node:12
+
+stages:
+  - install
+  - lint-test
+  - build
+
+workflow:
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+      - frontend/*
+
+default:
+  before_script:
+    - cd frontend
+
+cache:
+  paths:
+    - frontend/node_modules/
+
+install:
+  stage: install
+  script:
+    - yarn
+
+lint-test:
+  stage: lint-test
+  script: 
+    - yarn
+    - yarn lint
+    - yarn test
+
+build:
+  stage: build
+  script: 
+    - yarn
+    - yarn build
