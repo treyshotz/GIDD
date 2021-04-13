@@ -1,6 +1,7 @@
-image: maven:4.0.0-slim
+image: maven:3.6.3-slim
 
 stages:
+  - build-and-test
   - test
 
 default:
@@ -10,8 +11,8 @@ default:
 include:
   - template: 'Workflows/MergeRequest-Pipelines.gitlab-ci.yml'
 
-test:
-  stage: test
-  script:
-    - mvn test 
+build-and-test:
+  stage: build-and-test
+  script: mvn package
+
 
