@@ -1,7 +1,7 @@
 <br/>
 <p align="center">
     <a href="https://gitlab.stud.idi.ntnu.no/team-2-sysutv/idatt2106_2021_2" target="_blank">
-        <img width="50%" src="gidd.jpg" alt="Project logo">
+        <img width="50%" src="gidd.jpg" alt="Gidd logo">
     </a>
 </p>
 
