@@ -15,8 +15,8 @@ cache:
     - .m2/repository
 
 package:
-  stage: test
-  script: mvn package 
+  stage: package
+  script: mvn package --activate-profile test
   artifacts:
     paths:
       - .m2/repository
