@@ -1,0 +1,17 @@
+image: maven:4.0.0-slim
+
+stages:
+  - test
+
+default:
+  before_script:
+    - cd backend
+
+include:
+  - template: 'Workflows/MergeRequest-Pipelines.gitlab-ci.yml'
+
+test:
+  stage: test
+  script:
+    - mvn test 
+
