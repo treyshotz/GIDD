@@ -1,0 +1,17 @@
+.backend-test:
+  image: maven:3.6.3-slim
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+      - backend/*
+  before_script:
+    - cd backend
+
+cache:
+  paths:
+    - .m2/repository
+
+test:
+  extends: .backend-test
+  stage: test
+  script: mvn package --activate-profiles test

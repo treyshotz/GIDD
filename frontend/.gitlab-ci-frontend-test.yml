@@ -1,17 +1,9 @@
-image: node:12
-
-stages:
-  - install
-  - lint-test
-  - build
-
-workflow:
+.frontend-test:
+  image: node:12
   rules:
     - if: $CI_MERGE_REQUEST_ID
       changes:
       - frontend/*
-
-default:
   before_script:
     - cd frontend
 
@@ -20,19 +12,32 @@ cache:
     - frontend/node_modules/
 
 install:
-  stage: install
+  extends: .frontend-test
+  stage: .pre
   script:
     - yarn
 
-lint-test:
-  stage: lint-test
+lint:
+  extends: .frontend-test
+  stage: test
   script: 
     - yarn
     - yarn lint
     - yarn test
+  needs: [install]
+
+test:
+  extends: .frontend-test
+  stage: test
+  script: 
+    - yarn
+    - yarn test
+  needs: [install]
 
 build:
+  extends: .frontend-test
   stage: build
   script: 
     - yarn
     - yarn build
+  needs: [install]
