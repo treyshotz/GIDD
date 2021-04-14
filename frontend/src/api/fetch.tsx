@@ -1,5 +1,5 @@
 import { getCookie } from 'api/cookie';
-import { TOKEN_HEADER_NAME, API_URL, ACCESS_TOKEN } from 'constant';
+import { API_URL, AUTH_TOKEN } from 'constant';
 import { RequestResponse } from 'types/Types';
 
 type RequestMethodType = 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -22,7 +22,7 @@ export const IFetch = <T,>({ method, url, data = {}, withAuth = true, file }: Fe
   }
 
   if (withAuth) {
-    headers.append(TOKEN_HEADER_NAME, getCookie(ACCESS_TOKEN) as string);
+    headers.append('Authorization', `Bearer ${getCookie(AUTH_TOKEN)}`);
   }
 
   return fetch(request(method, urlAddress, headers, data, file)).then((response) => {

@@ -40,11 +40,11 @@ function Dialog({ open, onClose, onCancel, onConfirm, titleText, children, conte
         </DialogContent>
       )}
       <DialogActions>
-        <Button color='primary' onClick={onCancel || onClose}>
+        <Button color='primary' onClick={onCancel || onClose} variant='text'>
           {closeText || 'Lukk'}
         </Button>
         {onConfirm && (
-          <Button color='primary' disabled={disabled} onClick={onConfirm || onCancel} variant='contained'>
+          <Button color='primary' disabled={disabled} onClick={onConfirm || onCancel} variant='text'>
             {confirmText || 'OK'}
           </Button>
         )}

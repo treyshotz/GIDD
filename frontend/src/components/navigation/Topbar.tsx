@@ -2,13 +2,12 @@ import { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import URLS from 'URLS';
 import classNames from 'classnames';
-import { useUser, useIsAuthenticated } from 'hooks/User';
+import { useUser, useIsAuthenticated, useLogout } from 'hooks/User';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Hidden from '@material-ui/core/Hidden';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -16,7 +15,6 @@ import IconButton from '@material-ui/core/IconButton';
 // Assets/Icons
 import MenuIcon from '@material-ui/icons/MenuRounded';
 import CloseIcon from '@material-ui/icons/CloseRounded';
-import PersonOutlineIcon from '@material-ui/icons/PersonRounded';
 
 // Project Components
 import Sidebar from 'components/navigation/Sidebar';
@@ -25,7 +23,7 @@ import Logo from 'components/miscellaneous/Logo';
 const useStyles = makeStyles((theme) => ({
   appBar: {
     boxSizing: 'border-box',
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.colors.topbar,
     color: theme.palette.text.primary,
     flexGrow: 1,
     zIndex: theme.zIndex.drawer + 1,
@@ -38,10 +36,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0, 1),
     display: 'grid',
     gridTemplateColumns: '120px 1fr 120px',
-    [theme.breakpoints.down('xl')]: {
-      gridTemplateColumns: '100px 1fr 100px',
-    },
-    [theme.breakpoints.down('lg')]: {
+    [theme.breakpoints.down('md')]: {
       gridTemplateColumns: '80px 1fr',
     },
   },
@@ -60,11 +55,11 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-end',
   },
   menuButton: {
-    color: theme.palette.getContrastText(theme.palette.secondary.main),
+    color: theme.palette.common.white,
     margin: 'auto 0',
   },
   selected: {
-    borderBottom: '2px solid ' + theme.palette.getContrastText(theme.palette.secondary.main),
+    borderBottom: '2px solid ' + theme.palette.common.white,
   },
   profileName: {
     margin: `auto ${theme.spacing(1)}px`,
@@ -76,6 +71,13 @@ const useStyles = makeStyles((theme) => ({
   },
   topbarItem: {
     alignSelf: 'center',
+  },
+  authButton: {
+    color: theme.palette.get<string>({ light: theme.palette.common.white, dark: theme.palette.common.black }),
+    borderColor: theme.palette.get<string>({ light: theme.palette.common.white, dark: theme.palette.common.black }),
+    '&:hover': {
+      borderColor: theme.palette.get<string>({ light: '#cccccc', dark: '#333333' }),
+    },
   },
 }));
 
@@ -89,7 +91,7 @@ const TopBarItem = ({ text, to }: TopBarItemProps) => {
   const selected = useMemo(() => location.pathname === to, [location.pathname, to]);
   return (
     <div className={classNames(classes.topbarItem, selected && classes.selected)}>
-      <Button color='inherit' component={Link} onClick={selected ? () => window.location.reload() : undefined} to={to}>
+      <Button color='inherit' component={Link} onClick={selected ? () => window.location.reload() : undefined} to={to} variant='text'>
         {text}
       </Button>
     </div>
@@ -101,6 +103,7 @@ const Topbar = () => {
   const { data: user } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const classes = useStyles();
+  const logout = useLogout();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -121,7 +124,7 @@ const Topbar = () => {
       <Toolbar disableGutters>
         <div className={classes.toolbar}>
           <Link to={URLS.LANDING}>
-            <Logo className={classes.logo} darkColor='white' lightColor={!sidebarOpen ? 'blue' : 'white'} size='large' />
+            <Logo className={classes.logo} size='large' />
           </Link>
           <Hidden mdDown>
             <div className={classes.items}>
@@ -131,21 +134,18 @@ const Topbar = () => {
             </div>
           </Hidden>
           <div className={classes.right}>
-            {user ? (
-              <Button component={Link} onClick={URLS.LOGIN === location.pathname ? () => location.reload() : undefined} to={URLS.LOGIN}>
-                <Hidden smDown>
-                  <Typography className={classes.profileName}>{user.first_name}</Typography>
-                </Hidden>
-                {user.first_name.substr(0, 1)}
-              </Button>
-            ) : (
-              <Hidden mdDown>
-                <IconButton className={classes.menuButton} component={Link} to={URLS.LOGIN}>
-                  <PersonOutlineIcon />
-                </IconButton>
-              </Hidden>
-            )}
-            <Hidden lgUp>
+            <Hidden mdDown>
+              {user ? (
+                <Button className={classes.authButton} onClick={logout} variant='outlined'>
+                  Logg ut
+                </Button>
+              ) : (
+                <Button className={classes.authButton} component={Link} to={URLS.LOGIN} variant='outlined'>
+                  Logg inn
+                </Button>
+              )}
+            </Hidden>
+            <Hidden mdUp>
               <IconButton className={classes.menuButton} onClick={() => setSidebarOpen((prev) => !prev)}>
                 {sidebarOpen ? <CloseIcon /> : <MenuIcon />}
               </IconButton>

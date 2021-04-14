@@ -3,7 +3,7 @@
   rules:
     - if: $CI_MERGE_REQUEST_ID
       changes:
-      - frontend/*
+        - frontend/**/*
   before_script:
     - cd frontend
 
@@ -20,7 +20,7 @@ install:
 lint:
   extends: .frontend-test
   stage: test
-  script: 
+  script:
     - yarn
     - yarn lint
     - yarn test
@@ -29,7 +29,7 @@ lint:
 test:
   extends: .frontend-test
   stage: test
-  script: 
+  script:
     - yarn
     - yarn test
   needs: [install]
@@ -37,7 +37,7 @@ test:
 build:
   extends: .frontend-test
   stage: build
-  script: 
+  script:
     - yarn
     - yarn build
   needs: [install]

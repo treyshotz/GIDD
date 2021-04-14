@@ -16,10 +16,10 @@ export type PaginationResponse<T> = {
 export type User = {
   user_id: string;
   first_name: string;
-  last_name: string;
+  surname: string;
   email: string;
 };
-export type UserCreate = Pick<User, 'email' | 'first_name' | 'last_name' | 'user_id'> & {
+export type UserCreate = Pick<User, 'email' | 'first_name' | 'surname'> & {
   password: string;
 };
 

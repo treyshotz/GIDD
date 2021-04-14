@@ -55,7 +55,7 @@ const Footer = () => {
     <footer>
       <Divider variant='middle' />
       <div className={classes.content}>
-        <Logo className={classes.logo} darkColor='white' lightColor='white' size='large' />
+        <Logo className={classes.logo} size='large' />
         <div className={classes.theme}>
           <IconButton aria-label='delete' onClick={() => setShowThemeSettings(true)}>
             <LightIcon />

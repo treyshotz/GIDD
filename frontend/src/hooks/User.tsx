@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient, UseMutationResult } from 'react-query';
 import API from 'api/api';
+import URLS from 'URLS';
 import { User, UserCreate, LoginRequestResponse, RequestResponse } from 'types/Types';
 import { getCookie, setCookie, removeCookie } from 'api/cookie';
-import { ACCESS_TOKEN } from 'constant';
+import { AUTH_TOKEN } from 'constant';
 
 export const USER_QUERY_KEY = 'user';
 export const USERS_QUERY_KEY = 'users';
@@ -19,11 +20,11 @@ export const useRefreshUser = () => {
   };
 };
 
-export const useLogin = (): UseMutationResult<LoginRequestResponse, RequestResponse, { username: string; password: string }, unknown> => {
+export const useLogin = (): UseMutationResult<LoginRequestResponse, RequestResponse, { email: string; password: string }, unknown> => {
   const queryClient = useQueryClient();
-  return useMutation(({ username, password }) => API.authenticate(username, password), {
+  return useMutation(({ email, password }) => API.authenticate(email, password), {
     onSuccess: (data) => {
-      setCookie(ACCESS_TOKEN, data.token);
+      setCookie(AUTH_TOKEN, data.token);
       queryClient.removeQueries(USER_QUERY_KEY);
       queryClient.prefetchQuery(USER_QUERY_KEY, () => API.getUser());
     },
@@ -37,13 +38,14 @@ export const useForgotPassword = (): UseMutationResult<RequestResponse, RequestR
 export const useLogout = () => {
   const queryClient = useQueryClient();
   return () => {
-    removeCookie(ACCESS_TOKEN);
+    removeCookie(AUTH_TOKEN);
     queryClient.removeQueries(USER_QUERY_KEY);
+    location.href = URLS.LANDING;
   };
 };
 
 export const useIsAuthenticated = () => {
-  return typeof getCookie(ACCESS_TOKEN) !== 'undefined';
+  return typeof getCookie(AUTH_TOKEN) !== 'undefined';
 };
 
 export const useCreateUser = (): UseMutationResult<RequestResponse, RequestResponse, UserCreate, unknown> => {

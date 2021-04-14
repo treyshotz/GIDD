@@ -93,7 +93,7 @@ function ThemeSettings({ open, onClose }: ThemeSettingsProps) {
                 </ToggleButton>
               ))}
             </ToggleButtonGroup>
-            <Button className={classes.button} color='primary' onClick={onClose}>
+            <Button className={classes.button} color='primary' onClick={onClose} variant='text'>
               Lukk
             </Button>
           </div>

@@ -42,7 +42,7 @@ const Http404 = () => {
         {isAuthenticated ? 'Kunne ikke finne siden' : 'Du er innlogget, men kunne fremdeles ikke finne siden :('}
       </Typography>
       <div className={classes.buttons}>
-        <Button color='primary' component={Link} to={URLS.LANDING} variant='contained'>
+        <Button color='primary' component={Link} to={URLS.LANDING}>
           Til forsiden
         </Button>
         <Button color='primary' component={Link} to={URLS.LOGIN} variant='outlined'>

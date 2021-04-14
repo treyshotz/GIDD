@@ -1,17 +1,19 @@
 import URLS from 'URLS';
 import { Link } from 'react-router-dom';
-import { useIsAuthenticated } from 'hooks/User';
+import { useIsAuthenticated, useLogout } from 'hooks/User';
 
 // Material UI Components
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import Drawer from '@material-ui/core/Drawer';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
   sidebar: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.colors.topbar,
     width: '100vw',
     overflow: 'auto',
+    display: 'grid',
+    gridTemplateRows: '1fr 70px',
     height: 'calc(100% - 64px)',
     marginTop: 64,
     [theme.breakpoints.down('xs')]: {
@@ -20,15 +22,18 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   root: {
-    padding: theme.spacing(2, 3),
+    padding: theme.spacing(5, 3),
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'space-evenly',
   },
   text: {
-    color: theme.palette.getContrastText(theme.palette.secondary.main),
-    padding: theme.spacing(1),
-    textDecoration: 'none',
-    width: 'fit-content',
+    color: theme.palette.getContrastText(theme.palette.colors.topbar),
+    fontSize: '1.8rem',
+  },
+  bottomButton: {
+    height: 70,
+    borderRadius: 0,
   },
 }));
 
@@ -40,14 +45,15 @@ type SidebarItemProps = {
 const SidebarItem = ({ text, to }: SidebarItemProps) => {
   const classes = useStyles();
   return (
-    <Typography
+    <Button
       className={classes.text}
       component={Link}
+      fullWidth
       onClick={to === window.location.pathname ? () => window.location.reload() : undefined}
       to={to}
-      variant='h2'>
+      variant='text'>
       {text}
-    </Typography>
+    </Button>
   );
 };
 
@@ -61,14 +67,23 @@ const Sidebar = ({ items, onClose, open }: IProps) => {
   const classes = useStyles();
   const isAuthenticated = useIsAuthenticated();
   const theme = useTheme();
+  const logout = useLogout();
   return (
     <Drawer anchor='top' classes={{ paper: classes.sidebar }} onClose={onClose} open={open} style={{ zIndex: theme.zIndex.drawer - 1 }}>
       <div className={classes.root}>
         {items.map((item, i) => (
           <SidebarItem key={i} {...item} />
         ))}
-        {isAuthenticated ? <SidebarItem text='Min side' to={URLS.LOGIN} /> : <SidebarItem text='Logg inn' to={URLS.LOGIN} />}
       </div>
+      {isAuthenticated ? (
+        <Button className={classes.bottomButton} color='secondary' fullWidth onClick={logout}>
+          Logg ut
+        </Button>
+      ) : (
+        <Button className={classes.bottomButton} color='secondary' component={Link} fullWidth to={URLS.LOGIN}>
+          Logg inn
+        </Button>
+      )}
     </Drawer>
   );
 };

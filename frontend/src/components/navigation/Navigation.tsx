@@ -39,14 +39,9 @@ const Navigation = ({ isLoading = false, noFooter = false, maxWidth, banner, chi
       </Helmet>
       <Topbar />
       <main className={classes.main}>
-        {isLoading ? (
-          <LinearProgress />
-        ) : (
-          <>
-            {banner}
-            {maxWidth === false ? <>{children}</> : <Container maxWidth={maxWidth || 'xl'}>{children || <></>}</Container>}
-          </>
-        )}
+        {isLoading && <LinearProgress />}
+        {banner}
+        {maxWidth === false ? <>{children}</> : <Container maxWidth={maxWidth || 'xl'}>{children || <></>}</Container>}
       </main>
       {!noFooter && !isLoading && <Footer />}
     </>
