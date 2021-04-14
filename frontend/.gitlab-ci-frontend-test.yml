@@ -4,40 +4,68 @@
     - if: $CI_MERGE_REQUEST_ID
       changes:
         - frontend/**/*
+        - frontend/*
+      when: on_success
+    - when: never
   before_script:
     - cd frontend
+  cache:
+    paths:
+      - frontend/node_modules/
 
-cache:
-  paths:
-    - frontend/node_modules/
-
-install:
+frontend-install-mr:
   extends: .frontend-test
   stage: .pre
   script:
     - yarn
+  artifacts:
+    paths:
+      - frontend/build/
 
-lint:
+frontend-pre-mr-build:
+  extends: .frontend-test
+  stage: .pre
+  image: andreysenov/firebase-tools:latest
+  script:
+    - node ./prebuild.mjs
+  artifacts:
+    reports:
+      dotenv: build.env
+
+frontend-lint-mr:
   extends: .frontend-test
   stage: test
   script:
     - yarn
     - yarn lint
-    - yarn test
-  needs: [install]
+  needs: [frontend-install-mr]
 
-test:
+frontend-test-mr:
   extends: .frontend-test
   stage: test
   script:
     - yarn
     - yarn test
-  needs: [install]
+  needs: [frontend-install-mr]
 
-build:
+frontend-build-mr:
   extends: .frontend-test
   stage: build
   script:
     - yarn
     - yarn build
-  needs: [install]
+  needs: [frontend-install-mr]
+  artifacts:
+    paths:
+      - frontend/build/
+
+frontend-deploy-mr:
+  extends: .frontend-test
+  stage: deploy
+  image: andreysenov/firebase-tools:latest
+  needs: [frontend-build-mr, frontend-pre-mr-build]
+  script:
+    - firebase hosting:channel:deploy $CI_COMMIT_REF_SLUG
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: $MY_DEPLOYED_URL

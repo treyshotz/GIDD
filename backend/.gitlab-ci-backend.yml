@@ -4,14 +4,14 @@
     - if: $CI_MERGE_REQUEST_ID
       changes:
       - backend/**/*
+      - backend/*
   before_script:
     - cd backend
+  cache:
+    paths:
+      - .m2/repository
 
-cache:
-  paths:
-    - .m2/repository
-
-package:
+backend-test-mr:
   extends: .backend-test
   stage: test
   script: mvn package --activate-profiles test
