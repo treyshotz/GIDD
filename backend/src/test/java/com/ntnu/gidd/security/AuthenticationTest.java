@@ -2,6 +2,7 @@ package com.ntnu.gidd.security;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ntnu.gidd.controller.request.LoginRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ContextConfiguration(classes = WebSecurity.class)
-//@TestPropertySource("classpath:application.properties")
 public class AuthenticationTest {
 
     private static final String URI = "/auth/";
@@ -47,9 +47,10 @@ public class AuthenticationTest {
 
     @Test
     public void testLogin() throws Exception {
-        String loginJson = objectMapper.writeValueAsString("{\"username\":\"test\",\"password\":\"password123\"}");
+        LoginRequest loginRequest = new LoginRequest("test@mail.com", "password123");
+        String loginJson = objectMapper.writeValueAsString(loginRequest);
 
-        mockMvc.perform(post(URI + "login/")
+        mockMvc.perform(post(URI + "login")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(loginJson).with(csrf()))
         .andDo(print())
