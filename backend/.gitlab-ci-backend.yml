@@ -3,7 +3,7 @@
   rules:
     - if: $CI_MERGE_REQUEST_ID
       changes:
-      - backend/*
+      - backend/**/*
   before_script:
     - cd backend
 

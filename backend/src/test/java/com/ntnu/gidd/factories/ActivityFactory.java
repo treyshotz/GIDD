@@ -16,7 +16,17 @@ public class ActivityFactory implements FactoryBean<Activity> {
 
     @Override
     public Activity getObject() throws Exception {
-        return new Activity(UUID.randomUUID(), getRandomString(5), getRandomString(10), LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), LocalDateTime.now(), false, random.nextInt(1000));
+        return Activity.builder()
+                .id(UUID.randomUUID())
+                .title(getRandomString(5))
+                .description(getRandomString(10))
+                .start_date(LocalDateTime.now())
+                .end_date(LocalDateTime.now())
+                .signup_start(LocalDateTime.now())
+                .signup_end(LocalDateTime.now())
+                .closed(false)
+                .capacity(random.nextInt(1000))
+                .build();
     }
 
     @Override
