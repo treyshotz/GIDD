@@ -7,9 +7,12 @@ import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
 
+// Project components
+import ThemeSettings from 'components/miscellaneous/ThemeSettings';
+
 const useStyles = makeStyles((theme) => ({
   sidebar: {
-    backgroundColor: theme.palette.colors.topbar,
+    background: theme.palette.colors.topbar,
     width: '100vw',
     overflow: 'auto',
     display: 'grid',
@@ -29,11 +32,19 @@ const useStyles = makeStyles((theme) => ({
   },
   text: {
     color: theme.palette.getContrastText(theme.palette.colors.topbar),
-    fontSize: '1.8rem',
+    fontSize: '2rem',
+    textTransform: 'none',
   },
   bottomButton: {
     height: 70,
     borderRadius: 0,
+  },
+  icon: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  classNameIcon: {
+    fontSize: '3rem',
   },
 }));
 
@@ -74,6 +85,9 @@ const Sidebar = ({ items, onClose, open }: IProps) => {
         {items.map((item, i) => (
           <SidebarItem key={i} {...item} />
         ))}
+        <div className={classes.icon}>
+          <ThemeSettings className={classes.text} classNameIcon={classes.classNameIcon} />
+        </div>
       </div>
       {isAuthenticated ? (
         <Button className={classes.bottomButton} color='secondary' fullWidth onClick={logout}>

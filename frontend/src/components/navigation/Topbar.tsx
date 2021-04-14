@@ -1,7 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import URLS from 'URLS';
-import classNames from 'classnames';
 import { useUser, useIsAuthenticated, useLogout } from 'hooks/User';
 
 // Material UI Components
@@ -19,6 +18,7 @@ import CloseIcon from '@material-ui/icons/CloseRounded';
 // Project Components
 import Sidebar from 'components/navigation/Sidebar';
 import Logo from 'components/miscellaneous/Logo';
+import ThemeSettings from 'components/miscellaneous/ThemeSettings';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     margin: 'auto',
     padding: theme.spacing(0, 1),
     display: 'grid',
-    gridTemplateColumns: '120px 1fr 120px',
+    gridTemplateColumns: '120px 1fr auto',
     [theme.breakpoints.down('md')]: {
       gridTemplateColumns: '80px 1fr',
     },
@@ -46,20 +46,21 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 0,
   },
   items: {
-    display: 'flex',
-    justifyContent: 'flex-start',
+    display: 'grid',
+    gap: theme.spacing(1),
+    alignItems: 'self-start',
+    gridAutoFlow: 'column',
     color: theme.palette.common.white,
+    width: 'fit-content',
   },
   right: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  menuButton: {
-    color: theme.palette.common.white,
-    margin: 'auto 0',
-  },
-  selected: {
-    borderBottom: '2px solid ' + theme.palette.common.white,
+    display: 'grid',
+    gap: theme.spacing(1),
+    gridTemplateColumns: '35px auto',
+    [theme.breakpoints.down('md')]: {
+      display: 'grid',
+      justifyContent: 'flex-end',
+    },
   },
   profileName: {
     margin: `auto ${theme.spacing(1)}px`,
@@ -70,14 +71,9 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: 'nowrap',
   },
   topbarItem: {
-    alignSelf: 'center',
-  },
-  authButton: {
-    color: theme.palette.get<string>({ light: theme.palette.common.white, dark: theme.palette.common.black }),
-    borderColor: theme.palette.get<string>({ light: theme.palette.common.white, dark: theme.palette.common.black }),
-    '&:hover': {
-      borderColor: theme.palette.get<string>({ light: '#cccccc', dark: '#333333' }),
-    },
+    height: 35,
+    margin: 'auto 0',
+    color: theme.palette.common.white,
   },
 }));
 
@@ -90,11 +86,15 @@ const TopBarItem = ({ text, to }: TopBarItemProps) => {
   const classes = useStyles({});
   const selected = useMemo(() => location.pathname === to, [location.pathname, to]);
   return (
-    <div className={classNames(classes.topbarItem, selected && classes.selected)}>
-      <Button color='inherit' component={Link} onClick={selected ? () => window.location.reload() : undefined} to={to} variant='text'>
-        {text}
-      </Button>
-    </div>
+    <Button
+      className={classes.topbarItem}
+      color='inherit'
+      component={Link}
+      onClick={selected ? () => window.location.reload() : undefined}
+      to={to}
+      variant={selected ? 'outlined' : 'text'}>
+      {text}
+    </Button>
   );
 };
 
@@ -112,9 +112,9 @@ const Topbar = () => {
   const items = useMemo(
     () =>
       [
-        { text: 'Om GIDD', to: URLS.LANDING },
         { text: 'Aktiviteter', to: URLS.ACTIVITIES },
-        isAuthenticated ? { text: 'Innlogget', to: URLS.LOGIN } : { text: 'Ikke innlogget', to: URLS.LANDING },
+        { text: 'Om GIDD', to: URLS.ABOUT },
+        ...(isAuthenticated ? [{ text: 'Min profil', to: URLS.LOGIN }] : []),
       ] as Array<TopBarItemProps>,
     [isAuthenticated],
   );
@@ -135,18 +135,19 @@ const Topbar = () => {
           </Hidden>
           <div className={classes.right}>
             <Hidden mdDown>
+              <ThemeSettings className={classes.topbarItem} />
               {user ? (
-                <Button className={classes.authButton} onClick={logout} variant='outlined'>
+                <Button className={classes.topbarItem} color='inherit' onClick={logout} variant='outlined'>
                   Logg ut
                 </Button>
               ) : (
-                <Button className={classes.authButton} component={Link} to={URLS.LOGIN} variant='outlined'>
+                <Button className={classes.topbarItem} color='inherit' component={Link} to={URLS.LOGIN} variant='outlined'>
                   Logg inn
                 </Button>
               )}
             </Hidden>
             <Hidden mdUp>
-              <IconButton className={classes.menuButton} onClick={() => setSidebarOpen((prev) => !prev)}>
+              <IconButton className={classes.topbarItem} onClick={() => setSidebarOpen((prev) => !prev)}>
                 {sidebarOpen ? <CloseIcon /> : <MenuIcon />}
               </IconButton>
               <Sidebar items={items} onClose={() => setSidebarOpen(false)} open={sidebarOpen} />
