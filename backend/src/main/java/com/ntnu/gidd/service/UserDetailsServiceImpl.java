@@ -3,8 +3,10 @@ package com.ntnu.gidd.service;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.security.UserDetailsImpl;
+import jdk.jfr.Registered;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,10 +14,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @Slf4j
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
     private UserRepository userRepository;
 
     @Override

@@ -4,6 +4,7 @@ import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.repository.ActivityRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import java.util.List;
@@ -17,10 +18,10 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ActivityServiceImpl implements ActivityService {
     ModelMapper modelMapper = new ModelMapper();
 
-    @Autowired
     private ActivityRepository activityRepository;
 
     @Override

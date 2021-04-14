@@ -4,6 +4,7 @@ import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.service.ActivityService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +17,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("activities/")
 public class ActivityController {
 
-    @Autowired
     private ActivityService activityService;
 
     Logger logger = LoggerFactory.getLogger(ActivityController.class);
