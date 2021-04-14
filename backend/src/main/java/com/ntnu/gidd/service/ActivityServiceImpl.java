@@ -34,9 +34,13 @@ public class ActivityServiceImpl implements ActivityService {
         updateActivity.setSignup_start(activity.getSignup_start());
         updateActivity.setSignup_end(activity.getSignup_end());
         updateActivity.setClosed(activity.isClosed());
-        updateActivity.setCapacity(updateActivity.getCapacity());
+        updateActivity.setCapacity(activity.getCapacity());
 
         return this.activityRepository.save(updateActivity);
+    }
+
+    Activity addActivity(Activity activity){
+       return this.activityRepository.save(activity);
     }
 
 
