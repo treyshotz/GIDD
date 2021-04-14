@@ -10,11 +10,11 @@ import javax.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-@Entity
 @Table(name="activity")
 public class Activity extends UUIDModel {
 
