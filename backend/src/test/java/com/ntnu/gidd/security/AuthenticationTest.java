@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -46,25 +47,28 @@ public class AuthenticationTest {
     @MockBean
     private UserRepository userRepository;
 
+    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private BCryptPasswordEncoder encoder;
 
     @BeforeEach
     public void setup() {
         User testUser = new User();
 
         testUser.setEmail(email);
-        testUser.setPassword(password);
+        testUser.setPassword(encoder.encode(password));
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(testUser));
         
         
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .apply(springSecurity())
-                .build();
+//        mockMvc = MockMvcBuilders
+//                .webAppContextSetup(context)
+//                .apply(springSecurity())
+//                .build();
     }
 
     @Test
