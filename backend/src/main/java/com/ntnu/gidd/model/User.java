@@ -23,7 +23,6 @@ public class User extends UUIDModel {
 
     private String firstName;
     private String surname;
-
     @Column(unique = true)
     private String email;
     private LocalDate birthDate;
