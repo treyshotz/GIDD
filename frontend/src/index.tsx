@@ -21,6 +21,7 @@ import Landing from 'containers/Landing';
 const Http404 = lazy(() => import('containers/Http404'));
 const Auth = lazy(() => import('containers/Auth'));
 const Activities = lazy(() => import('containers/Activities'));
+const Profile = lazy(() => import('containers/Profile'));
 
 type ProvidersProps = {
   children: ReactNode;
@@ -63,6 +64,7 @@ const AppRoutes = () => {
         <Route element={<Activities />} path='' />
       </Route>
       <Route element={<Auth />} path={`${URLS.LOGIN}*`} />
+      <Route element={<Profile />} path={`${URLS.PROFILE}*`} />
 
       <Route element={<Http404 />} path='*' />
     </Routes>

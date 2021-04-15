@@ -14,6 +14,26 @@ export const useActivities = () => {
   });
 };
 
+export const useMyParticipatingActivities = () => {
+  return useInfiniteQuery<PaginationResponse<Activity>, RequestResponse>(
+    [EXPORT_QUERY_KEY],
+    ({ pageParam = 1 }) => API.getMyParticipatingActivities({ page: pageParam }),
+    {
+      getNextPageParam: (lastPage) => lastPage.next,
+    },
+  );
+};
+
+export const useMyHostActivities = () => {
+  return useInfiniteQuery<PaginationResponse<Activity>, RequestResponse>(
+    [EXPORT_QUERY_KEY],
+    ({ pageParam = 1 }) => API.getMyHostActivities({ page: pageParam }),
+    {
+      getNextPageParam: (lastPage) => lastPage.next,
+    },
+  );
+};
+
 export const useCreateActivity = (): UseMutationResult<Activity, RequestResponse, ActivityRequired, unknown> => {
   const queryClient = useQueryClient();
   return useMutation((newActivity: ActivityRequired) => API.createActivity(newActivity), {

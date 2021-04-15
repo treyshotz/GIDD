@@ -3,7 +3,7 @@ import API from 'api/api';
 import URLS from 'URLS';
 import { User, UserCreate, LoginRequestResponse, RequestResponse } from 'types/Types';
 import { getCookie, setCookie, removeCookie } from 'api/cookie';
-import { AUTH_TOKEN } from 'constant';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from 'constant';
 
 export const USER_QUERY_KEY = 'user';
 export const USERS_QUERY_KEY = 'users';
@@ -24,7 +24,8 @@ export const useLogin = (): UseMutationResult<LoginRequestResponse, RequestRespo
   const queryClient = useQueryClient();
   return useMutation(({ email, password }) => API.authenticate(email, password), {
     onSuccess: (data) => {
-      setCookie(AUTH_TOKEN, data.token);
+      setCookie(ACCESS_TOKEN, data.refresh_token, 1000 * 60 * 15);
+      setCookie(REFRESH_TOKEN, data.refresh_token);
       queryClient.removeQueries(USER_QUERY_KEY);
       queryClient.prefetchQuery(USER_QUERY_KEY, () => API.getUser());
     },
@@ -38,14 +39,15 @@ export const useForgotPassword = (): UseMutationResult<RequestResponse, RequestR
 export const useLogout = () => {
   const queryClient = useQueryClient();
   return () => {
-    removeCookie(AUTH_TOKEN);
+    removeCookie(ACCESS_TOKEN);
+    removeCookie(REFRESH_TOKEN);
     queryClient.removeQueries(USER_QUERY_KEY);
     location.href = URLS.LANDING;
   };
 };
 
 export const useIsAuthenticated = () => {
-  return typeof getCookie(AUTH_TOKEN) !== 'undefined';
+  return typeof getCookie(ACCESS_TOKEN) !== 'undefined';
 };
 
 export const useCreateUser = (): UseMutationResult<RequestResponse, RequestResponse, UserCreate, unknown> => {

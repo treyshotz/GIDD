@@ -3,7 +3,8 @@ export type RequestResponse = {
 };
 
 export type LoginRequestResponse = {
-  token: string;
+  access_token: string;
+  refresh_token: string;
 };
 
 export type PaginationResponse<T> = {

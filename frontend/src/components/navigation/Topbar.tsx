@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import URLS from 'URLS';
-import { useUser, useIsAuthenticated, useLogout } from 'hooks/User';
+import { useIsAuthenticated, useLogout } from 'hooks/User';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
@@ -100,7 +100,6 @@ const TopBarItem = ({ text, to }: TopBarItemProps) => {
 
 const Topbar = () => {
   const isAuthenticated = useIsAuthenticated();
-  const { data: user } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const classes = useStyles();
   const logout = useLogout();
@@ -114,7 +113,7 @@ const Topbar = () => {
       [
         { text: 'Aktiviteter', to: URLS.ACTIVITIES },
         { text: 'Om GIDD', to: URLS.ABOUT },
-        ...(isAuthenticated ? [{ text: 'Min profil', to: URLS.LOGIN }] : []),
+        ...(isAuthenticated ? [{ text: 'Min profil', to: URLS.PROFILE }] : []),
       ] as Array<TopBarItemProps>,
     [isAuthenticated],
   );
@@ -136,7 +135,7 @@ const Topbar = () => {
           <div className={classes.right}>
             <Hidden mdDown>
               <ThemeSettings className={classes.topbarItem} />
-              {user ? (
+              {isAuthenticated ? (
                 <Button className={classes.topbarItem} color='inherit' onClick={logout} variant='outlined'>
                   Logg ut
                 </Button>
