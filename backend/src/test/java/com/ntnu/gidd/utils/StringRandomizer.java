@@ -15,4 +15,8 @@ public class StringRandomizer {
         }
         return stringBuilder.toString();
     }
+
+    public static String getRandomEmail() {
+        return getRandomString(8) + "@" + getRandomString(4) + ".com";
+    }
 }
