@@ -1,5 +1,6 @@
 package com.ntnu.gidd.controller;
 
+import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.model.Activity;
@@ -33,7 +34,7 @@ public class ActivityController {
 
     @GetMapping("{activityId}/")
     @ResponseStatus(HttpStatus.OK)
-    public Activity get(@PathVariable UUID activityId){
+    public ActivityDto get(@PathVariable UUID activityId){
         try {
             return activityService.getActivityById(activityId);
         }catch (ActivityNotFoundExecption ex){

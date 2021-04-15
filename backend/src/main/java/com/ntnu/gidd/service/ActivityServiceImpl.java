@@ -1,17 +1,19 @@
 package com.ntnu.gidd.service;
 
+import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.model.Activity;
+import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.repository.ActivityRepository;
+import com.ntnu.gidd.repository.TrainingLevelRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,9 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     private ActivityRepository activityRepository;
+
+    @Autowired
+    private TrainingLevelRepository trainingLevelRepository;
 
     @Override
     public Activity updateActivity(UUID activityId, Activity activity) {
@@ -35,19 +40,25 @@ public class ActivityServiceImpl implements ActivityService {
         updateActivity.setSignup_end(activity.getSignup_end());
         updateActivity.setClosed(activity.isClosed());
         updateActivity.setCapacity(activity.getCapacity());
+        updateActivity.setTrainingLevel(getTrainingLevel(activity));
 
         return this.activityRepository.save(updateActivity);
     }
 
+    private TrainingLevel getTrainingLevel(Activity activity){
+        return trainingLevelRepository.findTraningLevelByLevel(activity.getTrainingLevel().getLevel()).
+                orElseThrow(() -> new EntityNotFoundException("Traning level does not exist"));
+    }
     Activity addActivity(Activity activity){
        return this.activityRepository.save(activity);
     }
 
 
     @Override
-    public Activity getActivityById(UUID id) {
-       return this.activityRepository.findById(id).
-               orElseThrow(()-> new ActivityNotFoundExecption("This activity does not exist"));
+    public ActivityDto getActivityById(UUID id) {
+       return modelMapper.map(this.activityRepository.findById(id).
+               orElseThrow(()-> new ActivityNotFoundExecption("This activity does not exist")),
+               ActivityDto.class);
 }
     @Override
     public List<ActivityListDto> getActivties() {

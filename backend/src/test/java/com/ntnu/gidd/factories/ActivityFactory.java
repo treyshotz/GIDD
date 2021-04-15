@@ -4,7 +4,6 @@ import com.ntnu.gidd.model.Activity;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
 
@@ -13,6 +12,7 @@ import static com.ntnu.gidd.utils.StringRandomizer.getRandomString;
 public class ActivityFactory implements FactoryBean<Activity> {
 
     Random random = new Random();
+    TrainingLevelFactory trainingLevelFactory = new TrainingLevelFactory();
 
     @Override
     public Activity getObject() throws Exception {
@@ -26,6 +26,7 @@ public class ActivityFactory implements FactoryBean<Activity> {
                 .signup_end(LocalDateTime.now())
                 .closed(false)
                 .capacity(random.nextInt(1000))
+                .trainingLevel(trainingLevelFactory.getObject())
                 .build();
     }
 

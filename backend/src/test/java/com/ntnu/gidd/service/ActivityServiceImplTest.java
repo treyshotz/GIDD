@@ -1,9 +1,14 @@
 package com.ntnu.gidd.service;
 
+import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.factories.ActivityFactory;
+import com.ntnu.gidd.factories.TrainingLevelFactory;
 import com.ntnu.gidd.model.Activity;
+import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.repository.ActivityRepository;
+import com.ntnu.gidd.repository.TrainingLevelRepository;
+import com.ntnu.gidd.utils.StringRandomizer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +41,9 @@ public class ActivityServiceImplTest {
     @Mock
     private ActivityRepository activityRepository;
 
+    @Mock
+    private TrainingLevelRepository trainingLevelRepository;
+
     private Activity activity;
 
     @BeforeEach
@@ -52,15 +60,15 @@ public class ActivityServiceImplTest {
     }
 
     @Test
-    void test_activity_service_impl_update_activity_and_returns_updatedActivity() throws Exception{
+    void testActivityServiceImplUpdateActivityAndReturnsUpdatedActivity() throws Exception{
+        TrainingLevel level = activity.getTrainingLevel();
         when(activityRepository.findById(activity.getId())).thenReturn(Optional.ofNullable(activity));
+        when(trainingLevelRepository.findTraningLevelByLevel(level.getLevel())).thenReturn(Optional.of(level));
+        activity.setTitle(StringRandomizer.getRandomString(10));
 
-        Activity updateActivity = new ActivityFactory().getObject();
-        assert updateActivity != null;
+        Activity updateActivity = activityService.updateActivity(activity.getId(), activity);
 
-        activityService.updateActivity(activity.getId(), updateActivity);
-
-        assertThat(activity.getId()).isNotEqualByComparingTo(updateActivity.getId());
+        assertThat(activity.getId()).isEqualTo(updateActivity.getId());
 
         assertThat(activity.getTitle()).isEqualTo(updateActivity.getTitle());
         assertThat(activity.getDescription()).isEqualTo(updateActivity.getDescription());
@@ -68,16 +76,16 @@ public class ActivityServiceImplTest {
     }
 
     @Test
-    void test_activity_service_impl_get_activity_by_id_returns_activity() throws Exception{
+    void testActivityServiceImplGetActivityByIdReturnsActivity() throws Exception{
         when(activityRepository.findById(activity.getId())).thenReturn(Optional.ofNullable(activity));
 
-        Activity activityFound = activityService.getActivityById(activity.getId());
+        ActivityDto activityFound = activityService.getActivityById(activity.getId());
 
-        assertThat(activityFound).isEqualTo(activity);
+        assertThat(activityFound.getId()).isEqualTo(activity.getId());
     }
 
     @Test
-    void test_activity_service_impl_get_activities_returns_activities() throws Exception{
+    void testActivityServiceImplGetActivitiesReturnsActivities() throws Exception{
 
         Activity secondActivity = new ActivityFactory().getObject();
         assert secondActivity != null;

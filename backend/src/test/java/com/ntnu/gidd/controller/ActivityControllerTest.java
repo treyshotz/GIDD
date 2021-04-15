@@ -45,7 +45,7 @@ public class ActivityControllerTest {
     }
     @WithMockUser(value = "spring")
     @Test
-    public void test_activity_controller_getAll_returns_OK_and_a_list_of_activities() throws Exception {
+    public void testActivityControllerGetAllReturnsOKAndAListOfActivities() throws Exception {
         this.mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -55,7 +55,7 @@ public class ActivityControllerTest {
 
     @WithMockUser(value = "spring")
     @Test
-    public void test_activity_controller_get_returns_OK_and_the_author () throws Exception {
+    public void testActivityControllerGetReturnsOKAndTheAuthor () throws Exception {
         this.mvc.perform(get(URI+activity.getId()+"/").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
