@@ -1,10 +1,8 @@
 package com.ntnu.gidd.security;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
+import com.ntnu.gidd.util.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -19,11 +17,12 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
 
     private JWTConfig jwtConfig;
-
+    private JwtUtil jwtUtil;
 
     public JWTAuthorizationFilter(AuthenticationManager authenticationManager, JWTConfig jwtConfig) {
         super(authenticationManager);
         this.jwtConfig = jwtConfig;
+        this.jwtUtil = new JwtUtil(jwtConfig);
     }
 
     /**
@@ -53,10 +52,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         String token = request.getHeader(jwtConfig.getHeader());
 
         if (token != null) {
-            String user = JWT.require(Algorithm.HMAC512(jwtConfig.getSecret().getBytes()))
-                    .build()
-                    .verify(token.replace(jwtConfig.getPrefix(), ""))
-                    .getSubject();
+            String user = jwtUtil.decodeToken(token);
 
             if (user != null)
                 return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
