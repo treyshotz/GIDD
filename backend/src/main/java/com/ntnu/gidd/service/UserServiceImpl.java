@@ -2,6 +2,8 @@ package com.ntnu.gidd.service;
 
 import com.ntnu.gidd.dto.UserDto;
 import com.ntnu.gidd.dto.UserRegistrationDto;
+import com.ntnu.gidd.exception.EmailInUseException;
+import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.UserRepository;
 import lombok.NoArgsConstructor;
@@ -38,10 +40,10 @@ public class UserServiceImpl implements UserService {
 	public UserDto saveUser(UserRegistrationDto user) {
 		//TODO: Verify that all the credentials are correct and that the user information doesn't exist
 		// Hash the password and salt
-		if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-			throw new
+		if(userRepository.findByEmail(user.getEmail()).isPresent()){
+			throw new EmailInUseException();
 		}
-		
+
 		User userObj = modelMapper.map(user, User.class);
 		return modelMapper.map(userRepository.save(userObj), UserDto.class);
 	}

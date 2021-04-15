@@ -2,6 +2,7 @@ package com.ntnu.gidd.service;
 
 import com.ntnu.gidd.dto.UserDto;
 import com.ntnu.gidd.dto.UserRegistrationDto;
+import com.ntnu.gidd.exception.EmailInUseException;
 import com.ntnu.gidd.model.User;
 import org.springframework.stereotype.Service;
 
