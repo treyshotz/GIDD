@@ -1,5 +1,7 @@
 package com.ntnu.gidd.dto;
 
+import com.ntnu.gidd.validation.PasswordMatches;
+import com.ntnu.gidd.validation.ValidEmail;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@PasswordMatches
 public class UserRegistrationDto {
       @NotNull
       @NotEmpty
@@ -27,6 +30,7 @@ public class UserRegistrationDto {
       private String password;
       private String matchingPassword;
 
+      @ValidEmail
       @NotNull
       @NotEmpty
       private String email;
