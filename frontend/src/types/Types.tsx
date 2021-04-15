@@ -24,14 +24,19 @@ export type UserCreate = Pick<User, 'email' | 'first_name' | 'surname'> & {
   password: string;
 };
 
-export type ActivityRequired = Partial<Activity> & Pick<Activity, 'title' | 'body'>;
+export type ActivityRequired = Partial<Activity> & Pick<Activity, 'title' | 'start_date' | 'end_date' | 'signup_start' | 'signup_end'>;
 
 export type Activity = {
-  id: number;
-  created_at: string;
-  updated_at: string;
+  activity_id: string;
+  created_date: string;
   title: string;
-  body: string;
-  image: string;
-  image_alt: string;
+  description: string;
+  closed: boolean;
+  capacity: number;
+  location: string;
+  start_date: string;
+  end_date: string;
+  signup_start: string;
+  signup_end: string;
+  hosts: Array<string>;
 };

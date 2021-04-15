@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
+import { UseFormReturn } from 'react-hook-form';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
@@ -34,16 +35,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MarkdownEditor = (props: TextFieldProps) => {
+export type MarkdownEditorProps = TextFieldProps &
+  Pick<UseFormReturn, 'formState'> & {
+    name: string;
+  };
+
+const MarkdownEditor = forwardRef(({ name, formState, ...props }: MarkdownEditorProps, ref) => {
   const classes = useStyles();
   const [helpDialogOpen, setHelpDialogOpen] = useState(false);
 
   const HelperText = () => {
     return (
       <>
-        {Boolean(props.error && props.helperText) && (
+        {Boolean(formState.errors[name] && formState.errors[name]?.message) && (
           <>
-            {props.helperText}
+            {formState.errors[name]?.message}
             <br />
           </>
         )}
@@ -166,6 +172,21 @@ const MarkdownEditor = (props: TextFieldProps) => {
   return (
     <>
       <TextField
+        error={Boolean(formState.errors[name])}
+        fullWidth
+        helperText={<HelperText />}
+        InputLabelProps={{ shrink: true }}
+        inputRef={ref}
+        label={props.label || 'Beskrivelse'}
+        margin='normal'
+        maxRows={15}
+        multiline
+        placeholder={props.placeholder || 'Skriv her'}
+        rows={5}
+        variant='outlined'
+        {...props}
+      />
+      {/* <TextField
         {...props}
         fullWidth
         helperText={<HelperText />}
@@ -176,7 +197,7 @@ const MarkdownEditor = (props: TextFieldProps) => {
         multiline
         rows={5}
         variant={props.variant || 'outlined'}
-      />
+      /> */}
       {helpDialogOpen && (
         <Dialog aria-labelledby='format-dialog-title' fullWidth maxWidth='md' onClose={() => setHelpDialogOpen(false)} open={helpDialogOpen}>
           <DialogTitle className={classes.dialogHeader} disableTypography id='format-dialog-title'>
@@ -192,6 +213,7 @@ const MarkdownEditor = (props: TextFieldProps) => {
       )}
     </>
   );
-};
+});
 
+MarkdownEditor.displayName = 'MarkdownEditor';
 export default MarkdownEditor;

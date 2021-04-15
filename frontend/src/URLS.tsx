@@ -16,6 +16,7 @@ export default {
   LANDING: '/',
   ABOUT: '/about/',
   ACTIVITIES: '/aktiviteter/',
+  ADMIN_ACTIVITIES: '/admin/aktiviteter/',
   PROFILE: '/profil/',
   ...AUTH_ROUTES,
 };

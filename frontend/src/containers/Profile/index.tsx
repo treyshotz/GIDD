@@ -2,6 +2,7 @@ import Helmet from 'react-helmet';
 import classnames from 'classnames';
 import { useUser } from 'hooks/User';
 import { Link, Routes, Route, Outlet } from 'react-router-dom';
+import URLS from 'URLS';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
@@ -77,6 +78,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const EDIT_PROFILE_URL = 'rediger/';
+
 const Profile = () => {
   const classes = useStyles();
   const { data: user, isLoading, isError } = useUser();
@@ -91,10 +94,12 @@ const Profile = () => {
   const Content = () => (
     <>
       <Container className={classnames(classes.grid, classes.buttons)} maxWidth='md'>
-        <Button component={Link} to='rediger/'>
+        <Button component={Link} to={EDIT_PROFILE_URL}>
           Oppdater profil
         </Button>
-        <Button>Administrer aktiviteter</Button>
+        <Button component={Link} to={URLS.ADMIN_ACTIVITIES}>
+          Administrer aktiviteter
+        </Button>
       </Container>
       <Container className={classnames(classes.grid, classes.content)}>
         <div className={classes.grid}>
@@ -129,7 +134,7 @@ const Profile = () => {
         </Paper>
       </Container>
       <Routes>
-        <Route element={<EditProfile user={user} />} path='rediger/' />
+        <Route element={<EditProfile user={user} />} path={EDIT_PROFILE_URL} />
         <Route element={<Content />} path='*' />
       </Routes>
       <Outlet />

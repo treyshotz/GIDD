@@ -4,8 +4,8 @@ import { Activity, ActivityRequired, PaginationResponse, RequestResponse } from 
 
 export const EXPORT_QUERY_KEY = 'activities';
 
-export const useActivityById = (id: number) => {
-  return useQuery<Activity, RequestResponse>([EXPORT_QUERY_KEY, id], () => API.getActivity(id), { enabled: id !== -1 });
+export const useActivityById = (id: string) => {
+  return useQuery<Activity, RequestResponse>([EXPORT_QUERY_KEY, id], () => API.getActivity(id), { enabled: id !== '' });
 };
 
 export const useActivities = () => {
@@ -39,12 +39,12 @@ export const useCreateActivity = (): UseMutationResult<Activity, RequestResponse
   return useMutation((newActivity: ActivityRequired) => API.createActivity(newActivity), {
     onSuccess: (data) => {
       queryClient.invalidateQueries(EXPORT_QUERY_KEY);
-      queryClient.setQueryData([EXPORT_QUERY_KEY, data.id], data);
+      queryClient.setQueryData([EXPORT_QUERY_KEY, data.activity_id], data);
     },
   });
 };
 
-export const useUpdateActivity = (id: number): UseMutationResult<Activity, RequestResponse, ActivityRequired, unknown> => {
+export const useUpdateActivity = (id: string): UseMutationResult<Activity, RequestResponse, ActivityRequired, unknown> => {
   const queryClient = useQueryClient();
   return useMutation((updatedActivity: ActivityRequired) => API.updateActivity(id, updatedActivity), {
     onSuccess: (data) => {
@@ -54,7 +54,7 @@ export const useUpdateActivity = (id: number): UseMutationResult<Activity, Reque
   });
 };
 
-export const useDeleteActivity = (id: number): UseMutationResult<RequestResponse, RequestResponse, unknown, unknown> => {
+export const useDeleteActivity = (id: string): UseMutationResult<RequestResponse, RequestResponse, unknown, unknown> => {
   const queryClient = useQueryClient();
   return useMutation(() => API.deleteActivity(id), {
     onSuccess: () => {
