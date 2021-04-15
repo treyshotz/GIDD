@@ -109,11 +109,9 @@ public class AuthenticationTest {
 				.andReturn();
 		
 		String token = mvcResult.getResponse().getHeader(jwtConfig.getHeader());
+		String actualEmail = jwtUtil.decodeToken(token);
 		
-		String user = jwtUtil.decodeToken(token);
-		UserDetails userDetails = (UserDetailsImpl) new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>()).getPrincipal();
-		
-		assertThat(userDetails.getUsername()).isEqualTo(testUser.getEmail());
+		assertThat(actualEmail).isEqualTo(testUser.getEmail());
 	}
 	
 	/**
