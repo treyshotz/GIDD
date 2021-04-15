@@ -19,6 +19,7 @@ src/main/resources/application-prod.properties
 *.iws
 *.iml
 *.ipr
+.idea/workspace.xml
 
 ### NetBeans ###
 /nbproject/private/

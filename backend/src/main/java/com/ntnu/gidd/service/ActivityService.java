@@ -13,5 +13,6 @@ public interface ActivityService {
     Activity updateActivity(UUID id, Activity activity);
     List<ActivityListDto> getActivties();
     ActivityDto getActivityById(UUID id);
+    Activity saveActivity(Activity activity);
 }
 

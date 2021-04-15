@@ -49,4 +49,10 @@ public class ActivityController {
         logger.debug("[X] Request to update Activity with id={}", activityId);
         return this.activityService.updateActivity(activityId, activity);
     }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Activity postActivity(@RequestBody Activity activity){
+        return activityService.saveActivity(activity);
+    }
 }

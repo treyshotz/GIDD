@@ -1,5 +1,6 @@
 package com.ntnu.gidd.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.repository.ActivityRepository;
@@ -15,6 +16,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 
 
 @SpringBootTest(webEnvironment = MOCK)
@@ -27,8 +29,12 @@ public class ActivityControllerTest {
     private MockMvc mvc;
 
     private ActivityFactory activityFactory = new ActivityFactory();
+
     @Autowired
     private ActivityRepository  activityRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private Activity activity;
 
@@ -61,6 +67,21 @@ public class ActivityControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.title").value(activity.getTitle()))
                 .andExpect(jsonPath("$.description").value(activity.getDescription()));
+
+    }
+
+
+    @WithMockUser(value = "spring")
+    @Test
+    public void testActivityControllerSaveReturn201ok() throws Exception {
+
+        Activity testActivity = activityFactory.getObject();
+
+        this.mvc.perform(post(URI)
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(testActivity)))
+            .andExpect(status().isCreated());
 
     }
 

@@ -65,6 +65,11 @@ public class ActivityServiceImpl implements ActivityService {
         return this.activityRepository.findAll().stream().map(activity->modelMapper.map(activity, ActivityListDto.class))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Activity saveActivity(Activity activity) {
+        return activityRepository.save(activity);
+    }
 }
 
 
