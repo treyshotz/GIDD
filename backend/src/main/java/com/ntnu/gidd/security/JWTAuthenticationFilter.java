@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
+/**
+ * Filter to check the existence and validity of the access token on the Authorization header.
+ */
 @Slf4j
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -29,7 +33,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         this.authenticationManager = authenticationManager;
         this.jwtConfig = jwtConfig;
 
-        setFilterProcessesUrl(jwtConfig.getUri() + "/login");
+        this.setRequiresAuthenticationRequestMatcher(
+                new AntPathRequestMatcher(jwtConfig.getUri() + "/login", "POST"));
     }
 
     /**
