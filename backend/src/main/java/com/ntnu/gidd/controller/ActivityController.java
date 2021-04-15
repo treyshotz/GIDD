@@ -55,4 +55,11 @@ public class ActivityController {
     public Activity postActivity(@RequestBody Activity activity){
         return activityService.saveActivity(activity);
     }
+
+    @DeleteMapping("/{activityId}")
+    public Activity deleteActivity(@PathVariable UUID activityId){
+        logger.debug("[X] Request to delete Activity with id={}", activityId);
+        return this.activityService.deleteActivity(activityId);
+    }
+
 }

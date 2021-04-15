@@ -70,6 +70,15 @@ public class ActivityServiceImpl implements ActivityService {
     public Activity saveActivity(Activity activity) {
         return activityRepository.save(activity);
     }
+
+    @Override
+    public Activity deleteActivity(UUID id){
+        Activity activitiesToDelete = activityRepository.findById(id).orElseThrow(
+            () -> new ActivityNotFoundExecption("This activity does not exist"));
+        this.activityRepository.delete(activitiesToDelete);
+        return activitiesToDelete;
+
+    }
 }
 
 

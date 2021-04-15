@@ -85,4 +85,20 @@ public class ActivityControllerTest {
 
     }
 
+
+    @WithMockUser(value = "spring")
+    @Test
+    public void testActivityControllerDeleteActivityAndReturnsOk() throws Exception {
+
+        Activity testActivity = activityFactory.getObject();
+        assert testActivity != null;
+        testActivity = activityRepository.save(testActivity);
+
+        this.mvc.perform(delete(URI + testActivity.getId() + "/")
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+    }
+
 }

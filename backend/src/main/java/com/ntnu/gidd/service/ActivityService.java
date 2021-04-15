@@ -14,5 +14,7 @@ public interface ActivityService {
     List<ActivityListDto> getActivties();
     ActivityDto getActivityById(UUID id);
     Activity saveActivity(Activity activity);
+    Activity deleteActivity(UUID id);
+
 }
 
