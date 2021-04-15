@@ -28,7 +28,7 @@ public class ActivityController {
     public List<ActivityListDto> getAll(){
         return activityService.getActivties();
     }
-
+    
     @GetMapping("{activityId}/")
     @ResponseStatus(HttpStatus.OK)
     public ActivityDto get(@PathVariable UUID activityId){
