@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 @PasswordMatches
 public class UserRegistrationDto {
       @NotNull
@@ -23,7 +25,7 @@ public class UserRegistrationDto {
 
       @NotNull
       @NotEmpty
-      private String lastName;
+      private String surname;
 
       @NotNull
       @NotEmpty

@@ -1,6 +1,8 @@
 package com.ntnu.gidd.exception;
 
-public class EmailInUseException extends RuntimeException {
+import javax.persistence.EntityExistsException;
+
+public class EmailInUseException extends EntityExistsException {
 
 	private static final long serialVersionUID = 1L;
 

@@ -20,7 +20,7 @@ public class UserDto {
 	
 	@NotNull
 	@NotEmpty
-	private String lastName;
+	private String surname;
 
 	@NotNull
 	@NotEmpty

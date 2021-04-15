@@ -9,16 +9,21 @@ import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.security.WebSecurity;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.bcel.BcelAccessForInlineMunger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Slf4j
 @NoArgsConstructor
+@Service
 public class UserServiceImpl implements UserService {
-	WebSecurity webSecurity = new WebSecurity();
+
+	@Autowired
+	BCryptPasswordEncoder passwordEncoder;
 
 	ModelMapper modelMapper = new ModelMapper();
 	
@@ -51,9 +56,7 @@ public class UserServiceImpl implements UserService {
 		}
 
 		//Hash and salt
-		BCryptPasswordEncoder encoder = webSecurity.bCryptPasswordEncoder();
-		user.setPassword(encoder.encode(user.getPassword()));
-
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		User userObj = modelMapper.map(user, User.class);
 		return modelMapper.map(userRepository.save(userObj), UserDto.class);
 	}
