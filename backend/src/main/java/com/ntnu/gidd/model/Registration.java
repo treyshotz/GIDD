@@ -12,15 +12,19 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-@Table(name="activity_registration")
-public class ActivityRegistration extends UUIDModel{
+@Table(name="registration")
+public class Registration extends TimeStampedModel{
 
+    @EmbeddedId
+    private RegistrationId registrationId;
+
+    @MapsId("user_id")
     @ManyToOne
     @JoinColumn(name="user_id", referencedColumnName = "id")
     User user;
 
+    @MapsId("activity_id")
     @ManyToOne
     @JoinColumn(name="activity_id", referencedColumnName = "id")
     Activity activity;
-
 }

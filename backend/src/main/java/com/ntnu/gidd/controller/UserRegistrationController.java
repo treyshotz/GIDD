@@ -15,31 +15,22 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("activities/{activityId}/registrations/")
-public class ActivityRegistrationController {
+@RequestMapping("users/{userId}/registrations/")
+public class UserRegistrationController {
 
   @Autowired
   private RegistrationService registrationService;
 
-  @PostMapping("")
-  @ResponseStatus(HttpStatus.CREATED)
-  public Registration postRegistration(@RequestBody Registration registration) {
-    log.debug("[X] Request to Post Registration with id={}", registration.getRegistrationId());
-    return registrationService.saveRegistration(registration);
-  }
-
   @GetMapping("")
   @ResponseStatus(HttpStatus.OK)
-  public List<Registration> getRegistrationForActivity(@PathVariable UUID activityId) {
-    log.debug("[X] Request to look up user registered for activity with id={}", activityId);
-    return registrationService.getRegistrationForActivity(activityId);
+  public List<Registration> getRegistrationsForUser(UUID userId) {
+    log.debug("[X] Request to look up acivites registered for user with id={}", userId);
+    return registrationService.getRegistrationsForUser(userId);
   }
 
-
-
-  @GetMapping("{userId}/")
+  @GetMapping("{activityId}/")
   @ResponseStatus(HttpStatus.OK)
-  public Registration getRegistrationWithCompositeIdActivity(UUID userId, UUID activityId) {
+  public Registration getRegistrationWithCompositeIdUser(UUID userId, UUID activityId) {
     return registrationService.getRegistrationWithCompositeId(userId, activityId);
   }
 }

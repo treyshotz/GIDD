@@ -24,8 +24,6 @@ public class ActivityController {
     @Autowired
     private ActivityService activityService;
 
-    Logger logger = LoggerFactory.getLogger(ActivityController.class);
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<ActivityListDto> getAll(){
@@ -38,7 +36,7 @@ public class ActivityController {
         try {
             return activityService.getActivityById(activityId);
         }catch (ActivityNotFoundExecption ex){
-            logger.debug("[X] Request to update Activity with id={}", activityId);
+            log.debug("[X] Request to update Activity with id={}", activityId);
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage(), ex);
         }
@@ -46,7 +44,7 @@ public class ActivityController {
 
     @PutMapping("{activityId}/")
     public Activity updateActivity(@PathVariable UUID activityId, @RequestBody Activity activity){
-        logger.debug("[X] Request to update Activity with id={}", activityId);
+        log.debug("[X] Request to update Activity with id={}", activityId);
         return this.activityService.updateActivity(activityId, activity);
     }
 
@@ -56,9 +54,9 @@ public class ActivityController {
         return activityService.saveActivity(activity);
     }
 
-    @DeleteMapping("/{activityId}")
+    @DeleteMapping("/{activityId}/")
     public Activity deleteActivity(@PathVariable UUID activityId){
-        logger.debug("[X] Request to delete Activity with id={}", activityId);
+        log.debug("[X] Request to delete Activity with id={}", activityId);
         return this.activityService.deleteActivity(activityId);
     }
 
