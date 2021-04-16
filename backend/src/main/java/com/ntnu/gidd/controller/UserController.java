@@ -23,17 +23,15 @@ public class UserController {
 
 	@Autowired
 	UserServiceImpl userService;
-	
-	Logger logger = LoggerFactory.getLogger(UserController.class);
-	
+
 	@PostMapping
 	public UserDto createUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto){
-		logger.debug("[X] Request to save user with email={}", userRegistrationDto.getEmail());
+		log.debug("[X] Request to save user with email={}", userRegistrationDto.getEmail());
 		try{
 			return userService.saveUser(userRegistrationDto);
 		}
 		catch (EmailInUseException exception){
-			logger.error(String.valueOf(exception));
+			log.error(String.valueOf(exception));
 			throw new ResponseStatusException(
 					HttpStatus.FORBIDDEN, exception.getMessage(), exception);
 		}
