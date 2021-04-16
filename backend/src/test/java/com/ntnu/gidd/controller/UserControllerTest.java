@@ -5,6 +5,7 @@ import com.ntnu.gidd.dto.UserRegistrationDto;
 import com.ntnu.gidd.factories.UserRegistrationFactory;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.model.User;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import java.time.LocalDate;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = MOCK)
@@ -50,9 +52,22 @@ public class UserControllerTest {
        */
       @BeforeEach
       public void setUp() throws Exception {
-
       }
-
+      
+      /**
+       * Cleans up the saved users after each test
+       * @throws Exception
+       */
+      @AfterEach
+      public void cleanUp() throws Exception {
+            userRepository.deleteAll();
+      }
+      
+      
+      /**
+       * Test that you can create a user with valid input
+       * @throws Exception
+       */
       @Test
       public void testCreateUserWithValidInput() throws Exception {
             String email = "test123@test.no";
@@ -66,7 +81,37 @@ public class UserControllerTest {
             mockMvc.perform(post(URI)
                   .contentType(MediaType.APPLICATION_JSON)
                   .content(objectMapper.writeValueAsString(validUser)))
-                  .andExpect(status().isOk());
-
+                  .andExpect(status().isOk())
+                  .andDo(print());
       }
+      
+      /**
+       * Test that a user can be created, but the same email cannot be used two times
+       * @throws Exception
+       */
+      @Test
+      public void testCreateUserTwoTimesFails() throws Exception {
+            String email = "test123@test.no";
+            String firstName = "tester";
+            String surname = "Testersen";
+            String password = "Ithinkthisisvalid123";
+            LocalDate birthDate = LocalDate.now();
+      
+            UserRegistrationDto validUser = new UserRegistrationDto(firstName, surname, password, password, email, birthDate);
+      
+            mockMvc.perform(post(URI)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(validUser)))
+                    .andExpect(status().isOk())
+                    .andDo(print());
+      
+      
+            mockMvc.perform(post(URI)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(validUser)))
+                    .andExpect(status().is4xxClientError())
+                    .andDo(print());
+      }
+      
+      
 }
