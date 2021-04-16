@@ -93,9 +93,9 @@ const Profile = () => {
       <Container className={classnames(classes.grid, classes.root)}>
         <div>
           <Paper className={classnames(classes.grid, classes.avatarContainer)}>
-            <Avatar className={classes.avatar}>{`${user.first_name.substr(0, 1)}${user.surname.substr(0, 1)}`}</Avatar>
+            <Avatar className={classes.avatar}>{`${user.firstName.substr(0, 1)}${user.surname.substr(0, 1)}`}</Avatar>
             <div>
-              <Typography align='center' variant='h2'>{`${user.first_name} ${user.surname}`}</Typography>
+              <Typography align='center' variant='h2'>{`${user.firstName} ${user.surname}`}</Typography>
               <Typography align='center' variant='subtitle2'>
                 {user.email}
               </Typography>

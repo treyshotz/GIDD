@@ -39,7 +39,7 @@ const Http404 = () => {
       </Helmet>
       <img alt='404' className={classes.img} src='https://via.placeholder.com/360x360.png' />
       <Typography align='center' variant='h1'>
-        {isAuthenticated ? 'Kunne ikke finne siden' : 'Du er innlogget, men kunne fremdeles ikke finne siden :('}
+        {isAuthenticated ? 'Du er innlogget, men kunne fremdeles ikke finne siden :(' : 'Kunne ikke finne siden'}
       </Typography>
       <div className={classes.buttons}>
         <Button color='primary' component={Link} to={URLS.LANDING}>

@@ -24,8 +24,8 @@ export const useLogin = (): UseMutationResult<LoginRequestResponse, RequestRespo
   const queryClient = useQueryClient();
   return useMutation(({ email, password }) => API.authenticate(email, password), {
     onSuccess: (data) => {
-      setCookie(ACCESS_TOKEN, data.refresh_token, 1000 * 60 * 15);
-      setCookie(REFRESH_TOKEN, data.refresh_token);
+      setCookie(ACCESS_TOKEN, data.token, 1000 * 60 * 15);
+      setCookie(REFRESH_TOKEN, data.refreshToken);
       queryClient.removeQueries(USER_QUERY_KEY);
       queryClient.prefetchQuery(USER_QUERY_KEY, () => API.getUser());
     },
@@ -60,7 +60,7 @@ export const useUpdateUser = (): UseMutationResult<User, RequestResponse, { user
     onSuccess: (data) => {
       queryClient.invalidateQueries(USERS_QUERY_KEY);
       const user = queryClient.getQueryData<User | undefined>(USER_QUERY_KEY);
-      if (data.user_id === user?.user_id) {
+      if (data.userId === user?.userId) {
         queryClient.setQueryData(USER_QUERY_KEY, data);
       }
     },

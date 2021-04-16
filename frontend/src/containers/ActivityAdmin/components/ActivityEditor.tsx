@@ -47,7 +47,7 @@ export type ActivityEditorProps = {
   goToActivity: (newActivity: string | null) => void;
 };
 
-type FormValues = Pick<Activity, 'title' | 'description' | 'end_date' | 'location' | 'start_date' | 'signup_start' | 'signup_end' | 'capacity'>;
+type FormValues = Pick<Activity, 'title' | 'description' | 'endDate' | 'location' | 'startDate' | 'signupStart' | 'signupEnd' | 'capacity'>;
 
 const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
   const classes = useStyles();
@@ -62,7 +62,7 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
   useEffect(() => {
     if (isError) {
       goToActivity(null);
-    } else if (activityId && data && !isUserLoading && (!user || !data.hosts.includes(user.user_id))) {
+    } else if (activityId && data && !isUserLoading && (!user || !data.hosts.includes(user.userId))) {
       goToActivity(null);
     }
   }, [isError, data, user, isUserLoading, activityId]);
@@ -71,12 +71,12 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
     (newValues: Activity | null) => {
       reset({
         description: newValues?.description || '',
-        end_date: newValues?.end_date.substring(0, 16) || new Date().toISOString().substring(0, 16),
-        signup_end: newValues?.signup_end?.substring(0, 16) || new Date().toISOString().substring(0, 16),
-        signup_start: newValues?.signup_start?.substring(0, 16) || new Date().toISOString().substring(0, 16),
+        endDate: newValues?.endDate.substring(0, 16) || new Date().toISOString().substring(0, 16),
+        signupEnd: newValues?.signupEnd?.substring(0, 16) || new Date().toISOString().substring(0, 16),
+        signupStart: newValues?.signupStart?.substring(0, 16) || new Date().toISOString().substring(0, 16),
         capacity: newValues?.capacity || 0,
         location: newValues?.location || '',
-        start_date: newValues?.start_date.substring(0, 16) || new Date().toISOString().substring(0, 16),
+        startDate: newValues?.startDate.substring(0, 16) || new Date().toISOString().substring(0, 16),
         title: newValues?.title || '',
       });
     },
@@ -115,16 +115,16 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
   };
 
   const submit: SubmitHandler<FormValues> = async (data) => {
-    if (parseISO(data.signup_end) < parseISO(data.signup_start)) {
-      setError('signup_end', { message: 'Påmeldingsslutt må være etter påmeldingsstart' });
+    if (parseISO(data.signupEnd) < parseISO(data.signupStart)) {
+      setError('signupEnd', { message: 'Påmeldingsslutt må være etter påmeldingsstart' });
       return;
     }
-    if (parseISO(data.start_date) < parseISO(data.signup_end)) {
-      setError('signup_end', { message: 'Påmeldingsslutt må være før start på aktivitet' });
+    if (parseISO(data.startDate) < parseISO(data.signupEnd)) {
+      setError('signupEnd', { message: 'Påmeldingsslutt må være før start på aktivitet' });
       return;
     }
-    if (parseISO(data.end_date) < parseISO(data.start_date)) {
-      setError('end_date', { message: 'Slutt på aktivitet må være etter start på aktivitet' });
+    if (parseISO(data.endDate) < parseISO(data.startDate)) {
+      setError('endDate', { message: 'Slutt på aktivitet må være etter start på aktivitet' });
       return;
     }
     if (activityId) {
@@ -140,7 +140,7 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
       await createActivity.mutate(data, {
         onSuccess: (newActivity) => {
           showSnackbar('Aktiviteten ble opprettet', 'success');
-          goToActivity(newActivity.activity_id);
+          goToActivity(newActivity.activityId);
         },
         onError: (e) => {
           showSnackbar(e.detail, 'error');
@@ -162,15 +162,15 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
             <TextField formState={formState} label='Sted' {...register('location')} />
           </div>
           <div className={classes.grid}>
-            <DatePicker control={control} formState={formState} label='Start' name='start_date' rules={{ required: 'Feltet er påkrevd' }} type='date-time' />
-            <DatePicker control={control} formState={formState} label='Slutt' name='end_date' rules={{ required: 'Feltet er påkrevd' }} type='date-time' />
+            <DatePicker control={control} formState={formState} label='Start' name='startDate' rules={{ required: 'Feltet er påkrevd' }} type='date-time' />
+            <DatePicker control={control} formState={formState} label='Slutt' name='endDate' rules={{ required: 'Feltet er påkrevd' }} type='date-time' />
           </div>
           <div className={classes.grid}>
             <DatePicker
               control={control}
               formState={formState}
               label='Start påmelding'
-              name='signup_start'
+              name='signupStart'
               rules={{ required: 'Feltet er påkrevd' }}
               type='date-time'
             />
@@ -178,7 +178,7 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
               control={control}
               formState={formState}
               label='Slutt påmelding'
-              name='signup_end'
+              name='signupEnd'
               rules={{ required: 'Feltet er påkrevd' }}
               type='date-time'
             />

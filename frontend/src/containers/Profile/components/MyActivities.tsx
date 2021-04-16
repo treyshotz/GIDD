@@ -31,7 +31,7 @@ const MyActivities = () => {
             {data.pages.map((page, i) => (
               <Fragment key={i}>
                 {page.results.map((activity) => (
-                  <Typography key={activity.activity_id} variant='h2'>
+                  <Typography key={activity.activityId} variant='h2'>
                     - {activity.title}
                   </Typography>
                 ))}

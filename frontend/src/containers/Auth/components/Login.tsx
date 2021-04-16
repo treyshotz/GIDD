@@ -16,7 +16,7 @@ import TextField from 'components/inputs/TextField';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
-    margin: theme.spacing(5, 'auto'),
+    margin: theme.spacing(1, 'auto'),
     display: 'grid',
   },
   buttons: {

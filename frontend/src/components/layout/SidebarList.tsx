@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export type Item = {
-  activity_id: string;
+  activityId: string;
   title: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } & Record<string, any>;

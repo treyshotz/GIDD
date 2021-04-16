@@ -6,14 +6,15 @@ export default {
   // Auth
   createUser: (item: UserCreate) => IFetch<RequestResponse>({ method: 'POST', url: 'user/', data: item, withAuth: false }),
   // TODO: Change endpoint
-  authenticate: (username: string, password: string) =>
+  authenticate: (email: string, password: string) =>
     IFetch<LoginRequestResponse>({
       method: 'POST',
-      url: 'log-in/',
-      data: { user_id: username, password: password },
+      url: 'auth/login',
+      data: { email, password },
       withAuth: false,
     }),
   forgotPassword: (email: string) => IFetch<RequestResponse>({ method: 'POST', url: 'auth/password/reset/', data: { email: email }, withAuth: false }),
+  refreshAccessToken: () => IFetch<RequestResponse>({ method: 'GET', url: 'auth/refresh_token', refreshAccess: true, withAuth: false }),
 
   // Activity
   getActivity: (id: string) => IFetch<Activity>({ method: 'GET', url: `activities/${id}/` }),

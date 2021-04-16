@@ -5,8 +5,12 @@ export type RequestResponse = {
 };
 
 export type LoginRequestResponse = {
-  access_token: string;
-  refresh_token: string;
+  token: string;
+  refreshToken: string;
+};
+
+export type RefreshTokenResponse = {
+  token: string;
 };
 
 export type PaginationResponse<T> = {
@@ -17,31 +21,31 @@ export type PaginationResponse<T> = {
 };
 
 export type User = {
-  user_id: string;
-  first_name: string;
+  userId: string;
+  firstName: string;
   surname: string;
   email: string;
-  birth_date: string | null;
+  birthDate: string | null;
   traninglevel: TrainingLevel;
 };
-export type UserCreate = Pick<User, 'email' | 'first_name' | 'surname'> & {
+export type UserCreate = Pick<User, 'email' | 'firstName' | 'surname'> & {
   password: string;
 };
 
-export type ActivityRequired = Partial<Activity> & Pick<Activity, 'title' | 'start_date' | 'end_date' | 'signup_start' | 'signup_end'>;
+export type ActivityRequired = Partial<Activity> & Pick<Activity, 'title' | 'startDate' | 'endDate' | 'signupStart' | 'signupEnd'>;
 
 export type Activity = {
-  activity_id: string;
-  created_date: string;
+  activityId: string;
+  createdDate: string;
   title: string;
   description: string;
   closed: boolean;
   capacity: number;
   location: string;
-  start_date: string;
-  end_date: string;
-  signup_start: string;
-  signup_end: string;
+  startDate: string;
+  endDate: string;
+  signupStart: string;
+  signupEnd: string;
   hosts: Array<string>;
   image: string;
 };

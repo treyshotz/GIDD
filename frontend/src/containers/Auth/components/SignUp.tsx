@@ -15,7 +15,7 @@ import TextField from 'components/inputs/TextField';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
-    margin: theme.spacing(5, 'auto'),
+    margin: theme.spacing(1, 'auto'),
     display: 'grid',
   },
   buttons: {
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type SignUpData = {
-  first_name: string;
+  firstName: string;
   surname: string;
   email: string;
   password: string;
@@ -43,7 +43,7 @@ const SignUp = () => {
 
   const onSignup = async (data: SignUpData) => {
     createUser.mutate(
-      { first_name: data.first_name, surname: data.surname, email: data.email, password: data.password },
+      { firstName: data.firstName, surname: data.surname, email: data.email, password: data.password },
       {
         onSuccess: () => {
           navigate(URLS.LANDING);
@@ -66,7 +66,7 @@ const SignUp = () => {
           disabled={createUser.isLoading}
           formState={formState}
           label='Fornavn'
-          {...register('first_name', { required: 'Feltet er påkrevd' })}
+          {...register('firstName', { required: 'Feltet er påkrevd' })}
           required
         />
         <TextField
@@ -109,7 +109,7 @@ const SignUp = () => {
           Opprett bruker
         </SubmitButton>
       </form>
-      <Button color='secondary' component={Link} disabled={createUser.isLoading} fullWidth to={URLS.LOGIN}>
+      <Button className={classes.grid} color='secondary' component={Link} disabled={createUser.isLoading} fullWidth to={URLS.LOGIN}>
         Logg inn
       </Button>
     </>

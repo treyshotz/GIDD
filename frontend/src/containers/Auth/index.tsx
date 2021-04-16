@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
   logoContainer: {
     height: 50,
+    marginBottom: theme.spacing(5),
   },
   logo: {
     width: 'auto',

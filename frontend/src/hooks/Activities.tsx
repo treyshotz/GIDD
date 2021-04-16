@@ -39,7 +39,7 @@ export const useCreateActivity = (): UseMutationResult<Activity, RequestResponse
   return useMutation((newActivity: ActivityRequired) => API.createActivity(newActivity), {
     onSuccess: (data) => {
       queryClient.invalidateQueries(EXPORT_QUERY_KEY);
-      queryClient.setQueryData([EXPORT_QUERY_KEY, data.activity_id], data);
+      queryClient.setQueryData([EXPORT_QUERY_KEY, data.activityId], data);
     },
   });
 };

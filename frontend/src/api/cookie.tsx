@@ -1,6 +1,6 @@
 import Cookies from 'universal-cookie';
 
-const cookies = new Cookies();
+export const cookies = new Cookies();
 /**
  * Set a cookie
  * @param key - Key of cookie
@@ -19,4 +19,4 @@ export const removeCookie = (key: string) => {
   cookies.remove(key, { path: '/' });
 };
 
-export default { setCookie, getCookie, removeCookie };
+export default { cookies, setCookie, getCookie, removeCookie };

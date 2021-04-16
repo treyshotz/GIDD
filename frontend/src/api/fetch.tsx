@@ -1,6 +1,6 @@
-import { getCookie } from 'api/cookie';
-import { API_URL, ACCESS_TOKEN } from 'constant';
-import { RequestResponse } from 'types/Types';
+import { setCookie, getCookie } from 'api/cookie';
+import { API_URL, ACCESS_TOKEN, REFRESH_TOKEN } from 'constant';
+import { RequestResponse, RefreshTokenResponse } from 'types/Types';
 
 type RequestMethodType = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -11,24 +11,32 @@ type FetchProps = {
   data?: Record<string, unknown | any>;
   withAuth?: boolean;
   file?: File | Blob;
+  refreshAccess?: boolean;
+  tryAgain?: boolean;
 };
 
 // eslint-disable-next-line comma-spacing
-export const IFetch = <T,>({ method, url, data = {}, withAuth = true, file }: FetchProps): Promise<T> => {
+export const IFetch = <T,>({ method, url, data = {}, withAuth = true, refreshAccess = false, tryAgain = true, file }: FetchProps): Promise<T> => {
   const urlAddress = API_URL + url;
   const headers = new Headers();
   if (!file) {
     headers.append('Content-Type', 'application/json');
   }
 
-  if (withAuth) {
-    headers.append('Authorization', `Bearer ${getCookie(ACCESS_TOKEN)}`);
+  if (refreshAccess) {
+    headers.append('authorization', `Bearer ${getCookie(REFRESH_TOKEN)}`);
+  } else if (withAuth) {
+    headers.append('authorization', `Bearer ${getCookie(ACCESS_TOKEN)}`);
   }
 
-  return fetch(request(method, urlAddress, headers, data, file)).then((response) => {
+  return fetch(request(method, urlAddress, headers, data, file)).then(async (response) => {
     const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json') || !response.ok || response.json === undefined) {
-      if (response.json) {
+      if (response.status === 401 && Boolean(getCookie(REFRESH_TOKEN)) && !refreshAccess && tryAgain) {
+        const tokens = await IFetch<RefreshTokenResponse>({ method: 'GET', url: 'auth/refresh_token', refreshAccess: true });
+        setCookie(ACCESS_TOKEN, tokens.token);
+        return IFetch<T>({ method, url, data, withAuth, file, tryAgain: false });
+      } else if (response.json) {
         return response.json().then((responseData: RequestResponse) => {
           throw responseData;
         });
