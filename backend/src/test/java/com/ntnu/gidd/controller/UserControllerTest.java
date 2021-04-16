@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ntnu.gidd.dto.UserRegistrationDto;
 import com.ntnu.gidd.factories.UserRegistrationFactory;
 import com.ntnu.gidd.repository.UserRepository;
-import com.ntnu.gidd.model.User;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.modelmapper.ModelMapper;
@@ -12,21 +12,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.jupiter.api.Test;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-
-
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = MOCK)
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class UserControllerTest {
 
       private String URI = "/users";
@@ -40,55 +42,52 @@ public class UserControllerTest {
       @Autowired
       private UserRepository userRepository;
 
-      private ModelMapper modelMapper = new ModelMapper();
-
-      private UserRegistrationFactory userFactory = new UserRegistrationFactory();
-
-      private UserRegistrationDto user;
-
       /**
        * Sets up a test user before each test
        * @throws Exception
        */
       @BeforeEach
-      public void setUp() throws Exception {
+      public void setUp(){
       }
-      
+
       /**
        * Cleans up the saved users after each test
-       * @throws Exception
        */
       @AfterEach
-      public void cleanUp() throws Exception {
+      public void cleanUp(){
             userRepository.deleteAll();
       }
-      
+
       
       /**
        * Test that you can create a user with valid input
        * @throws Exception
        */
+      @WithMockUser(value = "spring")
       @Test
-      public void testCreateUserWithValidInput() throws Exception {
-            String email = "test123@test.no";
+      public void testCreateUserWithValidEmail() throws Exception {
+            List<String> emails = Arrays.asList("test@mail.com", "test.testesen@mail.com", "test_123-testesen@mail.com");
             String firstName = "tester";
             String surname = "Testersen";
             String password = "Ithinkthisisvalid123";
             LocalDate birthDate = LocalDate.now();
 
-            UserRegistrationDto validUser = new UserRegistrationDto(firstName, surname, password, password, email, birthDate);
+            for (String email : emails) {
+                  UserRegistrationDto validUser = new UserRegistrationDto(firstName, surname, password, password, email, birthDate);
 
-            mockMvc.perform(post(URI)
-                  .contentType(MediaType.APPLICATION_JSON)
-                  .content(objectMapper.writeValueAsString(validUser)))
-                  .andExpect(status().isOk())
-                  .andDo(print());
+                  mockMvc.perform(post(URI)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validUser)))
+                        .andExpect(status().isOk())
+                        .andDo(print());
+            }
       }
       
       /**
        * Test that a user can be created, but the same email cannot be used two times
        * @throws Exception
        */
+      @WithMockUser(value = "spring")
       @Test
       public void testCreateUserTwoTimesFails() throws Exception {
             String email = "test123@test.no";
@@ -96,16 +95,16 @@ public class UserControllerTest {
             String surname = "Testersen";
             String password = "Ithinkthisisvalid123";
             LocalDate birthDate = LocalDate.now();
-      
+
             UserRegistrationDto validUser = new UserRegistrationDto(firstName, surname, password, password, email, birthDate);
-      
+
             mockMvc.perform(post(URI)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(validUser)))
                     .andExpect(status().isOk())
                     .andDo(print());
-      
-      
+
+
             mockMvc.perform(post(URI)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(validUser)))
@@ -115,19 +114,21 @@ public class UserControllerTest {
       
       @Test
       public void testCreateUserWithInvalidEmail() throws Exception {
-            String email = "test123.no";
+            List<String> emails = Arrays.asList("test123.no", "test@", "test@mail..com");
             String firstName = "tester";
             String surname = "Testersen";
             String password = "Ithinkthisisvalid123";
             LocalDate birthDate = LocalDate.now();
-      
-            UserRegistrationDto invalidUser = new UserRegistrationDto(firstName, surname, password, password, email, birthDate);
-      
-            mockMvc.perform(post(URI)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(invalidUser)))
-                    .andExpect(status().is4xxClientError())
-                    .andDo(print());
+
+            for (String email : emails) {
+                  UserRegistrationDto invalidUser = new UserRegistrationDto(firstName, surname, password, password, email, birthDate);
+
+                  mockMvc.perform(post(URI)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidUser)))
+                        .andExpect(status().is4xxClientError())
+                        .andDo(print());
+            }
       }
       
       @Test
