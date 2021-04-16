@@ -57,7 +57,7 @@ const ActivityAdmin = () => {
   };
 
   return (
-    <Navigation maxWidth={false} noFooter>
+    <Navigation maxWidth={false} noFooter noTransparentTopbar>
       <SidebarList onItemClick={(id: string | null) => goToActivity(id || null)} selectedItemId={activityId} title='Aktiviteter' useHook={useActivities} />
       <div className={classes.root}>
         <div className={classes.content}>

@@ -1,4 +1,5 @@
 import { subMinutes } from 'date-fns';
+import { TrainingLevel } from 'types/Enums';
 
 // Add leading zero to numbers below 10. Ex: 2 -> 02, 12 -> 12
 const addLeadingZero = (number: number) => (number < 10 ? '0' + number : number);
@@ -105,4 +106,15 @@ export const dateAsUTC = (date: Date): Date => {
  */
 export const dateToUTC = (date: Date): Date => {
   return subMinutes(date, -date.getTimezoneOffset());
+};
+
+export const traningLevelToText = (level: TrainingLevel) => {
+  switch (level) {
+    case TrainingLevel.LOW:
+      return 'Lav';
+    case TrainingLevel.MEDIUM:
+      return 'Medium';
+    case TrainingLevel.HIGH:
+      return 'Høy';
+  }
 };

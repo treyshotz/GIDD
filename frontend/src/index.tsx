@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import 'assets/css/index.css';
 import { StylesProvider } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
+import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import { Navigate, BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -64,8 +66,10 @@ export const Providers = ({ children }: ProvidersProps) => {
     <QueryClientProvider client={queryClient}>
       <StylesProvider injectFirst>
         <ThemeProvider>
-          <CssBaseline />
-          <SnackbarProvider>{children}</SnackbarProvider>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <CssBaseline />
+            <SnackbarProvider>{children}</SnackbarProvider>
+          </LocalizationProvider>
         </ThemeProvider>
       </StylesProvider>
       <ReactQueryDevtools />

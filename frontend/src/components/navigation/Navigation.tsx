@@ -1,5 +1,6 @@
 import { ReactNode, ReactElement } from 'react';
 import Helmet from 'react-helmet';
+import classnames from 'classnames';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,8 +15,10 @@ const useStyles = makeStyles((theme) => ({
   main: {
     minHeight: '101vh',
     backgroundColor: theme.palette.background.default,
+  },
+  normalMain: {
     paddingTop: 64,
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('sm')]: {
       paddingTop: 56,
     },
   },
@@ -26,10 +29,11 @@ export type NavigationProps = {
   banner?: ReactElement;
   maxWidth?: false | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   isLoading?: boolean;
+  noTransparentTopbar?: boolean;
   noFooter?: boolean;
 };
 
-const Navigation = ({ isLoading = false, noFooter = false, maxWidth, banner, children }: NavigationProps) => {
+const Navigation = ({ isLoading = false, noTransparentTopbar = false, noFooter = false, maxWidth, banner, children }: NavigationProps) => {
   const classes = useStyles();
 
   return (
@@ -37,8 +41,8 @@ const Navigation = ({ isLoading = false, noFooter = false, maxWidth, banner, chi
       <Helmet>
         <title>Gidd - Det er bare å gidde</title>
       </Helmet>
-      <Topbar />
-      <main className={classes.main}>
+      <Topbar noTransparentTopbar={noTransparentTopbar} />
+      <main className={classnames(classes.main, noTransparentTopbar && classes.normalMain)}>
         {isLoading && <LinearProgress />}
         {banner}
         {maxWidth === false ? <>{children}</> : <Container maxWidth={maxWidth || 'xl'}>{children || <></>}</Container>}

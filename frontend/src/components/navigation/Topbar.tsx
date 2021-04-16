@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import URLS from 'URLS';
 import { useIsAuthenticated, useLogout } from 'hooks/User';
@@ -27,7 +28,10 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     flexGrow: 1,
     zIndex: theme.zIndex.drawer + 1,
-    transition: '0.4s',
+    transition: '0.6s',
+  },
+  transparentAppBar: {
+    backgroundColor: 'transparent',
   },
   toolbar: {
     width: '100%',
@@ -99,14 +103,25 @@ const TopBarItem = ({ text, to }: TopBarItemProps) => {
   );
 };
 
-const Topbar = () => {
+export type TopbarProps = {
+  noTransparentTopbar?: boolean;
+};
+
+const Topbar = ({ noTransparentTopbar }: TopbarProps) => {
   const isAuthenticated = useIsAuthenticated();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const classes = useStyles();
   const logout = useLogout();
+  const [scrollLength, setScrollLength] = useState(0);
+
+  const handleScroll = () => setScrollLength(window.pageYOffset);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    if (!noTransparentTopbar) {
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
   }, []);
 
   const items = useMemo(
@@ -120,7 +135,11 @@ const Topbar = () => {
   );
 
   return (
-    <AppBar className={classes.appBar} color='primary' elevation={0} position='fixed'>
+    <AppBar
+      className={classnames(classes.appBar, !noTransparentTopbar && scrollLength < 20 && !sidebarOpen && classes.transparentAppBar)}
+      color='primary'
+      elevation={0}
+      position='fixed'>
       <Toolbar disableGutters>
         <div className={classes.toolbar}>
           <Link to={URLS.LANDING}>

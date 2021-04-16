@@ -1,3 +1,5 @@
+import { TrainingLevel } from 'types/Enums';
+
 export type RequestResponse = {
   detail: string;
 };
@@ -19,6 +21,8 @@ export type User = {
   first_name: string;
   surname: string;
   email: string;
+  birth_date: string | null;
+  traninglevel: TrainingLevel;
 };
 export type UserCreate = Pick<User, 'email' | 'first_name' | 'surname'> & {
   password: string;

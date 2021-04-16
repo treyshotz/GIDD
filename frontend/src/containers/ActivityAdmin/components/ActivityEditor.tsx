@@ -13,6 +13,7 @@ import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 // Project components
+import DatePicker from 'components/inputs/DatePicker';
 import VerifyDialog from 'components/layout/VerifyDialog';
 import SubmitButton from 'components/inputs/SubmitButton';
 import TextField from 'components/inputs/TextField';
@@ -56,7 +57,7 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
   const updateActivity = useUpdateActivity(activityId || '');
   const deleteActivity = useDeleteActivity(activityId || '');
   const showSnackbar = useSnackbar();
-  const { handleSubmit, register, formState, setError, reset } = useForm<FormValues>();
+  const { control, handleSubmit, register, formState, setError, reset } = useForm<FormValues>();
 
   useEffect(() => {
     if (isError) {
@@ -161,23 +162,25 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
             <TextField formState={formState} label='Sted' {...register('location')} />
           </div>
           <div className={classes.grid}>
-            <TextField formState={formState} label='Start' required {...register('start_date', { required: 'Feltet er påkrevd' })} type='datetime-local' />
-            <TextField formState={formState} label='Slutt' required {...register('end_date', { required: 'Feltet er påkrevd' })} type='datetime-local' />
+            <DatePicker control={control} formState={formState} label='Start' name='start_date' rules={{ required: 'Feltet er påkrevd' }} type='date-time' />
+            <DatePicker control={control} formState={formState} label='Slutt' name='end_date' rules={{ required: 'Feltet er påkrevd' }} type='date-time' />
           </div>
           <div className={classes.grid}>
-            <TextField
+            <DatePicker
+              control={control}
               formState={formState}
               label='Start påmelding'
-              required
-              {...register('signup_start', { required: 'Feltet er påkrevd' })}
-              type='datetime-local'
+              name='signup_start'
+              rules={{ required: 'Feltet er påkrevd' }}
+              type='date-time'
             />
-            <TextField
+            <DatePicker
+              control={control}
               formState={formState}
               label='Slutt påmelding'
-              required
-              {...register('signup_end', { required: 'Feltet er påkrevd' })}
-              type='datetime-local'
+              name='signup_end'
+              rules={{ required: 'Feltet er påkrevd' }}
+              type='date-time'
             />
           </div>
           <div className={classes.grid}>
@@ -198,8 +201,8 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
             formState={formState}
             label='Beskrivelse'
             maxRows={15}
+            minRows={5}
             multiline
-            rows={5}
             {...register('description', { required: 'Gi arrengementet en beskrivelse' })}
             required
           />

@@ -2,13 +2,14 @@ import FormControl, { FormControlProps } from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import InputLabel from '@material-ui/core/InputLabel';
 import MuiSelect from '@material-ui/core/Select';
-import { Controller, RegisterOptions, UseFormReturn } from 'react-hook-form';
+import { Control, Controller, RegisterOptions, UseFormReturn } from 'react-hook-form';
 
 export type IProps = FormControlProps &
-  Pick<UseFormReturn, 'formState' | 'control'> & {
+  Pick<UseFormReturn, 'formState'> & {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    control: Control<any>;
     name: string;
     rules?: RegisterOptions;
-  } & {
     children: React.ReactNode;
     label: string;
     defaultValue?: string;
