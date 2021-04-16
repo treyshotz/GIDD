@@ -49,3 +49,5 @@ export type Activity = {
   hosts: Array<string>;
   image: string;
 };
+
+export type ActivityHost = Pick<User, 'firstName' | 'surname' | 'email' | 'userId'>;

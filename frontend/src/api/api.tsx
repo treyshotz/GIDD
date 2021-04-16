@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IFetch } from 'api/fetch';
-import { LoginRequestResponse, Activity, ActivityRequired, PaginationResponse, RequestResponse, User, UserCreate } from 'types/Types';
+import { LoginRequestResponse, Activity, ActivityRequired, ActivityHost, PaginationResponse, RequestResponse, User, UserCreate } from 'types/Types';
 
 export default {
   // Auth
@@ -25,6 +25,8 @@ export default {
   createActivity: (item: ActivityRequired) => IFetch<Activity>({ method: 'POST', url: `activities/`, data: item }),
   updateActivity: (id: string, item: ActivityRequired) => IFetch<Activity>({ method: 'PUT', url: `activities/${id}/`, data: item }),
   deleteActivity: (id: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `activities/${id}/` }),
+  getActivityHosts: (id: string) => IFetch<Array<ActivityHost>>({ method: 'GET', url: `activities/${id}/hosts/` }),
+  addActivityHost: (id: string, email: string) => IFetch<Array<ActivityHost>>({ method: 'POST', url: `activities/${id}/hosts/`, data: { email } }),
 
   // User
   // TODO: Change endpoint

@@ -15,7 +15,7 @@ import Zoom from '@material-ui/core/Zoom';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Skeleton from '@material-ui/lab/Skeleton';
+import Skeleton from '@material-ui/core/Skeleton';
 
 // Icons
 import MenuIcon from '@material-ui/icons/MenuRounded';

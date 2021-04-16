@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import URLS from 'URLS';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useActivities } from 'hooks/Activities';
+import { useUser } from 'hooks/User';
+import { useActivities, useActivityById } from 'hooks/Activities';
 
 // Material-UI
 import { makeStyles, Theme } from '@material-ui/core/styles';
@@ -11,6 +12,7 @@ import Collapse from '@material-ui/core/Collapse';
 // Icons
 import EditIcon from '@material-ui/icons/EditRounded';
 import ParticipantsIcon from '@material-ui/icons/PeopleRounded';
+import HostsIcon from '@material-ui/icons/AdminPanelSettingsRounded';
 
 // Project components
 import Paper from 'components/layout/Paper';
@@ -18,6 +20,7 @@ import Tabs from 'components/layout/Tabs';
 import Navigation from 'components/navigation/Navigation';
 import SidebarList from 'components/layout/SidebarList';
 import ActivityEditor from 'containers/ActivityAdmin/components/ActivityEditor';
+import ActivityHosts from 'containers/ActivityAdmin/components/ActivityHosts';
 // import ActivityParticipants from 'containers/ActivityAdmin/components/ActivityParticipants';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -43,9 +46,12 @@ const ActivityAdmin = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const { activityId } = useParams();
+  const { data: user, isLoading: isUserLoading } = useUser();
+  const { data, isError } = useActivityById(activityId || '');
   const editTab = { value: 'edit', label: activityId ? 'Endre' : 'Opprett', icon: EditIcon };
   const participantsTab = { value: 'participants', label: 'Påmeldte', icon: ParticipantsIcon };
-  const tabs = [editTab, participantsTab];
+  const hostsTab = { value: 'hosts', label: 'Arrangører', icon: HostsIcon };
+  const tabs = [editTab, ...(activityId ? [participantsTab, hostsTab] : [])];
   const [tab, setTab] = useState(editTab.value);
 
   const goToActivity = (newActivity: string | null) => {
@@ -55,6 +61,15 @@ const ActivityAdmin = () => {
       navigate(URLS.ADMIN_ACTIVITIES);
     }
   };
+
+  useEffect(() => {
+    if (isError || (activityId && data && !isUserLoading && (!user || !data.hosts.includes(user.userId)))) {
+      // TODO: Add when backend works
+      // goToActivity(null);
+    }
+  }, [isError, data, user, isUserLoading, activityId]);
+
+  useEffect(() => setTab(editTab.value), [activityId]);
 
   return (
     <Navigation maxWidth={false} noFooter noTransparentTopbar>
@@ -71,6 +86,9 @@ const ActivityAdmin = () => {
             </Collapse>
             <Collapse in={tab === participantsTab.value} mountOnEnter>
               {/* <ActivityParticipants activityId={activityId} /> */}
+            </Collapse>
+            <Collapse in={tab === hostsTab.value} mountOnEnter>
+              <ActivityHosts activityId={activityId} />
             </Collapse>
           </Paper>
         </div>

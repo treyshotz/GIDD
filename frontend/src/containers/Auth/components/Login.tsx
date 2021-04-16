@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Helmet from 'react-helmet';
 import URLS from 'URLS';
 import { useLogin } from 'hooks/User';
+import { EMAIL_REGEX } from 'constant';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
@@ -64,7 +65,13 @@ const LogIn = () => {
           disabled={logIn.isLoading}
           formState={formState}
           label='Epost'
-          {...register('email', { required: 'Feltet er påkrevd' })}
+          {...register('email', {
+            required: 'Feltet er påkrevd',
+            pattern: {
+              value: EMAIL_REGEX,
+              message: 'Ugyldig e-post',
+            },
+          })}
           required
           type='email'
         />

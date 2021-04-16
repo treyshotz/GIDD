@@ -1,7 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import classnames from 'classnames';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useUser } from 'hooks/User';
 import { Activity } from 'types/Types';
 import { useActivityById, useCreateActivity, useUpdateActivity, useDeleteActivity } from 'hooks/Activities';
 import { useSnackbar } from 'hooks/Snackbar';
@@ -51,21 +50,12 @@ type FormValues = Pick<Activity, 'title' | 'description' | 'endDate' | 'location
 
 const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
   const classes = useStyles();
-  const { data: user, isLoading: isUserLoading } = useUser();
-  const { data, isLoading, isError } = useActivityById(activityId || '');
+  const { data, isLoading } = useActivityById(activityId || '');
   const createActivity = useCreateActivity();
   const updateActivity = useUpdateActivity(activityId || '');
   const deleteActivity = useDeleteActivity(activityId || '');
   const showSnackbar = useSnackbar();
   const { control, handleSubmit, register, formState, setError, reset } = useForm<FormValues>();
-
-  useEffect(() => {
-    if (isError) {
-      goToActivity(null);
-    } else if (activityId && data && !isUserLoading && (!user || !data.hosts.includes(user.userId))) {
-      goToActivity(null);
-    }
-  }, [isError, data, user, isUserLoading, activityId]);
 
   const setValues = useCallback(
     (newValues: Activity | null) => {
