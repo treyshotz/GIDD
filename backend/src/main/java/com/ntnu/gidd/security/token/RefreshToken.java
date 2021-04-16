@@ -23,8 +23,8 @@ public class RefreshToken implements JwtToken {
 
         List<String> scopes = claims.getBody()
                 .get("scopes", List.class);
-        boolean hasRefreshTokenScope = scopes.stream()
-                .anyMatch(Scopes.REFRESH_TOKEN.name()::equals);
+        boolean hasRefreshTokenScope = scopes != null && scopes.stream()
+                .anyMatch(Scopes.REFRESH_TOKEN.scope()::equals);
 
         if (hasRefreshTokenScope)
             return Optional.of(new RefreshToken(claims));
