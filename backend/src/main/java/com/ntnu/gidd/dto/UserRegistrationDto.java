@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
+@Builder
 @FieldMatch(field = "password", fieldMatch = "matchingPassword")
 public class UserRegistrationDto {
       @NotNull
