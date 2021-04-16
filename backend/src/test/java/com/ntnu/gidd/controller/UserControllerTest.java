@@ -74,8 +74,7 @@ public class UserControllerTest {
                   mockMvc.perform(post(URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validUser)))
-                        .andExpect(status().isOk())
-                        .andDo(print());
+                        .andExpect(status().isOk());
             }
       }
       
@@ -97,15 +96,13 @@ public class UserControllerTest {
             mockMvc.perform(post(URI)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(validUser)))
-                    .andExpect(status().isOk())
-                    .andDo(print());
+                    .andExpect(status().isOk());
 
 
             mockMvc.perform(post(URI)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(validUser)))
-                    .andExpect(status().is4xxClientError())
-                    .andDo(print());
+                    .andExpect(status().is4xxClientError());
       }
 
       /**
@@ -126,8 +123,7 @@ public class UserControllerTest {
                   mockMvc.perform(post(URI)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidUser)))
-                        .andExpect(status().is4xxClientError())
-                        .andDo(print());
+                        .andExpect(status().is4xxClientError());
             }
       }
 
@@ -148,7 +144,6 @@ public class UserControllerTest {
             mockMvc.perform(post(URI)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(invalidUser)))
-                    .andExpect(status().is4xxClientError())
-                    .andDo(print());
+                    .andExpect(status().is4xxClientError());
       }
 }
