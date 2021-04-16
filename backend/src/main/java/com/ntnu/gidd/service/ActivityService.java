@@ -8,13 +8,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
-@Service
 public interface ActivityService {
-    Activity updateActivity(UUID id, Activity activity);
+    ActivityDto updateActivity(UUID id, Activity activity);
     List<ActivityListDto> getActivties();
     ActivityDto getActivityById(UUID id);
-    Activity saveActivity(Activity activity);
-    Activity deleteActivity(UUID id);
+    ActivityDto saveActivity(Activity activity);
+    void deleteActivity(UUID id);
 
 }
 

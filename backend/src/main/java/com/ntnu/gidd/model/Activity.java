@@ -2,11 +2,9 @@ package com.ntnu.gidd.model;
 
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import lombok.*;
@@ -22,6 +20,7 @@ public class Activity extends UUIDModel {
 
     @NotNull
     private String title;
+    @NotNull
     private String description;
     @NotNull
     private LocalDateTime start_date;
@@ -36,6 +35,17 @@ public class Activity extends UUIDModel {
     @OneToOne
     @JoinColumn(name = "traning_level_id", referencedColumnName = "id")
     private TrainingLevel trainingLevel;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id" ),
+    inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+    uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
+    private List<User> hosts;
     private int capacity;
-    //TODO add host: user foreign key
+
+    @PreRemove
+    private void removeGroupsFromUsers() {
+        for (User user : hosts) {
+            user.getActivities().remove(this);
+        }
+    }
 }

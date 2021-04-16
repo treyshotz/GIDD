@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.repository.ActivityRepository;
+import com.ntnu.gidd.repository.UserRepository;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -21,6 +24,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 
 @SpringBootTest(webEnvironment = MOCK)
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class ActivityControllerTest {
 
     private  String URI = "/activities/";
@@ -34,6 +38,9 @@ public class ActivityControllerTest {
     private ActivityRepository  activityRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     private Activity activity;
@@ -42,21 +49,23 @@ public class ActivityControllerTest {
     public void setUp() throws Exception {
         activity = activityFactory.getObject();
         assert activity != null;
+        userRepository.saveAll(activity.getHosts());
         activity = activityRepository.save(activity);
     }
 
     @AfterEach
-    public  void cleanUp(){
-        activityRepository.delete(activity);
+    public void cleanUp(){
+        activityRepository.deleteAll();
+        userRepository.deleteAll();
     }
+
     @WithMockUser(value = "spring")
     @Test
     public void testActivityControllerGetAllReturnsOKAndAListOfActivities() throws Exception {
         this.mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.*").isArray())
-                .andExpect(jsonPath("$.[0].title").value(activity.getTitle()));
+                .andExpect(jsonPath("$.*").isArray());
     }
 
     @WithMockUser(value = "spring")
@@ -68,6 +77,8 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.title").value(activity.getTitle()))
                 .andExpect(jsonPath("$.description").value(activity.getDescription()));
 
+
+
     }
 
 
@@ -76,6 +87,7 @@ public class ActivityControllerTest {
     public void testActivityControllerSaveReturn201ok() throws Exception {
 
         Activity testActivity = activityFactory.getObject();
+        userRepository.saveAll(testActivity.getHosts());
 
         this.mvc.perform(post(URI)
             .with(csrf())
@@ -92,6 +104,7 @@ public class ActivityControllerTest {
 
         Activity testActivity = activityFactory.getObject();
         assert testActivity != null;
+        userRepository.saveAll(testActivity.getHosts());
         testActivity = activityRepository.save(testActivity);
 
         this.mvc.perform(delete(URI + testActivity.getId() + "/")

@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,9 +28,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,11 +52,8 @@ public class ActivityServiceImplTest {
     public void setUp() throws Exception {
         activity = new ActivityFactory().getObject();
         assert activity != null;
-
-        when(activityRepository.save(activity)).thenReturn(activity);
-        activityRepository.save(activity);
+        lenient().when(activityRepository.save(activity)).thenReturn(activity);
     }
-
     @AfterEach public void cleanUp(){
         activityRepository.delete(activity);
     }
@@ -66,7 +65,7 @@ public class ActivityServiceImplTest {
         when(trainingLevelRepository.findTraningLevelByLevel(level.getLevel())).thenReturn(Optional.of(level));
         activity.setTitle(StringRandomizer.getRandomString(10));
 
-        Activity updateActivity = activityService.updateActivity(activity.getId(), activity);
+        ActivityDto updateActivity = activityService.updateActivity(activity.getId(), activity);
 
         assertThat(activity.getId()).isEqualTo(updateActivity.getId());
 

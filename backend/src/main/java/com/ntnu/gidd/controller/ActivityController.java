@@ -5,9 +5,8 @@ import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.service.ActivityService;
+import com.ntnu.gidd.util.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -43,21 +42,30 @@ public class ActivityController {
     }
 
     @PutMapping("{activityId}/")
-    public Activity updateActivity(@PathVariable UUID activityId, @RequestBody Activity activity){
+    @ResponseStatus(HttpStatus.OK)
+    public ActivityDto updateActivity(@PathVariable UUID activityId, @RequestBody Activity activity){
+        try {
         log.debug("[X] Request to update Activity with id={}", activityId);
         return this.activityService.updateActivity(activityId, activity);
+    } catch (ActivityNotFoundExecption ex){
+        log.debug("[X] Request to update Activity with id={}", activityId);
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, ex.getMessage(), ex);
+    }
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Activity postActivity(@RequestBody Activity activity){
+    public ActivityDto postActivity(@RequestBody Activity activity){
         return activityService.saveActivity(activity);
     }
 
     @DeleteMapping("/{activityId}/")
-    public Activity deleteActivity(@PathVariable UUID activityId){
+    @ResponseStatus(HttpStatus.OK)
+    public Response deleteActivity(@PathVariable UUID activityId){
         log.debug("[X] Request to delete Activity with id={}", activityId);
-        return this.activityService.deleteActivity(activityId);
+        activityService.deleteActivity(activityId);
+        return new Response( "Activity has been deleted");
     }
 
 }

@@ -1,5 +1,4 @@
 package com.ntnu.gidd.service;
-
 import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
@@ -29,9 +28,9 @@ public class ActivityServiceImpl implements ActivityService {
     private TrainingLevelRepository trainingLevelRepository;
 
     @Override
-    public Activity updateActivity(UUID activityId, Activity activity) {
-        Activity updateActivity = this.activityRepository.findById(activityId).orElseThrow(
-                () -> new ActivityNotFoundExecption("This activity does not exist"));
+    public ActivityDto updateActivity(UUID activityId, Activity activity) {
+        Activity updateActivity = this.activityRepository.findById(activityId)
+                .orElseThrow(ActivityNotFoundExecption::new);
         updateActivity.setTitle(activity.getTitle());
         updateActivity.setDescription(activity.getDescription());
         updateActivity.setStart_date(activity.getStart_date());
@@ -42,23 +41,18 @@ public class ActivityServiceImpl implements ActivityService {
         updateActivity.setCapacity(activity.getCapacity());
         updateActivity.setTrainingLevel(getTrainingLevel(activity));
 
-        return this.activityRepository.save(updateActivity);
+        return modelMapper.map(this.activityRepository.save(updateActivity),ActivityDto.class);
     }
 
     private TrainingLevel getTrainingLevel(Activity activity){
         return trainingLevelRepository.findTraningLevelByLevel(activity.getTrainingLevel().getLevel()).
                 orElseThrow(() -> new EntityNotFoundException("Traning level does not exist"));
     }
-    Activity addActivity(Activity activity){
-       return this.activityRepository.save(activity);
-    }
-
 
     @Override
     public ActivityDto getActivityById(UUID id) {
        return modelMapper.map(this.activityRepository.findById(id).
-               orElseThrow(()-> new ActivityNotFoundExecption("This activity does not exist")),
-               ActivityDto.class);
+               orElseThrow(ActivityNotFoundExecption::new), ActivityDto.class);
 }
     @Override
     public List<ActivityListDto> getActivties() {
@@ -67,17 +61,13 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Activity saveActivity(Activity activity) {
-        return activityRepository.save(activity);
+    public ActivityDto saveActivity(Activity activity) {
+        return modelMapper.map(activityRepository.save(activity), ActivityDto.class);
     }
 
     @Override
-    public Activity deleteActivity(UUID id){
-        Activity activitiesToDelete = activityRepository.findById(id).orElseThrow(
-            () -> new ActivityNotFoundExecption("This activity does not exist"));
-        this.activityRepository.delete(activitiesToDelete);
-        return activitiesToDelete;
-
+    public void deleteActivity(UUID id){
+        this.activityRepository.deleteById(id);
     }
 }
 

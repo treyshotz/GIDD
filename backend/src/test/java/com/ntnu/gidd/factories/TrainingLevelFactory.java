@@ -5,11 +5,8 @@ import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import org.springframework.beans.factory.FactoryBean;
 
-import java.time.LocalDateTime;
 import java.util.Random;
-import java.util.UUID;
 
-import static com.ntnu.gidd.utils.StringRandomizer.getRandomString;
 
 public class TrainingLevelFactory implements FactoryBean<TrainingLevel> {
 
