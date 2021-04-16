@@ -38,10 +38,7 @@ public class UserControllerTest {
 
       @Autowired
       private UserRepository userRepository;
-
-      /**
-       * Sets up a test user before each test
-       */
+      
       @BeforeEach
       public void setUp(){
       }
