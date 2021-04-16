@@ -38,6 +38,5 @@ public class UserRegistrationDto {
       @Email
       private String email;
 
-      @NotNull
       private LocalDate birthDate;
 }
