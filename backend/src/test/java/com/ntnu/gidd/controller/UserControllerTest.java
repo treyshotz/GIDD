@@ -38,7 +38,7 @@ public class UserControllerTest {
 
       @Autowired
       private UserRepository userRepository;
-      
+
       @BeforeEach
       public void setUp(){
       }
