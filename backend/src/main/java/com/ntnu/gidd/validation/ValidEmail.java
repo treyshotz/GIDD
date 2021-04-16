@@ -1,7 +1,5 @@
 package com.ntnu.gidd.validation;
 
-import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
-
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.Documented;

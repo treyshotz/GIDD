@@ -113,5 +113,38 @@ public class UserControllerTest {
                     .andDo(print());
       }
       
+      @Test
+      public void testCreateUserWithInvalidEmail() throws Exception {
+            String email = "test123.no";
+            String firstName = "tester";
+            String surname = "Testersen";
+            String password = "Ithinkthisisvalid123";
+            LocalDate birthDate = LocalDate.now();
       
+            UserRegistrationDto invalidUser = new UserRegistrationDto(firstName, surname, password, password, email, birthDate);
+      
+            mockMvc.perform(post(URI)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(invalidUser)))
+                    .andExpect(status().is4xxClientError())
+                    .andDo(print());
+      }
+      
+      @Test
+      public void testCreateUserWithNotMatchingPassword() throws Exception {
+            String email = "test123@test.no";
+            String firstName = "tester";
+            String surname = "Testersen";
+            String password = "Ithinkthisisvalid123";
+            LocalDate birthDate = LocalDate.now();
+      
+            UserRegistrationDto invalidUser = new UserRegistrationDto(firstName, surname, password, "not the same", email, birthDate);
+      
+            mockMvc.perform(post(URI)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(invalidUser)))
+                    .andExpect(status().is4xxClientError())
+                    .andDo(print());
+      
+      }
 }
