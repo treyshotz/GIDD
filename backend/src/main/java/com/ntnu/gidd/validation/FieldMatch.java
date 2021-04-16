@@ -12,10 +12,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({TYPE,ANNOTATION_TYPE})
 @Retention(RUNTIME)
-@Constraint(validatedBy = PasswordMatchesValidator.class)
+@Constraint(validatedBy = FieldMatchValidator.class)
 @Documented
-public @interface PasswordMatches {
-      String message() default "Passwords don't match";
+public @interface FieldMatch {
+      String message() default "Fields doesn't match";
       Class<?>[] groups() default {};
       Class<? extends Payload>[] payload() default {};
+      String field();
+      String fieldMatch();
 }

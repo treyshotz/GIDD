@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,24 +23,14 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-	
+
 	@Autowired
 	UserServiceImpl userService;
 	
 	Logger logger = LoggerFactory.getLogger(UserController.class);
 	
 	@PostMapping
-	public UserDto createUser(@RequestBody UserRegistrationDto userRegistrationDto){
-		//TODO: Maybe this validation should made into a separate method?
-		EmailValidator emailValidator = EmailValidator.getInstance();
-		if(!emailValidator.isValid(userRegistrationDto.getEmail())) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Email is not valid");
-		}
-		
-		if(!userRegistrationDto.getPassword().equals(userRegistrationDto.getMatchingPassword())) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Password does not match");
-		}
-		
+	public UserDto createUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto){
 		logger.debug("[X] Request to save user with email={}", userRegistrationDto.getEmail());
 		try{
 			return userService.saveUser(userRegistrationDto);
