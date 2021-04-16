@@ -3,13 +3,10 @@ package com.ntnu.gidd.service;
 import com.ntnu.gidd.dto.UserDto;
 import com.ntnu.gidd.dto.UserRegistrationDto;
 import com.ntnu.gidd.exception.EmailInUseException;
-import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.UserRepository;
-import com.ntnu.gidd.security.WebSecurity;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.bcel.BcelAccessForInlineMunger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -38,11 +35,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDto getUserById(UUID id) {
 		return null;
-	}
-	
-	public UserDto getUserByEmail(String email) {
-		return modelMapper.map(this.userRepository.findByEmail(email)
-						.orElseThrow(() -> new UserNotFoundException("This activity does not exist")), UserDto.class);
 	}
 
 	private boolean emailExist(String email) {

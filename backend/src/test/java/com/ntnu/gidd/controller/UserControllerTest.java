@@ -2,12 +2,9 @@ package com.ntnu.gidd.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ntnu.gidd.dto.UserRegistrationDto;
-import com.ntnu.gidd.factories.UserRegistrationFactory;
 import com.ntnu.gidd.repository.UserRepository;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,7 +41,6 @@ public class UserControllerTest {
 
       /**
        * Sets up a test user before each test
-       * @throws Exception
        */
       @BeforeEach
       public void setUp(){
@@ -61,7 +57,7 @@ public class UserControllerTest {
       
       /**
        * Test that you can create a user with valid input
-       * @throws Exception
+       * @throws Exception from post request
        */
       @WithMockUser(value = "spring")
       @Test
@@ -85,7 +81,7 @@ public class UserControllerTest {
       
       /**
        * Test that a user can be created, but the same email cannot be used two times
-       * @throws Exception
+       * @throws Exception from post request
        */
       @WithMockUser(value = "spring")
       @Test
@@ -111,7 +107,11 @@ public class UserControllerTest {
                     .andExpect(status().is4xxClientError())
                     .andDo(print());
       }
-      
+
+      /**
+       * Test that a user cannot be created if email is on a wrong format
+       * @throws Exception
+       */
       @Test
       public void testCreateUserWithInvalidEmail() throws Exception {
             List<String> emails = Arrays.asList("test123.no", "test@", "test@mail..com");
@@ -130,7 +130,11 @@ public class UserControllerTest {
                         .andDo(print());
             }
       }
-      
+
+      /**
+       * Tests that a user cannot be created when the password fields isn't matching
+       * @throws Exception
+       */
       @Test
       public void testCreateUserWithNotMatchingPasswordFails() throws Exception {
             String email = "test123@test.no";
@@ -146,6 +150,5 @@ public class UserControllerTest {
                     .content(objectMapper.writeValueAsString(invalidUser)))
                     .andExpect(status().is4xxClientError())
                     .andDo(print());
-      
       }
 }

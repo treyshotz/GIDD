@@ -24,6 +24,10 @@ public class MatchingFieldValidatorTest {
             ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
             validator = factory.getValidator();
       }
+
+      /**
+       * Ensures that an error occurs when two fields is unequal
+       */
       @Test
       public void testNonMatchingFields() {
             UserRegistrationDto user = new UserRegistrationDto("Test", "Testesen", "password", "differentPassword", "test@mail.no", LocalDate.now());
@@ -32,9 +36,12 @@ public class MatchingFieldValidatorTest {
             assertEquals(violations.size(), 1);
       }
 
+      /**
+       * Ensures that there isn't any errors when two fields are the same
+       */
       @Test
       public void testMatchingFields() {
-            UserRegistrationDto user = new UserRegistrationDto("Test", "Testesen", "password", "password", "test@mail.no", LocalDate.now());
+            UserRegistrationDto user = new UserRegistrationDto("A", "B", "password", "password", "test@mail.no", LocalDate.now());
 
             Set<ConstraintViolation<UserRegistrationDto>> violations = validator.validate(user);
             assertTrue(violations.isEmpty());
