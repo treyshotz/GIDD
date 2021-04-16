@@ -30,6 +30,7 @@ public class UserController {
 	
 	@PostMapping
 	public UserDto createUser(@RequestBody UserRegistrationDto userRegistrationDto){
+		//TODO: Maybe this validation should made into a separate method?
 		EmailValidator emailValidator = EmailValidator.getInstance();
 		if(!emailValidator.isValid(userRegistrationDto.getEmail())) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Email is not valid");

@@ -1,7 +1,6 @@
 package com.ntnu.gidd.dto;
 
 import com.ntnu.gidd.validation.PasswordMatches;
-import com.ntnu.gidd.validation.ValidEmail;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,12 +26,12 @@ public class UserRegistrationDto {
       @NotEmpty
       private String surname;
 
+      
       @NotNull
       @NotEmpty
       private String password;
       private String matchingPassword;
       
-      @ValidEmail
       @NotNull
       @NotEmpty
       private String email;

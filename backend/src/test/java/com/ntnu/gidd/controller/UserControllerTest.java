@@ -131,7 +131,7 @@ public class UserControllerTest {
       }
       
       @Test
-      public void testCreateUserWithNotMatchingPassword() throws Exception {
+      public void testCreateUserWithNotMatchingPasswordFails() throws Exception {
             String email = "test123@test.no";
             String firstName = "tester";
             String surname = "Testersen";
