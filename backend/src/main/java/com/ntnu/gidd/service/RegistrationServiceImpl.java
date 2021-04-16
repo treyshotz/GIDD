@@ -10,6 +10,9 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * RegistrationServiceImpl class for services for the RegistrationRepository
+ */
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
 
@@ -21,12 +24,22 @@ public class RegistrationServiceImpl implements RegistrationService {
     return registrationRepository.save(registration);
   }
 
+  /**
+   * Finds all registration for a given activity
+   * @param activity_id
+   * @return List of registration or throws Exception
+   */
   @Override
   public List<Registration> getRegistrationForActivity(UUID activity_id){
       return registrationRepository.findRegistrationsByActivity_Id(activity_id)
               .orElseThrow(RegistrationNotFoundException::new);
   }
 
+  /**
+   * Finds all registration for a given user
+   * @param user_id
+   * @return List of registration or throws exception
+   */
   @Override
   public List<Registration> getRegistrationsForUser(UUID user_id) {
     return registrationRepository.findRegistrationsByUser_Id(user_id)
@@ -39,17 +52,14 @@ public class RegistrationServiceImpl implements RegistrationService {
             .orElseThrow(RegistrationNotFoundException::new);
   }
 
+  /**
+   * Find the registration with the corresponding registration id
+   * @param id
+   * @return Registration or throws exception
+   */
   @Override
   public Registration getRegistrationWithRegistrationId(RegistrationId id) {
     return registrationRepository.findById(id).
         orElseThrow(RegistrationNotFoundException::new);
   }
-
-
-
-
-
-
-
-
 }

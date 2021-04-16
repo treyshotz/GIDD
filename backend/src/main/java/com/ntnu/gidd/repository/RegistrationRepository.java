@@ -9,6 +9,11 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
+/**
+ * RegistrationRepository extending the JpaRepository, with Registration as type and RegistrationId as id
+ * Contains methods for finding a registration based on the user, activity and registrationId
+ */
+
 @Repository
 public interface RegistrationRepository extends JpaRepository<Registration, RegistrationId> {
     Optional<List<Registration>> findRegistrationsByActivity_Id(UUID activityId);

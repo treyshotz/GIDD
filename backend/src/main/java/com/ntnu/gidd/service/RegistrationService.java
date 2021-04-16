@@ -16,7 +16,8 @@ public interface RegistrationService {
 
   List<Registration> getRegistrationsForUser(UUID user_id);
 
+  Registration getRegistrationWithRegistrationId(RegistrationId id);
+
   Registration getRegistrationWithCompositeId(UUID user_id, UUID activity_id);
 
-  Registration getRegistrationWithRegistrationId(RegistrationId id);
 }

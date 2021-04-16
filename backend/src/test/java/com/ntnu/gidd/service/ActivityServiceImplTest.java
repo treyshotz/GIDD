@@ -59,7 +59,7 @@ public class ActivityServiceImplTest {
     }
 
     @Test
-    void testActivityServiceImplUpdateActivityAndReturnsUpdatedActivity() throws Exception{
+    void testActivityServiceImplUpdateActivityAndReturnsUpdatedActivity() {
         TrainingLevel level = activity.getTrainingLevel();
         when(activityRepository.findById(activity.getId())).thenReturn(Optional.ofNullable(activity));
         when(trainingLevelRepository.findTraningLevelByLevel(level.getLevel())).thenReturn(Optional.of(level));
@@ -75,7 +75,7 @@ public class ActivityServiceImplTest {
     }
 
     @Test
-    void testActivityServiceImplGetActivityByIdReturnsActivity() throws Exception{
+    void testActivityServiceImplGetActivityByIdReturnsActivity() {
         when(activityRepository.findById(activity.getId())).thenReturn(Optional.ofNullable(activity));
 
         ActivityDto activityFound = activityService.getActivityById(activity.getId());

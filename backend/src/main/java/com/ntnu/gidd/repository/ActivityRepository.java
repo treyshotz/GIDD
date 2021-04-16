@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * ActivityRepository extending JpaRepository with Activity and UUID as id
+ */
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, UUID> {
     List<Activity> findActivitiesByHosts(User user);

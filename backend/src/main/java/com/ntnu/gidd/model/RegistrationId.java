@@ -8,6 +8,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * RegistrationId is a class defining the id of a registration
+ * The unique id is a composite key combining the userId and activityId
+ */
+
 @Getter
 @Setter
 @Embeddable
