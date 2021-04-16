@@ -43,7 +43,8 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public UserDto saveUser(UserRegistrationDto user) {
-		if(emailExist(user.getEmail())){
+userRepository.findbyEmail(email).orElseThrow(EmailInUseException::new);
+
 			throw new EmailInUseException();
 		}
 
