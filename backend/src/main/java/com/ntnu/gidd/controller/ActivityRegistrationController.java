@@ -1,8 +1,12 @@
 package com.ntnu.gidd.controller;
 
+import com.ntnu.gidd.exception.RegistrationNotFoundException;
 import com.ntnu.gidd.model.Registration;
 import java.util.List;
 import java.util.UUID;
+
+import com.ntnu.gidd.model.RegistrationId;
+import com.ntnu.gidd.util.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ntnu.gidd.service.RegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestController
@@ -36,11 +41,25 @@ public class ActivityRegistrationController {
     return registrationService.getRegistrationForActivity(activityId);
   }
 
-
-
   @GetMapping("{userId}/")
   @ResponseStatus(HttpStatus.OK)
   public Registration getRegistrationWithCompositeIdActivity(@PathVariable UUID userId, @PathVariable UUID activityId) {
     return registrationService.getRegistrationWithCompositeId(userId, activityId);
   }
+
+  @DeleteMapping("{userId}/")
+  @ResponseStatus(HttpStatus.OK)
+  public Response deleteRegistration(@PathVariable UUID activityId, UUID userId){
+    try {
+      log.debug("[X] Request to delete Registration with userId={} ", userId);
+      registrationService.deleteRegistrationWithCompositeId(userId, activityId);
+      return new Response("Registration has been deleted");
+    } catch (RegistrationNotFoundException ex) {
+      log.debug("[X] Request to delete Registration with userId={} resulted in RegistrationNotFound", userId);
+      throw new ResponseStatusException(
+              HttpStatus.NOT_FOUND, ex.getMessage(), ex
+      );
+    }
+  }
+
 }

@@ -98,7 +98,5 @@ public class ActivityServiceImplTest {
         for (int i = 0; i < activities.size(); i++){
             assertThat(activities.get(i).getTitle()).isEqualTo(getActivities.get(i).getTitle());
         }
-
     }
-
 }

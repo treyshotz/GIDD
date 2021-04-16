@@ -19,4 +19,5 @@ public interface RegistrationRepository extends JpaRepository<Registration, Regi
     Optional<List<Registration>> findRegistrationsByActivity_Id(UUID activityId);
     Optional<List<Registration>> findRegistrationsByUser_Id(UUID userId);
     Optional<Registration> findRegistrationByUser_IdAndActivity_Id(UUID userid, UUID activityId);
+    void deleteRegistrationsByUser_IdAndActivity_Id(UUID userId, UUID activityId);
 }

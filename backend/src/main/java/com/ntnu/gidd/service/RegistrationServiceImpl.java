@@ -5,6 +5,7 @@ import com.ntnu.gidd.model.Registration;
 import com.ntnu.gidd.model.RegistrationId;
 import com.ntnu.gidd.repository.RegistrationRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,12 @@ public class RegistrationServiceImpl implements RegistrationService {
             .orElseThrow(RegistrationNotFoundException::new);
   }
 
+  /**
+   * Finds registration with composite id
+   * @param user_id
+   * @param activity_id
+   * @return registration or throws exception
+   */
   @Override
   public Registration getRegistrationWithCompositeId(UUID user_id, UUID activity_id) {
     return registrationRepository.findRegistrationByUser_IdAndActivity_Id(user_id, activity_id)
@@ -61,5 +68,18 @@ public class RegistrationServiceImpl implements RegistrationService {
   public Registration getRegistrationWithRegistrationId(RegistrationId id) {
     return registrationRepository.findById(id).
         orElseThrow(RegistrationNotFoundException::new);
+  }
+
+  /**
+   * Find the registration with the registration id
+   * Deletes the registration
+   * @param user_id, activity_id
+   * @return deletion or throws exception
+   */
+  @Override
+  public void deleteRegistrationWithCompositeId(UUID user_id, UUID activity_id) {
+    registrationRepository.findRegistrationByUser_IdAndActivity_Id(user_id, activity_id)
+            .orElseThrow(RegistrationNotFoundException::new);
+    registrationRepository.deleteRegistrationsByUser_IdAndActivity_Id(user_id, activity_id);
   }
 }

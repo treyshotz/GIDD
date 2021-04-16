@@ -20,4 +20,5 @@ public interface RegistrationService {
 
   Registration getRegistrationWithCompositeId(UUID user_id, UUID activity_id);
 
+  void deleteRegistrationWithCompositeId(UUID user_id, UUID activity_id);
 }
