@@ -47,7 +47,6 @@ public class UserServiceImpl implements UserService {
 			throw new EmailInUseException();
 		}
 
-		//Hash and salt
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		User userObj = modelMapper.map(user, User.class);
 		return modelMapper.map(userRepository.save(userObj), UserDto.class);
