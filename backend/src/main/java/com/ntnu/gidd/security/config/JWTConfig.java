@@ -1,13 +1,15 @@
-package com.ntnu.gidd.security;
+package com.ntnu.gidd.security.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Configuration
 public class JWTConfig {
 
     @Value("${security.jwt.uri:/auth}")
@@ -24,5 +26,8 @@ public class JWTConfig {
 
     @Value("${security.jwt.secret:JwtSecretKey}")
     private String secret;
+
+    @Value("${security.jwt.refresh_expiration:#{1000*60*60*24}}")
+    private int refreshExpiration;
 
 }

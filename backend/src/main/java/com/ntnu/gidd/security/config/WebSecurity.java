@@ -1,6 +1,9 @@
-package com.ntnu.gidd.security;
+package com.ntnu.gidd.security.config;
 
+import com.ntnu.gidd.security.filter.JWTAuthenticationFilter;
+import com.ntnu.gidd.security.filter.JWTUsernamePasswordAuthenticationFilter;
 import com.ntnu.gidd.service.UserDetailsServiceImpl;
+import com.ntnu.gidd.util.JwtUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -11,7 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -36,8 +39,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, jwtConfig().getUri() + "/**")
-                .permitAll()
+                .antMatchers(HttpMethod.POST, jwtConfig().getUri() + "/login").permitAll()
+                .antMatchers(HttpMethod.GET, jwtConfig().getUri() + "/refresh_token").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -45,8 +48,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(
                         (req, res, e) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage()))
                 .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtConfig()))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtConfig()))
+                .addFilter(new JWTUsernamePasswordAuthenticationFilter(authenticationManager(), jwtConfig()))
+                .addFilterAfter(new JWTAuthenticationFilter(jwtConfig(), jwtUtil()), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
@@ -90,5 +93,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Bean
     public JWTConfig jwtConfig() {
         return new JWTConfig();
+    }
+
+    @Bean
+    public JwtUtil jwtUtil() {
+        return new JwtUtil(jwtConfig());
     }
 }

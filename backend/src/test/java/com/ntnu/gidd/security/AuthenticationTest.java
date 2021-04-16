@@ -2,11 +2,13 @@ package com.ntnu.gidd.security;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ntnu.gidd.controller.ActivityController;
+import com.jayway.jsonpath.JsonPath;
 import com.ntnu.gidd.controller.request.LoginRequest;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.UserRepository;
+import com.ntnu.gidd.security.config.JWTConfig;
+import com.ntnu.gidd.security.config.WebSecurity;
 import com.ntnu.gidd.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -15,15 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,6 +30,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -105,11 +105,12 @@ public class AuthenticationTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(loginJson))
 				.andExpect(status().isOk())
-				.andDo(print())
+				.andExpect(jsonPath("$.token").isNotEmpty())
+				.andExpect(jsonPath("$.refreshToken").isNotEmpty())
 				.andReturn();
-		
-		String token = mvcResult.getResponse().getHeader(jwtConfig.getHeader());
-		String actualEmail = jwtUtil.decodeToken(token);
+
+		String token = JsonPath.read(mvcResult.getResponse().getContentAsString(), "$.token");
+		String actualEmail = jwtUtil.getEmailFromToken(token);
 		
 		assertThat(actualEmail).isEqualTo(testUser.getEmail());
 	}
