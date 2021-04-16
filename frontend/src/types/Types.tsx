@@ -39,4 +39,5 @@ export type Activity = {
   signup_start: string;
   signup_end: string;
   hosts: Array<string>;
+  image: string;
 };

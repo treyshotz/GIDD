@@ -12,6 +12,7 @@ declare module '@material-ui/core/styles/createPalette' {
     get: <T>({ light, dark }: { light: T; dark: T }) => T;
     colors: {
       topbar: string;
+      gradient: string;
     };
   }
 
@@ -20,6 +21,7 @@ declare module '@material-ui/core/styles/createPalette' {
     get: <T>({ light, dark }: { light: T; dark: T }) => T;
     colors: {
       topbar: string;
+      gradient: string;
     };
   }
 }
@@ -116,6 +118,7 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
       },
       colors: {
         topbar: get<string>({ light: '#0080ff', dark: '#223243' }),
+        gradient: get<string>({ light: 'linear-gradient(to bottom,#105370d0, #26b9cc94)', dark: 'linear-gradient(to bottom,#105370d0, #26b9cc94)' }),
       },
     },
     shape: {
