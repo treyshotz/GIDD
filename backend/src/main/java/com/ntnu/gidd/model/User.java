@@ -28,6 +28,7 @@ public class User extends UUIDModel {
     private LocalDate birthDate;
     private String password;
     private String salt;
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id" ),
             inverseJoinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id"),
@@ -35,8 +36,9 @@ public class User extends UUIDModel {
     private List<Activity> activities;
 
     @PreRemove
-    private void removeGroupsFromUsers() {
-        for (Activity activity : activities) {
+    private void removeActivitiesFromUsers() {
+
+        if(this.activities != null)for (Activity activity : activities) {
             activity.getHosts().remove(this);
         }
     }

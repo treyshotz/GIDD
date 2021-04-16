@@ -1,6 +1,7 @@
 package com.ntnu.gidd.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class Activity extends UUIDModel {
     @OneToOne
     @JoinColumn(name = "traning_level_id", referencedColumnName = "id")
     private TrainingLevel trainingLevel;
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id" ),
     inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -43,8 +45,8 @@ public class Activity extends UUIDModel {
     private int capacity;
 
     @PreRemove
-    private void removeGroupsFromUsers() {
-        for (User user : hosts) {
+    private void removeHostsFromActivity() {
+        if(this.hosts != null)for (User user : hosts) {
             user.getActivities().remove(this);
         }
     }

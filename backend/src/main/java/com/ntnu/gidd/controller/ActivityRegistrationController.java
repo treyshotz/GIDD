@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ntnu.gidd.service.RegistrationService;
@@ -39,7 +40,7 @@ public class ActivityRegistrationController {
 
   @GetMapping("{userId}/")
   @ResponseStatus(HttpStatus.OK)
-  public Registration getRegistrationWithCompositeIdActivity(UUID userId, UUID activityId) {
+  public Registration getRegistrationWithCompositeIdActivity(@PathVariable UUID userId, @PathVariable UUID activityId) {
     return registrationService.getRegistrationWithCompositeId(userId, activityId);
   }
 }
