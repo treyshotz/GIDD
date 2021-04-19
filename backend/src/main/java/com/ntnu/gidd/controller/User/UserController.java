@@ -1,6 +1,7 @@
 package com.ntnu.gidd.controller.User;
 
 import com.ntnu.gidd.dto.UserDto;
+import com.ntnu.gidd.dto.UserPasswordUpdateDto;
 import com.ntnu.gidd.dto.UserRegistrationDto;
 import com.ntnu.gidd.exception.EmailInUseException;
 import com.ntnu.gidd.service.UserService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.UUID;
 
 @Slf4j
@@ -48,5 +50,12 @@ public class UserController {
             throw new ResponseStatusException(
                   HttpStatus.FORBIDDEN, exception.getMessage(), exception);
         }
+    }
+    
+    @PostMapping("/change-password")
+    @ResponseStatus(HttpStatus.OK)
+    public void updatePassword(Principal principal, @RequestBody UserPasswordUpdateDto user) {
+        System.out.println("PASSORD: " + user.getNewPassword());
+        userService.changePassword(principal, user);
     }
 }
