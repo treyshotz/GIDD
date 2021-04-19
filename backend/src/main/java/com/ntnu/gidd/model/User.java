@@ -27,7 +27,6 @@ public class User extends UUIDModel {
     private String email;
     private LocalDate birthDate;
     private String password;
-    private String salt;
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id" ),
