@@ -14,8 +14,7 @@ import {
 
 export default {
   // Auth
-  createUser: (item: UserCreate) => IFetch<RequestResponse>({ method: 'POST', url: 'user/', data: item, withAuth: false }),
-  // TODO: Change endpoint
+  createUser: (item: UserCreate) => IFetch<RequestResponse>({ method: 'POST', url: 'users/', data: item, withAuth: false, tryAgain: false }),
   authenticate: (email: string, password: string) =>
     IFetch<LoginRequestResponse>({
       method: 'POST',
@@ -24,14 +23,13 @@ export default {
       withAuth: false,
     }),
   forgotPassword: (email: string) => IFetch<RequestResponse>({ method: 'POST', url: 'auth/password/reset/', data: { email: email }, withAuth: false }),
-  refreshAccessToken: () => IFetch<RequestResponse>({ method: 'GET', url: 'auth/refresh_token', refreshAccess: true, withAuth: false }),
+  refreshAccessToken: () => IFetch<RequestResponse>({ method: 'GET', url: 'auth/refresh-token', refreshAccess: true, withAuth: false }),
 
   // Activity
   getActivity: (id: string) => IFetch<Activity>({ method: 'GET', url: `activities/${id}/` }),
   getActivities: (filters?: any) => IFetch<PaginationResponse<Activity>>({ method: 'GET', url: `activities/`, data: filters || {} }),
-  getMyParticipatingActivities: (filters?: any) =>
-    IFetch<PaginationResponse<Activity>>({ method: 'GET', url: `user/userdata/activities/`, data: filters || {} }),
-  getMyHostActivities: (filters?: any) => IFetch<PaginationResponse<Activity>>({ method: 'GET', url: `user/userdata/host-activities/`, data: filters || {} }),
+  getMyParticipatingActivities: (filters?: any) => IFetch<PaginationResponse<Activity>>({ method: 'GET', url: `user/me/activities/`, data: filters || {} }),
+  getMyHostActivities: (filters?: any) => IFetch<PaginationResponse<Activity>>({ method: 'GET', url: `user/me/host-activities/`, data: filters || {} }),
   createActivity: (item: ActivityRequired) => IFetch<Activity>({ method: 'POST', url: `activities/`, data: item }),
   updateActivity: (id: string, item: ActivityRequired) => IFetch<Activity>({ method: 'PUT', url: `activities/${id}/`, data: item }),
   deleteActivity: (id: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `activities/${id}/` }),
@@ -44,7 +42,6 @@ export default {
   deleteRegistration: (activityId: string, userId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `activities/${activityId}/users/${userId}/` }),
 
   // User
-  // TODO: Change endpoint
-  getUser: () => IFetch<User>({ method: 'GET', url: `user/2/` }),
-  updateUser: (userName: string, item: Partial<User>) => IFetch<User>({ method: 'PUT', url: `user/${userName}/`, data: item }),
+  getUser: () => IFetch<User>({ method: 'GET', url: `users/me/` }),
+  updateUser: (userId: string, item: Partial<User>) => IFetch<User>({ method: 'PUT', url: `users/${userId}/`, data: item }),
 };

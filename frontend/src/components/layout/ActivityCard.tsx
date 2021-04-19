@@ -28,7 +28,7 @@ export default function ActivityCard(props: ActivityCardProps) {
   const classes = useStyles();
 
   return (
-    <Link className={classes.link} to={`${URLS.ACTIVITIES}${props.activity.activityId}/`}>
+    <Link className={classes.link} to={`${URLS.ACTIVITIES}${props.activity.id}/`}>
       <Card className={classes.root}>
         <CardActionArea>
           <CardMedia className={classes.media} image={props.activity.image} />

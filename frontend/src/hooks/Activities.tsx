@@ -45,7 +45,7 @@ export const useCreateActivity = (): UseMutationResult<Activity, RequestResponse
   return useMutation((newActivity: ActivityRequired) => API.createActivity(newActivity), {
     onSuccess: (data) => {
       queryClient.invalidateQueries(ACTIVITIES_QUERY_KEY);
-      queryClient.setQueryData([ACTIVITIES_QUERY_KEY, data.activityId], data);
+      queryClient.setQueryData([ACTIVITIES_QUERY_KEY, data.id], data);
     },
   });
 };
@@ -101,7 +101,7 @@ export const useCreateActivityRegistration = (activityId: string): UseMutationRe
   return useMutation((userId) => API.createRegistration(activityId, userId), {
     onSuccess: (data) => {
       queryClient.invalidateQueries([ACTIVITIES_QUERY_KEY, activityId]);
-      queryClient.setQueryData([ACTIVITIES_QUERY_KEY, activityId, ACTIVITIES_QUERY_KEY_REGISTRATION, data.userId], data);
+      queryClient.setQueryData([ACTIVITIES_QUERY_KEY, activityId, ACTIVITIES_QUERY_KEY_REGISTRATION, data.id], data);
     },
   });
 };

@@ -47,7 +47,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
   });
   const submit = async (data: UserEditData) => {
     updateUser.mutate(
-      { userId: user.userId, user: { ...data, birthDate: data.birthDate ? data.birthDate.toISOString().substring(0, 16) : null } },
+      { userId: user.id, user: { ...data, birthDate: data.birthDate ? data.birthDate.toISOString().substring(0, 16) : null } },
       {
         onSuccess: () => {
           showSnackbar('Profilen ble oppdatert', 'success');

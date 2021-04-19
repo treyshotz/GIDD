@@ -74,7 +74,7 @@ const ActivityHosts = ({ activityId }: ActivityHostsProps) => {
   return (
     <div className={classes.list}>
       {hosts?.map((host) => (
-        <Host host={host} key={host.userId} />
+        <Host host={host} key={host.id} />
       ))}
       <Paper className={classes.paper}>
         <Typography variant='h3'>Legg til arrangør</Typography>

@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @AllArgsConstructor
 @EnableWebSecurity
@@ -40,13 +41,19 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     // https://docs.spring.io/spring-security/site/docs/current/reference/html5/#jc-httpsecurity
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.cors()
+        httpSecurity.cors().configurationSource(request -> {
+                  var cors = new CorsConfiguration();
+                  cors.setAllowedOrigins(List.of("*"));
+                  cors.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
+                  cors.setAllowedHeaders(List.of("*"));
+                  return cors;
+                })
                 .and()
                 .csrf()
                 .disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, jwtConfig.getUri() + "/login").permitAll()
-                .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers(HttpMethod.POST, "/users/").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
