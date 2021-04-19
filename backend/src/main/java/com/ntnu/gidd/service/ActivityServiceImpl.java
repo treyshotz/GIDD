@@ -62,8 +62,10 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public ActivityDto saveActivity(Activity activity) {
-        return modelMapper.map(activityRepository.save(activity), ActivityDto.class);
+    public ActivityDto saveActivity(ActivityDto activity) {
+        Activity newActivity = modelMapper.map(activity, Activity.class);
+        newActivity.setTrainingLevel(getTrainingLevel(activity.getLevel()));
+        return modelMapper.map(newActivity, ActivityDto.class);
     }
 
     @Override

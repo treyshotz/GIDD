@@ -56,7 +56,7 @@ public class ActivityController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ActivityDto postActivity(@RequestBody Activity activity){
+    public ActivityDto postActivity(@RequestBody ActivityDto activity){
         return activityService.saveActivity(activity);
     }
 
