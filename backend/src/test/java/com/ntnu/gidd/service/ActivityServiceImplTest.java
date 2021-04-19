@@ -54,9 +54,6 @@ public class ActivityServiceImplTest {
         assert activity != null;
         lenient().when(activityRepository.save(activity)).thenReturn(activity);
     }
-    @AfterEach public void cleanUp(){
-        activityRepository.delete(activity);
-    }
 
     @Test
     void testActivityServiceImplUpdateActivityAndReturnsUpdatedActivity() {

@@ -49,7 +49,6 @@ public class ActivityControllerTest {
     public void setUp() throws Exception {
         activity = activityFactory.getObject();
         assert activity != null;
-        userRepository.saveAll(activity.getHosts());
         activity = activityRepository.save(activity);
     }
 
@@ -65,7 +64,7 @@ public class ActivityControllerTest {
         this.mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.*").isArray());
+                .andExpect(jsonPath("$.[0].title").value(activity.getTitle()));
     }
 
     @WithMockUser(value = "spring")
@@ -87,7 +86,6 @@ public class ActivityControllerTest {
     public void testActivityControllerSaveReturn201ok() throws Exception {
 
         Activity testActivity = activityFactory.getObject();
-        userRepository.saveAll(testActivity.getHosts());
 
         this.mvc.perform(post(URI)
             .with(csrf())
@@ -104,7 +102,6 @@ public class ActivityControllerTest {
 
         Activity testActivity = activityFactory.getObject();
         assert testActivity != null;
-        userRepository.saveAll(testActivity.getHosts());
         testActivity = activityRepository.save(testActivity);
 
         this.mvc.perform(delete(URI + testActivity.getId() + "/")

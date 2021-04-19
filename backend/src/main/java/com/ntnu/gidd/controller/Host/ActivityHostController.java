@@ -1,7 +1,8 @@
 package com.ntnu.gidd.controller.Host;
 
-import com.ntnu.gidd.dto.ActivityHostDto;
+import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.dto.UserEmailDto;
+import com.ntnu.gidd.dto.UserListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.exception.UserNotFoundExecption;
 import com.ntnu.gidd.service.Host.HostService;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -25,9 +27,9 @@ public class ActivityHostController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ActivityHostDto get(@PathVariable UUID activityId){
+    public List<UserListDto> get(@PathVariable UUID activityId){
         try {
-            return hostService.getById(activityId);
+            return hostService.getByActivityId(activityId);
         }catch (ActivityNotFoundExecption ex){
             log.debug("[X] Request to get Activities with id={}", activityId);
             throw new ResponseStatusException(
@@ -37,7 +39,7 @@ public class ActivityHostController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public ActivityHostDto update(@PathVariable UUID activityId, @RequestBody UserEmailDto user){
+    public List<UserListDto> update(@PathVariable UUID activityId, @RequestBody UserEmailDto user){
         try {
             log.debug("[X] Request to create host on activity with id={}", activityId);
             return hostService.addHosts(activityId, user);
@@ -50,12 +52,10 @@ public class ActivityHostController {
 
     @DeleteMapping("{userId}/")
     @ResponseStatus(HttpStatus.OK)
-    public Response delete(@PathVariable UUID activityId, @PathVariable UUID userId){
+    public List<UserListDto>  delete(@PathVariable UUID activityId, @PathVariable UUID userId){
         try {
             log.debug("[X] Request to deleted host on activity with id={}", activityId);
-            hostService.deleteHost(activityId, userId);
-            return new Response("Host was deleted");
-
+            return hostService.deleteHost(activityId, userId);
         }catch (UserNotFoundExecption | ActivityNotFoundExecption ex){
             log.debug("[X] Request to activities/activityId={}/hosts/ resultet in User or Activity not found", activityId);
             throw new ResponseStatusException(

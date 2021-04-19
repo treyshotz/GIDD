@@ -37,7 +37,7 @@ public class Activity extends UUIDModel {
     @JoinColumn(name = "traning_level_id", referencedColumnName = "id")
     private TrainingLevel trainingLevel;
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id" ),
     inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
     uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))

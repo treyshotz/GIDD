@@ -7,6 +7,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.ntnu.gidd.utils.StringRandomizer.getRandomEmail;
@@ -16,8 +18,9 @@ public class UserFactory implements FactoryBean<User> {
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
+
     @Override
-    public User getObject() {
+    public User getObject() throws Exception {
         return User.builder()
                 .id(UUID.randomUUID())
                 .email(getRandomEmail())

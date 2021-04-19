@@ -29,7 +29,7 @@ public class User extends UUIDModel {
     private String password;
     private String salt;
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id" ),
             inverseJoinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "activity_id"}))

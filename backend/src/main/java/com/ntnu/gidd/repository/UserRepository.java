@@ -1,5 +1,6 @@
 package com.ntnu.gidd.repository;
 
+import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 

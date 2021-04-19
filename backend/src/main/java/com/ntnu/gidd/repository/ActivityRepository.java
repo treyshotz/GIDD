@@ -14,5 +14,5 @@ import java.util.UUID;
  */
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, UUID> {
-    List<Activity> findActivitiesByHosts(User user);
+    Optional<Activity> findActivityByIdAndHosts_Id(UUID id, UUID hosts_id);
 }

@@ -11,7 +11,6 @@ import static com.ntnu.gidd.utils.StringRandomizer.getRandomString;
 public class ActivityFactory implements FactoryBean<Activity> {
 
     Random random = new Random();
-    UserFactory userFactory = new UserFactory();
     TrainingLevelFactory trainingLevelFactory = new TrainingLevelFactory();
 
     @Override
@@ -27,7 +26,6 @@ public class ActivityFactory implements FactoryBean<Activity> {
                 .closed(false)
                 .capacity(random.nextInt(1000))
                 .trainingLevel(trainingLevelFactory.getObject())
-                .hosts(List.of(Objects.requireNonNull(userFactory.getObject()), userFactory.getObject()))
                 .build();
     }
 

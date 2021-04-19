@@ -1,7 +1,8 @@
 package com.ntnu.gidd.controller.Host;
 
-import com.ntnu.gidd.dto.ActivityHostDto;
+import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
+import com.ntnu.gidd.dto.UserListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.exception.UserNotFoundExecption;
 import com.ntnu.gidd.service.Host.HostService;
@@ -40,13 +41,25 @@ public class UserHostController {
 
     @GetMapping("{activityId}/")
     @ResponseStatus(HttpStatus.OK)
-    public ActivityHostDto get(@PathVariable UUID userId, @PathVariable UUID activityId){
+    public ActivityDto get(@PathVariable UUID userId, @PathVariable UUID activityId){
         try {
-            return hostService.getById(activityId);
-        }catch (ActivityNotFoundExecption ex){
-            log.debug("[X] Request to get Activity of user with userId={} and activityId={}", userId,activityId);
+            return hostService.getActivityFromUser(userId, activityId);
+        }catch (ActivityNotFoundExecption | UserNotFoundExecption ex ){
+            log.debug("[X] Request to get Activity of user with userId={} and activityId={} failed", userId,activityId);
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage(), ex);
         }
     }
+    @DeleteMapping("{activityId}/")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ActivityListDto>  delete(@PathVariable UUID userId, @PathVariable UUID activityId ){
+        try {
+            log.debug("[X] Request to deleted host on user with id={}", userId);
+            return hostService.deleteHostfromUser(activityId, userId);
+        }catch (UserNotFoundExecption | ActivityNotFoundExecption ex){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, ex.getMessage(), ex);
+        }
+    }
+
 }

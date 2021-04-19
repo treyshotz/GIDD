@@ -1,4 +1,4 @@
-package com.ntnu.gidd.controller;
+package com.ntnu.gidd.controller.Registration;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 
@@ -62,7 +62,6 @@ public class ActivityRegistrationControllerTest {
   @BeforeEach
   public void setup() throws Exception {
     activity = activityFactory.getObject();
-    userRepository.saveAll(activity.getHosts());
     assert activity != null;
     activity = activityRepository.save(activity);
 
@@ -118,8 +117,6 @@ public class ActivityRegistrationControllerTest {
     Activity testActivity = activityFactory.getObject();
     Registration testRegistration = new Registration();
     RegistrationId testRegistrationId = new RegistrationId();
-
-    userRepository.saveAll(testActivity.getHosts());
 
     testActivity = activityRepository.save(testActivity);
     testUser = userRepository.save(testUser);

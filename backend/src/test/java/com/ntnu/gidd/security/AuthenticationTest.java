@@ -61,7 +61,7 @@ public class AuthenticationTest {
 	private User testUser;
 	
 	@BeforeEach
-	public void setup() {
+	public void setup() throws Exception {
 		jwtUtil = new JwtUtil(jwtConfig);
 
 		testUser = new UserFactory().getObject();
