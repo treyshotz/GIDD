@@ -2,7 +2,6 @@ package com.ntnu.gidd.service;
 
 import com.ntnu.gidd.dto.UserDto;
 import com.ntnu.gidd.dto.UserRegistrationDto;
-import com.ntnu.gidd.dto.UserUpdateDto;
 import com.ntnu.gidd.exception.EmailInUseException;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.TrainingLevel;
@@ -34,8 +33,9 @@ public class UserServiceImpl implements UserService {
 	private UserRepository userRepository;
 	
 	@Override
-	public UserDto getUserById(UUID id) {
-		return null;
+	public UserDto getUserById(String email) {
+		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+		return modelMapper.map(user, UserDto.class);
 	}
 
 	private boolean emailExist(String email) {
@@ -61,14 +61,14 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private TrainingLevelRepository trainingLevelRepository;
 
-	public UserUpdateDto updateUser(UUID id, UserUpdateDto user){
+	public UserDto updateUser(UUID id, UserDto user){
 		User updatedUser = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
 		updatedUser.setFirstName(user.getFirstName());
 		updatedUser.setSurname(user.getSurname());
 		updatedUser.setEmail(user.getEmail());
 		updatedUser.setBirthDate(user.getBirthDate());
 		if(user.getLevel()!=null)updatedUser.setTrainingLevel(getTrainingLevel(user.getLevel()));
-		return modelMapper.map(userRepository.save(updatedUser), UserUpdateDto.class);
+		return modelMapper.map(userRepository.save(updatedUser), UserDto.class);
 	}
 
 	private TrainingLevel getTrainingLevel(TrainingLevelEnum level){

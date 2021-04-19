@@ -1,6 +1,5 @@
 package com.ntnu.gidd.service;
 
-import com.ntnu.gidd.dto.UserUpdateDto;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.model.User;

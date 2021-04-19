@@ -5,7 +5,6 @@ import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.UserRepository;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
