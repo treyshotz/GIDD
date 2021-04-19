@@ -20,12 +20,12 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
 	@Autowired
-	BCryptPasswordEncoder passwordEncoder;
+	private BCryptPasswordEncoder passwordEncoder;
 
-	ModelMapper modelMapper = new ModelMapper();
+	private ModelMapper modelMapper = new ModelMapper();
 	
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 	
 	@Override
 	public UserDto updateUser(UUID id, User activity) {
