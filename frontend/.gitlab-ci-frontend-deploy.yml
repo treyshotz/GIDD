@@ -19,6 +19,7 @@ frontend-build-master:
   artifacts:
     paths:
       - frontend/build/
+    expire_in: 15 mins
 
 frontend-deploy-master:
   extends: .frontend-deploy

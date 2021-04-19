@@ -21,6 +21,7 @@ frontend-install-mr:
   artifacts:
     paths:
       - frontend/build/
+    expire_in: 15 mins
 
 frontend-pre-mr-build:
   extends: .frontend-test
@@ -31,6 +32,7 @@ frontend-pre-mr-build:
   artifacts:
     reports:
       dotenv: build.env
+    expire_in: 15 mins
 
 frontend-lint-mr:
   extends: .frontend-test
@@ -58,6 +60,7 @@ frontend-build-mr:
   artifacts:
     paths:
       - frontend/build/
+    expire_in: 15 mins
 
 frontend-deploy-mr:
   extends: .frontend-test
