@@ -3,6 +3,8 @@ package com.ntnu.gidd.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ntnu.gidd.dto.UserRegistrationDto;
+import com.ntnu.gidd.factories.UserFactory;
+import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +42,8 @@ public class UserControllerTest {
 
       @Autowired
       private UserRepository userRepository;
+
+      private UserFactory userFactory = new UserFactory();
 
       private String firstName;
 
@@ -114,16 +118,14 @@ public class UserControllerTest {
        */
       @Test
       public void testCreateUserTwoTimesFails() throws Exception {
-            String email = "test123@test.no";
+            User user = userFactory.getObject();
+            assert user != null;
+            userRepository.save(user);
+
+            String email = user.getEmail();
             String password = "Ithinkthisisvalid123";
-            String matchingPassword = password;
 
-            UserRegistrationDto validUser = new UserRegistrationDto(firstName, surname, password, matchingPassword, email, birthDate);
-
-            mockMvc.perform(post(URI)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(validUser)))
-                    .andExpect(status().isCreated());
+            UserRegistrationDto validUser = new UserRegistrationDto(firstName, surname, password, password, email, birthDate);
 
 
             mockMvc.perform(post(URI)

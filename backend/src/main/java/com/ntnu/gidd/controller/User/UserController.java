@@ -41,7 +41,7 @@ public class UserController {
             return userService.saveUser(userRegistrationDto);
         }
         catch (EmailInUseException exception){
-            log.error(String.valueOf(exception));
+            log.error("Email is already in use", exception);
             throw new ResponseStatusException(
                   HttpStatus.FORBIDDEN, exception.getMessage(), exception);
         }
