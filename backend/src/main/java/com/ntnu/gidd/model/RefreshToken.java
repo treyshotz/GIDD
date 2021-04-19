@@ -1,6 +1,7 @@
 package com.ntnu.gidd.model;
 
-import lombok.Data;
+import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -9,9 +10,13 @@ import java.util.UUID;
 
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class RefreshToken {
     @Id
+    @Type(type="uuid-char")
     private UUID jti;
 
     private boolean isValid;

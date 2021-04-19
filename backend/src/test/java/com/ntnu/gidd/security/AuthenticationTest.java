@@ -4,12 +4,14 @@ package com.ntnu.gidd.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ntnu.gidd.config.PasswordEncoderConfig;
+import com.ntnu.gidd.config.JwtConfiguration;
 import com.ntnu.gidd.controller.request.LoginRequest;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.config.WebSecurity;
+import com.ntnu.gidd.service.token.RefreshTokenService;
 import com.ntnu.gidd.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -35,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-@ContextConfiguration(classes = {WebSecurity.class, PasswordEncoderConfig.class})
+@ContextConfiguration(classes = {WebSecurity.class, PasswordEncoderConfig.class, JwtConfiguration.class})
 @ActiveProfiles("test")
 public class AuthenticationTest {
 	
@@ -44,13 +46,16 @@ public class AuthenticationTest {
 	
 	@MockBean
 	private UserRepository userRepository;
+
+	@MockBean
+	private RefreshTokenService refreshTokenService;
 	
 	@Autowired
 	private MockMvc mockMvc;
 	
 	@Autowired
 	private ObjectMapper objectMapper;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder encoder;
 

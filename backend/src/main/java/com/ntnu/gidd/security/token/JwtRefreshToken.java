@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 /**
@@ -14,11 +15,12 @@ import java.util.Optional;
  */
 @Getter
 @AllArgsConstructor
-public class RefreshToken implements JwtToken {
+public class JwtRefreshToken implements JwtToken {
 
+    private String token;
     private Jws<Claims> claims;
 
-    public static Optional<RefreshToken> of(RawJwtAccessToken token, String signingKey) {
+    public static Optional<JwtRefreshToken> of(RawJwtAccessToken token, String signingKey) {
         Jws<Claims> claims = token.parseClaims(signingKey);
 
         List<String> scopes = claims.getBody()
@@ -27,17 +29,21 @@ public class RefreshToken implements JwtToken {
                 .anyMatch(Scopes.REFRESH_TOKEN.scope()::equals);
 
         if (hasRefreshTokenScope)
-            return Optional.of(new RefreshToken(claims));
+            return Optional.of(new JwtRefreshToken(token.getToken(), claims));
 
         return Optional.empty();
     }
 
     @Override
     public String getToken() {
-        return null;
+        return token;
     }
 
     public String getSubject() {
         return claims.getBody().getSubject();
+    }
+
+    public String getJti() {
+        return claims.getBody().getId();
     }
 }

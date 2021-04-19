@@ -85,7 +85,7 @@ class AuthenticationControllerTest {
      */
     @Test
     void testRefreshTokenWithValidRefreshTokenReturnsNewToken() throws Exception {
-        MvcResult mvcResult = mvc.perform(get(URI + "refresh_token")
+        MvcResult mvcResult = mvc.perform(get(URI + "refresh-token")
                                                   .header(jwtConfig.getHeader(), jwtConfig.getPrefix() + refreshToken))
                 .andExpect(jsonPath("$.token").isNotEmpty())
                 .andReturn();
@@ -101,7 +101,7 @@ class AuthenticationControllerTest {
      */
     @Test
     void testRefreshTokenWithAccessTokenIsNotAllowed() throws Exception {
-        mvc.perform(get(URI + "refresh_token")
+        mvc.perform(get(URI + "refresh-token")
                                         .header(jwtConfig.getHeader(), jwtConfig.getPrefix() + accessToken))
                 .andDo(print())
                 .andExpect(status().isBadRequest());

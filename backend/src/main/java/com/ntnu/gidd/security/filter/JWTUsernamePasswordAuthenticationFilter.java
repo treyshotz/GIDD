@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ntnu.gidd.controller.request.LoginRequest;
 import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.UserDetailsImpl;
+import com.ntnu.gidd.security.token.JwtRefreshToken;
 import com.ntnu.gidd.security.token.JwtToken;
 import com.ntnu.gidd.security.token.JwtTokenFactory;
 import com.ntnu.gidd.security.token.TokenFactory;
+import com.ntnu.gidd.service.token.RefreshTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,12 +33,14 @@ import java.util.Map;
 @Slf4j
 public class JWTUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+    private RefreshTokenService refreshTokenService;
     private AuthenticationManager authenticationManager;
     private TokenFactory tokenFactory;
     private ObjectMapper objectMapper;
     private JWTConfig jwtConfig;
 
-    public JWTUsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager, JWTConfig jwtConfig) {
+    public JWTUsernamePasswordAuthenticationFilter(RefreshTokenService refreshTokenService, AuthenticationManager authenticationManager, JWTConfig jwtConfig) {
+        this.refreshTokenService = refreshTokenService;
         this.authenticationManager = authenticationManager;
         this.jwtConfig = jwtConfig;
         this.tokenFactory = new JwtTokenFactory(jwtConfig);
@@ -79,7 +83,8 @@ public class JWTUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
 
         JwtToken accessToken = tokenFactory.createAccessToken(userDetails);
         JwtToken refreshToken = tokenFactory.createRefreshToken(userDetails);
-
+        refreshTokenService.saveRefreshToken(refreshToken);
+        
         log.debug("Successfully created access and refresh token for user (email:{})", userDetails.getUsername());
 
         Map<String, String> tokens = new HashMap<>();

@@ -18,7 +18,7 @@ public class AuthenticationController {
     private JWTConfig jwtConfig;
     private JwtService jwtService;
 
-    @GetMapping("/refresh_token")
+    @GetMapping("/refresh-token")
     public JwtToken refreshToken(HttpServletRequest request) {
         String header = request.getHeader(jwtConfig.getHeader());
         return jwtService.refreshToken(header);

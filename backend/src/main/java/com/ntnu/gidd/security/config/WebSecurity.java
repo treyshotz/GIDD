@@ -3,6 +3,7 @@ package com.ntnu.gidd.security.config;
 import com.ntnu.gidd.security.filter.JWTAuthenticationFilter;
 import com.ntnu.gidd.security.filter.JWTUsernamePasswordAuthenticationFilter;
 import com.ntnu.gidd.service.UserDetailsServiceImpl;
+import com.ntnu.gidd.service.token.RefreshTokenService;
 import com.ntnu.gidd.util.JwtUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,11 @@ import javax.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
+    private RefreshTokenService refreshTokenService;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private JwtUtil jwtUtil;
+    private JWTConfig jwtConfig;
+
     /**
      * Sets up the web security configuration
      * @param httpSecurity
@@ -39,9 +45,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, jwtConfig().getUri() + "/login").permitAll()
+                .antMatchers(HttpMethod.POST, jwtConfig.getUri() + "/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
-                .antMatchers(HttpMethod.GET, jwtConfig().getUri() + "/refresh_token").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -49,8 +54,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(
                         (req, res, e) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage()))
                 .and()
-                .addFilter(new JWTUsernamePasswordAuthenticationFilter(authenticationManager(), jwtConfig()))
-                .addFilterAfter(new JWTAuthenticationFilter(jwtConfig(), jwtUtil()), UsernamePasswordAuthenticationFilter.class)
+                .addFilter(new JWTUsernamePasswordAuthenticationFilter(refreshTokenService, authenticationManager(), jwtConfig))
+                .addFilterAfter(new JWTAuthenticationFilter(jwtConfig, jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
@@ -58,7 +63,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService())
-                .passwordEncoder(bCryptPasswordEncoder());
+                .passwordEncoder(bCryptPasswordEncoder);
     }
 
     /**
@@ -85,18 +90,4 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         return new UserDetailsServiceImpl();
     }
 
-    //TODO: Is this the right place to have this
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public JWTConfig jwtConfig() {
-        return new JWTConfig();
-    }
-
-    @Bean
-    public JwtUtil jwtUtil() {
-        return new JwtUtil(jwtConfig());
-    }
 }

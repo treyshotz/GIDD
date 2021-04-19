@@ -7,7 +7,7 @@ import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.extractor.TokenExtractor;
 import com.ntnu.gidd.security.token.JwtToken;
 import com.ntnu.gidd.security.token.RawJwtAccessToken;
-import com.ntnu.gidd.security.token.RefreshToken;
+import com.ntnu.gidd.security.token.JwtRefreshToken;
 import com.ntnu.gidd.security.token.TokenFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,10 +34,10 @@ public class JwtServiceImpl implements JwtService {
     public JwtToken refreshToken(String header) {
         String token = tokenExtractor.extract(header);
         RawJwtAccessToken rawJwtAccessToken = new RawJwtAccessToken(token);
-        RefreshToken refreshToken = RefreshToken.of(rawJwtAccessToken, jwtConfig.getSecret())
+        JwtRefreshToken jwtRefreshToken = JwtRefreshToken.of(rawJwtAccessToken, jwtConfig.getSecret())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid token claims."));
 
-        String subject = refreshToken.getSubject();
+        String subject = jwtRefreshToken.getSubject();
         User user = userRepository.findByEmail(subject)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + subject));
 
