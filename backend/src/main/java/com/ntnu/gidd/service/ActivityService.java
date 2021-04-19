@@ -12,7 +12,7 @@ public interface ActivityService {
     ActivityDto updateActivity(UUID id, ActivityDto activity);
     List<ActivityListDto> getActivties();
     ActivityDto getActivityById(UUID id);
-    ActivityDto saveActivity(Activity activity);
+    ActivityDto saveActivity(ActivityDto activity);
     void deleteActivity(UUID id);
 
 }
