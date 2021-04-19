@@ -4,7 +4,7 @@ import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.dto.UserEmailDto;
 import com.ntnu.gidd.dto.UserListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
-import com.ntnu.gidd.exception.UserNotFoundExecption;
+import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.service.Host.HostService;
 import com.ntnu.gidd.util.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +56,7 @@ public class ActivityHostController {
         try {
             log.debug("[X] Request to deleted host on activity with id={}", activityId);
             return hostService.deleteHost(activityId, userId);
-        }catch (UserNotFoundExecption | ActivityNotFoundExecption ex){
+        }catch (UserNotFoundException | ActivityNotFoundExecption ex){
             log.debug("[X] Request to activities/activityId={}/hosts/ resultet in User or Activity not found", activityId);
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage(), ex);

@@ -41,13 +41,13 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         account.setEmail("admin@test.com");
         account.setPassword(encoder.encode("admin"));
 
-        if (trainingLevelRepository.findTraningLevelByLevel(TrainingLevelEnum.High).isEmpty()){
+        if (trainingLevelRepository.findTrainingLevelByLevel(TrainingLevelEnum.High).isEmpty()){
             trainingLevelRepository.save(TrainingLevel.builder().id(1l).level(TrainingLevelEnum.High).build());
         }
-        if (trainingLevelRepository.findTraningLevelByLevel(TrainingLevelEnum.Medium).isEmpty()){
+        if (trainingLevelRepository.findTrainingLevelByLevel(TrainingLevelEnum.Medium).isEmpty()){
             trainingLevelRepository.save(TrainingLevel.builder().id(2l).level(TrainingLevelEnum.Medium).build());
         }
-        if (trainingLevelRepository.findTraningLevelByLevel(TrainingLevelEnum.Low).isEmpty()){
+        if (trainingLevelRepository.findTrainingLevelByLevel(TrainingLevelEnum.Low).isEmpty()){
             trainingLevelRepository.save(TrainingLevel.builder().id(3l).level(TrainingLevelEnum.Low).build());
         }
         if(userRepository.findByEmail(account.getEmail()).isEmpty()){

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ActivityService {
-    ActivityDto updateActivity(UUID id, Activity activity);
+    ActivityDto updateActivity(UUID id, ActivityDto activity);
     List<ActivityListDto> getActivties();
     ActivityDto getActivityById(UUID id);
     ActivityDto saveActivity(Activity activity);

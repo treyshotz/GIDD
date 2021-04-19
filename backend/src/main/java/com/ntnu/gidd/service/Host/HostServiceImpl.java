@@ -5,7 +5,7 @@ import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.dto.UserEmailDto;
 import com.ntnu.gidd.dto.UserListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
-import com.ntnu.gidd.exception.UserNotFoundExecption;
+import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
@@ -35,7 +35,7 @@ public class HostServiceImpl implements HostService {
 
     @Override
     public List<ActivityListDto> getAll(UUID userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundExecption::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         return user.getActivities().stream()
                 .map(activity->modelMapper.map(activity, ActivityListDto.class))
                 .collect(Collectors.toList());
@@ -61,7 +61,7 @@ public class HostServiceImpl implements HostService {
                 .orElseThrow(ActivityNotFoundExecption::new);
         ArrayList<User> list = new ArrayList<>(activity.getHosts()) ;
         list.add(userRepository.findByEmail(user.getEmail()).
-                orElseThrow(UserNotFoundExecption::new));
+                orElseThrow(UserNotFoundException::new));
         activity.setHosts(list);
         return activityRepository.save(activity)
                 .getHosts().stream()
@@ -75,7 +75,7 @@ public class HostServiceImpl implements HostService {
                 .orElseThrow(ActivityNotFoundExecption::new);
         ArrayList<User> list = new ArrayList<>(activity.getHosts()) ;
        list.remove(userRepository.findById(userId)
-                .orElseThrow(UserNotFoundExecption::new));
+                .orElseThrow(UserNotFoundException::new));
        activity.setHosts(list);
         return activityRepository.save(activity).getHosts().stream()
                 .map(a -> modelMapper.map(a, UserListDto.class))
@@ -85,7 +85,7 @@ public class HostServiceImpl implements HostService {
 
     @Override
     public List<ActivityListDto> deleteHostfromUser(UUID activityId, UUID userId) {
-       User user = userRepository.findById(userId).orElseThrow(UserNotFoundExecption::new);
+       User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         ArrayList<Activity> list = new ArrayList<>(user.getActivities());
         list.remove(activityRepository.findById(activityId).orElseThrow(ActivityNotFoundExecption::new));
         user.setActivities(list);

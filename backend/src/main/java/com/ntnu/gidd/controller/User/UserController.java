@@ -6,7 +6,7 @@ import com.ntnu.gidd.dto.UserUpdateDto;
 import com.ntnu.gidd.exception.EmailInUseException;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.service.UserDetailsServiceImpl;
-import com.ntnu.gidd.service.UserServiceImpl;
+import com.ntnu.gidd.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,15 +22,12 @@ import java.util.UUID;
 public class UserController {
 
     @Autowired
-    UserServiceImpl userService;
-
-    @Autowired
-    private UserDetailsServiceImpl userDetailsServiceImpl;
+    private UserService userService;
 
     @PutMapping("{userId}/")
     @ResponseStatus(HttpStatus.OK)
-    public User updateActivity(@PathVariable UUID userId, @RequestBody UserUpdateDto user){
-        return this.userDetailsServiceImpl.updateUser(userId, user);
+    public UserUpdateDto updateActivity(@PathVariable UUID userId, @RequestBody UserUpdateDto user){
+        return this.userService.updateUser(userId, user);
     }
 
     @PostMapping

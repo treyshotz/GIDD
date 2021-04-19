@@ -15,24 +15,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 
 @ExtendWith(MockitoExtension.class)
 public class ActivityServiceImplTest {
@@ -45,6 +34,8 @@ public class ActivityServiceImplTest {
 
     @Mock
     private TrainingLevelRepository trainingLevelRepository;
+
+    ModelMapper modelMapper = new ModelMapper();
 
     private Activity activity;
 
@@ -59,10 +50,10 @@ public class ActivityServiceImplTest {
     void testActivityServiceImplUpdateActivityAndReturnsUpdatedActivity() {
         TrainingLevel level = activity.getTrainingLevel();
         when(activityRepository.findById(activity.getId())).thenReturn(Optional.ofNullable(activity));
-        when(trainingLevelRepository.findTraningLevelByLevel(level.getLevel())).thenReturn(Optional.of(level));
+        when(trainingLevelRepository.findTrainingLevelByLevel(level.getLevel())).thenReturn(Optional.of(level));
         activity.setTitle(StringRandomizer.getRandomString(10));
 
-        ActivityDto updateActivity = activityService.updateActivity(activity.getId(), activity);
+        ActivityDto updateActivity = activityService.updateActivity(activity.getId(),modelMapper.map(activity,ActivityDto.class));
 
         assertThat(activity.getId()).isEqualTo(updateActivity.getId());
 

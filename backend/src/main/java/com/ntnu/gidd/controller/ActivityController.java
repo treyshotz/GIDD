@@ -43,7 +43,7 @@ public class ActivityController {
 
     @PutMapping("{activityId}/")
     @ResponseStatus(HttpStatus.OK)
-    public ActivityDto updateActivity(@PathVariable UUID activityId, @RequestBody Activity activity){
+    public ActivityDto updateActivity(@PathVariable UUID activityId, @RequestBody ActivityDto activity){
         try {
         log.debug("[X] Request to update Activity with id={}", activityId);
         return this.activityService.updateActivity(activityId, activity);

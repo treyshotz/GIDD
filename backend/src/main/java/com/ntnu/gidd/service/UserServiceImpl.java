@@ -2,9 +2,14 @@ package com.ntnu.gidd.service;
 
 import com.ntnu.gidd.dto.UserDto;
 import com.ntnu.gidd.dto.UserRegistrationDto;
+import com.ntnu.gidd.dto.UserUpdateDto;
 import com.ntnu.gidd.exception.EmailInUseException;
+import com.ntnu.gidd.exception.UserNotFoundException;
+import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.model.User;
+import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
+import com.ntnu.gidd.util.TrainingLevelEnum;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -12,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 
 @Slf4j
@@ -26,11 +32,6 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private UserRepository userRepository;
-	
-	@Override
-	public UserDto updateUser(UUID id, User activity) {
-		return null;
-	}
 	
 	@Override
 	public UserDto getUserById(UUID id) {
@@ -55,5 +56,23 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDto deleteUser(UUID id) {
 		return null;
+	}
+
+	@Autowired
+	private TrainingLevelRepository trainingLevelRepository;
+
+	public UserUpdateDto updateUser(UUID id, UserUpdateDto user){
+		User updatedUser = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+		updatedUser.setFirstName(user.getFirstName());
+		updatedUser.setSurname(user.getSurname());
+		updatedUser.setEmail(user.getEmail());
+		updatedUser.setBirthDate(user.getBirthDate());
+		if(user.getLevel()!=null)updatedUser.setTrainingLevel(getTrainingLevel(user.getLevel()));
+		return modelMapper.map(userRepository.save(updatedUser), UserUpdateDto.class);
+	}
+
+	private TrainingLevel getTrainingLevel(TrainingLevelEnum level){
+		return trainingLevelRepository.findTrainingLevelByLevel(level).
+				orElseThrow(() -> new EntityNotFoundException("Traning level does not exist"));
 	}
 }

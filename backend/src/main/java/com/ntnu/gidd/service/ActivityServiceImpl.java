@@ -6,6 +6,7 @@ import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
+import com.ntnu.gidd.util.TrainingLevelEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import java.util.List;
@@ -28,7 +29,7 @@ public class ActivityServiceImpl implements ActivityService {
     private TrainingLevelRepository trainingLevelRepository;
 
     @Override
-    public ActivityDto updateActivity(UUID activityId, Activity activity) {
+    public ActivityDto updateActivity(UUID activityId, ActivityDto activity) {
         Activity updateActivity = this.activityRepository.findById(activityId)
                 .orElseThrow(ActivityNotFoundExecption::new);
         updateActivity.setTitle(activity.getTitle());
@@ -39,13 +40,13 @@ public class ActivityServiceImpl implements ActivityService {
         updateActivity.setSignup_end(activity.getSignup_end());
         updateActivity.setClosed(activity.isClosed());
         updateActivity.setCapacity(activity.getCapacity());
-        updateActivity.setTrainingLevel(getTrainingLevel(activity));
+        if(activity.getLevel()!=null)updateActivity.setTrainingLevel(getTrainingLevel(activity.getLevel()));
 
         return modelMapper.map(this.activityRepository.save(updateActivity),ActivityDto.class);
     }
 
-    private TrainingLevel getTrainingLevel(Activity activity){
-        return trainingLevelRepository.findTraningLevelByLevel(activity.getTrainingLevel().getLevel()).
+    private TrainingLevel getTrainingLevel(TrainingLevelEnum level){
+        return trainingLevelRepository.findTrainingLevelByLevel(level).
                 orElseThrow(() -> new EntityNotFoundException("Traning level does not exist"));
     }
 

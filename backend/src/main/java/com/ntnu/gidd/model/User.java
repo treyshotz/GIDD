@@ -33,6 +33,9 @@ public class User extends UUIDModel {
             inverseJoinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "activity_id"}))
     private List<Activity> activities;
+    @OneToOne
+    @JoinColumn(name = "traning_level_id", referencedColumnName = "id")
+    private TrainingLevel trainingLevel;
 
     @PreRemove
     private void removeActivitiesFromUsers() {

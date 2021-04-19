@@ -4,7 +4,7 @@ import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.dto.UserListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
-import com.ntnu.gidd.exception.UserNotFoundExecption;
+import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.service.Host.HostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class UserHostController {
         try {
             log.debug("[X] Request to get all Activities of user with userId={}", userId);
             return hostService.getAll(userId);
-        }catch (UserNotFoundExecption ex){
+        }catch (UserNotFoundException ex){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage(), ex);
         }
@@ -44,7 +44,7 @@ public class UserHostController {
     public ActivityDto get(@PathVariable UUID userId, @PathVariable UUID activityId){
         try {
             return hostService.getActivityFromUser(userId, activityId);
-        }catch (ActivityNotFoundExecption | UserNotFoundExecption ex ){
+        }catch (ActivityNotFoundExecption | UserNotFoundException ex ){
             log.debug("[X] Request to get Activity of user with userId={} and activityId={} failed", userId,activityId);
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage(), ex);
@@ -56,7 +56,7 @@ public class UserHostController {
         try {
             log.debug("[X] Request to deleted host on user with id={}", userId);
             return hostService.deleteHostfromUser(activityId, userId);
-        }catch (UserNotFoundExecption | ActivityNotFoundExecption ex){
+        }catch (UserNotFoundException | ActivityNotFoundExecption ex){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage(), ex);
         }

@@ -1,6 +1,7 @@
 package com.ntnu.gidd.dto;
 
 
+import com.ntnu.gidd.util.TrainingLevelEnum;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -16,4 +17,5 @@ public class UserUpdateDto {
     @NonNull
     private String email;
     private LocalDate birthDate;
+    private TrainingLevelEnum level;
 }

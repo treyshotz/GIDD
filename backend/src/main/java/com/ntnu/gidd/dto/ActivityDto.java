@@ -33,6 +33,6 @@ public class ActivityDto {
     @NotNull
     private boolean closed;
     private List<UserListDto> hosts;
-    private TrainingLevelEnum traningLevel;
+    private TrainingLevelEnum level;
     private int capacity;
 }
