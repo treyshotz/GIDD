@@ -21,7 +21,7 @@ export type PaginationResponse<T> = {
 };
 
 export type User = {
-  userId: string;
+  id: string;
   firstName: string;
   surname: string;
   email: string;
@@ -30,12 +30,13 @@ export type User = {
 };
 export type UserCreate = Pick<User, 'email' | 'firstName' | 'surname'> & {
   password: string;
+  matchingPassword: string;
 };
 
 export type ActivityRequired = Partial<Activity> & Pick<Activity, 'title' | 'startDate' | 'endDate' | 'signupStart' | 'signupEnd'>;
 
 export type Activity = {
-  activityId: string;
+  id: string;
   createdDate: string;
   title: string;
   description: string;
@@ -50,9 +51,9 @@ export type Activity = {
   image: string;
 };
 
-export type ActivityHost = Pick<User, 'firstName' | 'surname' | 'email' | 'userId'>;
+export type ActivityHost = Pick<User, 'firstName' | 'surname' | 'email' | 'id'>;
 
-export type Registration = Pick<User, 'firstName' | 'surname' | 'email' | 'userId'> & {
+export type Registration = Pick<User, 'firstName' | 'surname' | 'email' | 'id'> & {
   registrationId: string;
   createdDate: string;
 };

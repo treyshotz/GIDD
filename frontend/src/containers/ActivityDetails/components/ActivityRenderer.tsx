@@ -99,8 +99,8 @@ export type ActivityRendererProps = {
 const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
   const classes = useStyles();
   const { data: user } = useUser();
-  const { data: registration } = useActivityRegistration(data.activityId, preview || !user ? '' : user.userId);
-  const deleteRegistration = useDeleteActivityRegistration(data.activityId);
+  const { data: registration } = useActivityRegistration(data.id, preview || !user ? '' : user.id);
+  const deleteRegistration = useDeleteActivityRegistration(data.id);
   const showSnackbar = useSnackbar();
   const [viewSignup, setViewSignup] = useState(false);
   const startDate = parseISO(data.startDate);
@@ -110,7 +110,7 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
 
   const signOff = async () => {
     if (user) {
-      deleteRegistration.mutate(user.userId, {
+      deleteRegistration.mutate(user.id, {
         onSuccess: (data) => {
           showSnackbar(data.detail, 'success');
           setViewSignup(false);
@@ -207,8 +207,8 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
             swipeAreaWidth={56}>
             {user && <ActivityRegistration activity={data} user={user} />}
           </SwipeableDrawer>
-          {!preview && data.hosts.includes(user?.userId || '') && (
-            <Button component={Link} fullWidth to={`${URLS.ADMIN_ACTIVITIES}${data.activityId}/`} variant='outlined'>
+          {!preview && data.hosts.includes(user?.id || '') && (
+            <Button component={Link} fullWidth to={`${URLS.ADMIN_ACTIVITIES}${data.id}/`} variant='outlined'>
               Endre aktivitet
             </Button>
           )}

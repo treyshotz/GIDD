@@ -130,7 +130,7 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
       await createActivity.mutate(data, {
         onSuccess: (newActivity) => {
           showSnackbar('Aktiviteten ble opprettet', 'success');
-          goToActivity(newActivity.activityId);
+          goToActivity(newActivity.id);
         },
         onError: (e) => {
           showSnackbar(e.detail, 'error');

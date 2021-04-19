@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export type Item = {
-  activityId: string;
+  id: string;
   title: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } & Record<string, any>;
@@ -129,9 +129,9 @@ const SidebarList = ({ useHook, onItemClick, selectedItemId, title, idKey = 'id'
           <Pagination fullWidth hasNextPage={hasNextPage} nextPage={fetchNextPage}>
             <List className={classes.list} dense disablePadding>
               {isLoading && <ListItemLoading />}
-              {items.map((item) => (
+              {/* {items.map((item) => (
                 <ListItem item={item} key={item[idKey]} />
-              ))}
+              ))} */}
             </List>
           </Pagination>
           {!noExpired && (
@@ -143,9 +143,9 @@ const SidebarList = ({ useHook, onItemClick, selectedItemId, title, idKey = 'id'
               <Pagination fullWidth hasNextPage={hasNextExpiredPage} nextPage={fetchNextExpiredPage}>
                 <List className={classes.list} dense disablePadding>
                   {isExpiredLoading && <ListItemLoading />}
-                  {expiredItems.map((item) => (
+                  {/* {expiredItems.map((item) => (
                     <ListItem item={item} key={item[idKey]} />
-                  ))}
+                  ))} */}
                 </List>
               </Pagination>
             </>

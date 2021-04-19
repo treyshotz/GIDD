@@ -63,7 +63,7 @@ const ActivityAdmin = () => {
   };
 
   useEffect(() => {
-    if (isError || (activityId && data && !isUserLoading && (!user || !data.hosts.includes(user.userId)))) {
+    if (isError || (activityId && data && !isUserLoading && (!user || !data.hosts.includes(user.id)))) {
       // TODO: Add when backend works
       // goToActivity(null);
     }

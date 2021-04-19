@@ -39,13 +39,13 @@ export type ActivityRegistrationProps = {
 
 const ActivityRegistration = ({ activity, user }: ActivityRegistrationProps) => {
   const classes = useStyles();
-  const createRegistration = useCreateActivityRegistration(activity.activityId);
+  const createRegistration = useCreateActivityRegistration(activity.id);
   const showSnackbar = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
 
   const signUp = async () => {
     setIsLoading(true);
-    createRegistration.mutate(user.userId, {
+    createRegistration.mutate(user.id, {
       onSuccess: () => {
         showSnackbar('Påmeldingen var vellykket', 'success');
       },
