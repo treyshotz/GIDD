@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserHostControllerTest {
 
     private String getURI(User user) {
-        return "/user/" + user.getId() + "/hosts/";
+        return "/user/" + user.getId().toString() + "/hosts/";
     }
 
     @Autowired
@@ -77,7 +77,7 @@ public class UserHostControllerTest {
     @WithMockUser(value = "spring")
     @Test
     public void testUserHostGetReturnsTheWantedActivity() throws Exception {
-        this.mvc.perform(get(getURI(user)+user.getActivities().get(0).getId()+"/")
+        this.mvc.perform(get(getURI(user)+user.getActivities().get(0).getId().toString()+"/")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -95,7 +95,7 @@ public class UserHostControllerTest {
         user.setActivities(list);
         activityRepository.save(deleteActivity);
         userRepository.save(user);
-        this.mvc.perform(delete(getURI(user)+user.getActivities().get(0).getId()+"/")
+        this.mvc.perform(delete(getURI(user)+user.getActivities().get(0).getId().toString()+"/")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

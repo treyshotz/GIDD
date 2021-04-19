@@ -16,9 +16,9 @@ import java.util.List;
 @Data
 @Entity
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class User extends UUIDModel {
 
     private String firstName;

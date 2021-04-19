@@ -17,6 +17,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @Table(name="activity")
+@EqualsAndHashCode(callSuper = true)
 public class Activity extends UUIDModel {
 
     @NotNull
