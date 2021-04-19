@@ -1,10 +1,14 @@
 package com.ntnu.gidd.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ntnu.gidd.dto.UserRegistrationDto;
 import com.ntnu.gidd.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,10 +21,8 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
+import java.util.stream.Stream;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = MOCK)
@@ -39,8 +41,20 @@ public class UserControllerTest {
       @Autowired
       private UserRepository userRepository;
 
+      private String firstName;
+
+      private String surname;
+
+      private LocalDate birthDate;
+
+      /**
+       * Setting up variables that is the same for all tests
+       */
       @BeforeEach
       public void setUp(){
+            firstName = "Test";
+            surname = "Testersen";
+            birthDate = LocalDate.now();
       }
 
       /**
@@ -51,49 +65,65 @@ public class UserControllerTest {
             userRepository.deleteAll();
       }
 
+      /**
+       * Provides a stream of Valid emails to provide parameterized test
+       * @return Stream of valid emails
+       */
+      private static Stream<Arguments> provideValidEmails() {
+            return Stream.of(
+                  Arguments.of("test123@mail.com"),
+                  Arguments.of("test1.testesen@mail.com"),
+                  Arguments.of("test_1234-testesen@mail.com")
+            );
+      }
+
+      /**
+       * Provides a stream of Invalid emails to provide parameterized test
+       * @return Stream of invalid emails
+       */
+      private static Stream<Arguments> provideInvalidEmails() {
+            return Stream.of(
+                  Arguments.of("test123.no"),
+                  Arguments.of("test@"),
+                  Arguments.of("test@mail..com")
+            );
+      }
       
       /**
        * Test that you can create a user with valid input
        * @throws Exception from post request
        */
-      @WithMockUser(value = "spring")
-      @Test
-      public void testCreateUserWithValidEmail() throws Exception {
-            List<String> emails = Arrays.asList("test@mail.com", "test.testesen@mail.com", "test_123-testesen@mail.com");
-            String firstName = "tester";
-            String surname = "Testersen";
+      @ParameterizedTest
+      @MethodSource("provideValidEmails")
+      public void testCreateUserWithValidEmail(String email) throws Exception {
             String password = "Ithinkthisisvalid123";
-            LocalDate birthDate = LocalDate.now();
+            String matchingPassword = "Ithinkthisisvalid123";
 
-            for (String email : emails) {
-                  UserRegistrationDto validUser = new UserRegistrationDto(firstName, surname, password, password, email, birthDate);
+            UserRegistrationDto validUser = new UserRegistrationDto(firstName, surname, password, matchingPassword, email, birthDate);
 
-                  mockMvc.perform(post(URI)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validUser)))
-                        .andExpect(status().isOk());
-            }
+            mockMvc.perform(post(URI)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(objectMapper.writeValueAsString(validUser)))
+                  .andExpect(status().isCreated());
       }
+
       
       /**
        * Test that a user can be created, but the same email cannot be used two times
        * @throws Exception from post request
        */
-      @WithMockUser(value = "spring")
       @Test
       public void testCreateUserTwoTimesFails() throws Exception {
             String email = "test123@test.no";
-            String firstName = "tester";
-            String surname = "Testersen";
             String password = "Ithinkthisisvalid123";
-            LocalDate birthDate = LocalDate.now();
+            String matchingPassword = password;
 
-            UserRegistrationDto validUser = new UserRegistrationDto(firstName, surname, password, password, email, birthDate);
+            UserRegistrationDto validUser = new UserRegistrationDto(firstName, surname, password, matchingPassword, email, birthDate);
 
             mockMvc.perform(post(URI)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(validUser)))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated());
 
 
             mockMvc.perform(post(URI)
@@ -106,22 +136,17 @@ public class UserControllerTest {
        * Test that a user cannot be created if email is on a wrong format
        * @throws Exception
        */
-      @Test
-      public void testCreateUserWithInvalidEmail() throws Exception {
-            List<String> emails = Arrays.asList("test123.no", "test@", "test@mail..com");
-            String firstName = "tester";
-            String surname = "Testersen";
+      @ParameterizedTest
+      @MethodSource("provideInvalidEmails")
+      public void testCreateUserWithInvalidEmail(String email) throws Exception {
             String password = "Ithinkthisisvalid123";
-            LocalDate birthDate = LocalDate.now();
 
-            for (String email : emails) {
-                  UserRegistrationDto invalidUser = new UserRegistrationDto(firstName, surname, password, password, email, birthDate);
+            UserRegistrationDto invalidUser = new UserRegistrationDto(firstName, surname, password, password, email, birthDate);
 
-                  mockMvc.perform(post(URI)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidUser)))
-                        .andExpect(status().is4xxClientError());
-            }
+            mockMvc.perform(post(URI)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(objectMapper.writeValueAsString(invalidUser)))
+                  .andExpect(status().is4xxClientError());
       }
 
       /**
@@ -131,10 +156,7 @@ public class UserControllerTest {
       @Test
       public void testCreateUserWithNotMatchingPasswordFails() throws Exception {
             String email = "test123@test.no";
-            String firstName = "tester";
-            String surname = "Testersen";
             String password = "Ithinkthisisvalid123";
-            LocalDate birthDate = LocalDate.now();
       
             UserRegistrationDto invalidUser = new UserRegistrationDto(firstName, surname, password, "not the same", email, birthDate);
       

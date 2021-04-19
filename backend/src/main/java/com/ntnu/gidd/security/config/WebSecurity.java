@@ -40,6 +40,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, jwtConfig().getUri() + "/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers(HttpMethod.GET, jwtConfig().getUri() + "/refresh_token").permitAll()
                 .anyRequest()
                 .authenticated()
@@ -85,7 +86,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     }
 
     //TODO: Is this the right place to have this
-    @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }

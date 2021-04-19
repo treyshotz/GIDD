@@ -47,8 +47,8 @@ public class UserServiceImpl implements UserService {
 			throw new EmailInUseException();
 		}
 
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		User userObj = modelMapper.map(user, User.class);
+		userObj.setPassword(passwordEncoder.encode(user.getPassword()));
 		return modelMapper.map(userRepository.save(userObj), UserDto.class);
 	}
 	
