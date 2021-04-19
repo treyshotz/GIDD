@@ -6,6 +6,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.ntnu.gidd.config.PasswordEncoderConfig;
 import com.ntnu.gidd.config.JwtConfiguration;
 import com.ntnu.gidd.controller.request.LoginRequest;
+import com.ntnu.gidd.dto.UserPasswordUpdateDto;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.UserRepository;
@@ -188,6 +189,28 @@ public class AuthenticationTest {
 		mockMvc.perform(get("/api/activities/")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", token))
+				.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void testChangePasswordWithToken() throws Exception {
+		LoginRequest loginRequest = new LoginRequest(testUser.getEmail(), password);
+		String loginJson = objectMapper.writeValueAsString(loginRequest);
+		UserPasswordUpdateDto update = new UserPasswordUpdateDto(password, "newPassword", "newPassword");
+		
+		MvcResult response = mockMvc.perform(post((URI))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(loginJson))
+				.andExpect(status().isOk())
+				.andReturn();
+		
+		//TODO: This doesn't take the whole token...
+		String token = JsonPath.read(response.getResponse().getContentAsString(), "$.token");
+		assert token != null;
+		mockMvc.perform(post("/users/change-password/")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(update))
+				.header("Authorization", "Bearer " + token))
 				.andExpect(status().isOk());
 	}
 }
