@@ -3,6 +3,7 @@ package com.ntnu.gidd.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import com.ntnu.gidd.config.PasswordEncoderConfig;
 import com.ntnu.gidd.controller.request.LoginRequest;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.User;
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-@ContextConfiguration(classes = WebSecurity.class)
+@ContextConfiguration(classes = {WebSecurity.class, PasswordEncoderConfig.class})
 @ActiveProfiles("test")
 public class AuthenticationTest {
 	
