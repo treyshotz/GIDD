@@ -122,7 +122,7 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
       },
     },
     shape: {
-      borderRadius: 2,
+      borderRadius: 10,
     },
     typography: {
       h1: {

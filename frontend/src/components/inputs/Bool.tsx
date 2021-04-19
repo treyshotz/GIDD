@@ -1,4 +1,4 @@
-import { Controller, RegisterOptions, UseFormReturn } from 'react-hook-form';
+import { Controller, RegisterOptions, UseFormReturn, Control } from 'react-hook-form';
 
 // Material UI Components
 import MuiFormControlLabel, { FormControlLabelProps } from '@material-ui/core/FormControlLabel';
@@ -8,7 +8,9 @@ import MuiFormControl from '@material-ui/core/FormControl';
 import MuiFormHelperText from '@material-ui/core/FormHelperText';
 
 export type IBoolProps = Omit<FormControlLabelProps, 'control'> &
-  Pick<UseFormReturn, 'control' | 'formState'> & {
+  Pick<UseFormReturn, 'formState'> & {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    control: Control<any>;
     name: string;
     helperText?: string;
     rules?: RegisterOptions;
