@@ -1,6 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IFetch } from 'api/fetch';
-import { LoginRequestResponse, Activity, ActivityRequired, ActivityHost, PaginationResponse, RequestResponse, User, UserCreate } from 'types/Types';
+import {
+  LoginRequestResponse,
+  Activity,
+  ActivityRequired,
+  ActivityHost,
+  PaginationResponse,
+  Registration,
+  RequestResponse,
+  User,
+  UserCreate,
+} from 'types/Types';
 
 export default {
   // Auth
@@ -27,9 +37,14 @@ export default {
   deleteActivity: (id: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `activities/${id}/` }),
   getActivityHosts: (id: string) => IFetch<Array<ActivityHost>>({ method: 'GET', url: `activities/${id}/hosts/` }),
   addActivityHost: (id: string, email: string) => IFetch<Array<ActivityHost>>({ method: 'POST', url: `activities/${id}/hosts/`, data: { email } }),
+  getRegistration: (activityId: string, userId: string) => IFetch<Registration>({ method: 'GET', url: `activities/${activityId}/users/${userId}/` }),
+  getActivityRegistrations: (activityId: string) => IFetch<Array<Registration>>({ method: 'GET', url: `activities/${activityId}/users/` }),
+  createRegistration: (activityId: string, userId: string) =>
+    IFetch<Registration>({ method: 'POST', url: `activities/${activityId}/users/`, data: { userId } }),
+  deleteRegistration: (activityId: string, userId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `activities/${activityId}/users/${userId}/` }),
 
   // User
   // TODO: Change endpoint
-  getUser: () => IFetch<User>({ method: 'GET', url: `user/1/` }),
+  getUser: () => IFetch<User>({ method: 'GET', url: `user/2/` }),
   updateUser: (userName: string, item: Partial<User>) => IFetch<User>({ method: 'PUT', url: `user/${userName}/`, data: item }),
 };

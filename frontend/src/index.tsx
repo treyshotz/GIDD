@@ -24,6 +24,7 @@ import Landing from 'containers/Landing';
 const Http404 = lazy(() => import('containers/Http404'));
 const Auth = lazy(() => import('containers/Auth'));
 const Activities = lazy(() => import('containers/Activities'));
+const ActivityDetails = lazy(() => import('containers/ActivityDetails'));
 const ActivityAdmin = lazy(() => import('containers/ActivityAdmin'));
 const Profile = lazy(() => import('containers/Profile'));
 
@@ -89,6 +90,7 @@ const AppRoutes = () => {
     <Routes>
       <Route element={<Landing />} path={URLS.LANDING} />
       <Route path={URLS.ACTIVITIES}>
+        <Route element={<ActivityDetails />} path=':id/*' />
         <Route element={<Activities />} path='' />
       </Route>
       <Route element={<Auth />} path={`${URLS.LOGIN}*`} />

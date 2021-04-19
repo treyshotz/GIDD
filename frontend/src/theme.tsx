@@ -117,7 +117,7 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
         paper: get<string>({ light: '#f1f9ff', dark: '#232323' }),
       },
       colors: {
-        topbar: get<string>({ light: '#0080ff', dark: '#223243' }),
+        topbar: get<string>({ light: '#0080ff', dark: '#26292d' }),
         gradient: get<string>({ light: 'linear-gradient(to bottom,#105370d0, #26b9cc94)', dark: 'linear-gradient(to bottom,#105370d0, #26b9cc94)' }),
       },
     },

@@ -1,5 +1,8 @@
+import slugify from 'slugify';
 import { subMinutes } from 'date-fns';
 import { TrainingLevel } from 'types/Enums';
+
+export const urlEncode = (text = '') => slugify(text, { lower: true, strict: true, locale: 'nb' });
 
 // Add leading zero to numbers below 10. Ex: 2 -> 02, 12 -> 12
 const addLeadingZero = (number: number) => (number < 10 ? '0' + number : number);
@@ -40,19 +43,19 @@ export const getTimeSince = (date: Date) => {
 export const getDay = (day: number) => {
   switch (day) {
     case 0:
-      return 'Søn.';
+      return 'Søndag';
     case 1:
-      return 'Man.';
+      return 'Mandag';
     case 2:
-      return 'Tirs.';
+      return 'Tirsdag';
     case 3:
-      return 'Ons.';
+      return 'Onsdag';
     case 4:
-      return 'Tors.';
+      return 'Torsdag';
     case 5:
-      return 'Fre.';
+      return 'Fredag';
     case 6:
-      return 'Lør.';
+      return 'Lørdag';
     default:
       return day;
   }

@@ -35,12 +35,12 @@ const useStyles = makeStyles((theme) => ({
   },
   toolbar: {
     width: '100%',
-    maxWidth: theme.breakpoints.values.xl,
     margin: 'auto',
-    padding: theme.spacing(0, 1),
+    padding: theme.spacing(0, 2),
     display: 'grid',
     gridTemplateColumns: '120px 1fr auto',
     [theme.breakpoints.down('md')]: {
+      padding: theme.spacing(0, 1),
       gridTemplateColumns: '80px 1fr',
     },
   },

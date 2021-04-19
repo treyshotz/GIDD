@@ -4,6 +4,7 @@ import Divider from '@material-ui/core/Divider';
 
 // Project components
 import Logo from 'components/miscellaneous/Logo';
+import Container from 'components/layout/Container';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -37,10 +38,12 @@ const Footer = () => {
 
   return (
     <footer>
-      <Divider variant='middle' />
-      <div className={classes.content}>
-        <Logo className={classes.logo} size='large' />
-      </div>
+      <Container maxWidth='lg'>
+        <Divider variant='middle' />
+        <div className={classes.content}>
+          <Logo className={classes.logo} size='large' />
+        </div>
+      </Container>
     </footer>
   );
 };

@@ -51,3 +51,8 @@ export type Activity = {
 };
 
 export type ActivityHost = Pick<User, 'firstName' | 'surname' | 'email' | 'userId'>;
+
+export type Registration = Pick<User, 'firstName' | 'surname' | 'email' | 'userId'> & {
+  registrationId: string;
+  createdDate: string;
+};
