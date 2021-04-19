@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
@@ -65,11 +67,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void changePassword(Principal principal, UserPasswordUpdateDto user) {
 		User userObj = userRepository.findByEmail(principal.getName()).get();
+		userRepository.flush();
 		if (passwordEncoder.matches(user.getOldPassword(), userObj.getPassword())) {
 			if (user.getNewPassword().equals(user.getNewPasswordConfirmed())) {
-				userObj.setPassword(user.getNewPassword());
+				userObj.setPassword(passwordEncoder.encode(user.getNewPassword()));
 				userRepository.save(userObj);
-				userRepository.flush();
 			} else {
 				throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Passwords does not match");
 			}

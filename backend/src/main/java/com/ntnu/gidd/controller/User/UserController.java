@@ -55,7 +55,6 @@ public class UserController {
     @PostMapping("/change-password")
     @ResponseStatus(HttpStatus.OK)
     public void updatePassword(Principal principal, @RequestBody UserPasswordUpdateDto user) {
-        System.out.println("PASSORD: " + user.getNewPassword());
         userService.changePassword(principal, user);
     }
 }

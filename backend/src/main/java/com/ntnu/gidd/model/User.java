@@ -13,6 +13,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
+
 @Data
 @Entity
 @ToString(callSuper = true)
@@ -20,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class User extends UUIDModel {
-
+    
     private String firstName;
     private String surname;
     @Column(unique = true)
