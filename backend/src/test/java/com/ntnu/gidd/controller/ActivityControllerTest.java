@@ -56,7 +56,6 @@ public class ActivityControllerTest {
     @AfterEach
     public void cleanUp(){
         activityRepository.deleteAll();
-        userRepository.deleteAll();
     }
 
     @WithMockUser(value = "spring")
@@ -71,7 +70,7 @@ public class ActivityControllerTest {
     @WithMockUser(value = "spring")
     @Test
     public void testActivityControllerGetReturnsOKAndTheAuthor () throws Exception {
-        this.mvc.perform(get(URI+activity.getId()+"/").accept(MediaType.APPLICATION_JSON))
+        this.mvc.perform(get(URI+activity.getId().toString()+"/").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.title").value(activity.getTitle()))
@@ -105,7 +104,7 @@ public class ActivityControllerTest {
         assert testActivity != null;
         testActivity = activityRepository.save(testActivity);
 
-        this.mvc.perform(delete(URI + testActivity.getId() + "/")
+        this.mvc.perform(delete(URI + testActivity.getId().toString() + "/")
             .with(csrf())
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())

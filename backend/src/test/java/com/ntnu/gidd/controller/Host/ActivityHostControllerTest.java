@@ -109,7 +109,7 @@ public class ActivityHostControllerTest {
         activity.setHosts(list);
         userRepository.save(deleteUser);
         activityRepository.save(activity);
-        this.mvc.perform(delete(getURI(activity)+activity.getHosts().get(0).getId()+"/")
+        this.mvc.perform(delete(getURI(activity)+activity.getHosts().get(0).getId().toString()+"/")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
