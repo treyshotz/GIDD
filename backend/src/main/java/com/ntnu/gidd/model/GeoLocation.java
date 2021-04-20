@@ -19,7 +19,7 @@ public class GeoLocation{
     @Id
     Long id;
     @NotNull
-    private String longitude;
+    private double latitude;
     @NotNull
-    private String latitude;
+    private double longitude;
 }
