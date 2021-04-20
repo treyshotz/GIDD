@@ -69,12 +69,8 @@ public class UserServiceImpl implements UserService {
 		User userObj = userRepository.findByEmail(principal.getName()).get();
 		userRepository.flush();
 		if (passwordEncoder.matches(user.getOldPassword(), userObj.getPassword())) {
-			if (user.getNewPassword().equals(user.getNewPasswordConfirmed())) {
 				userObj.setPassword(passwordEncoder.encode(user.getNewPassword()));
 				userRepository.save(userObj);
-			} else {
-				throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Passwords does not match");
-			}
 		} else {
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Password is not correct");
 		}

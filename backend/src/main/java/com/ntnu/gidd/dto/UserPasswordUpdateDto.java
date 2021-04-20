@@ -12,6 +12,4 @@ public class UserPasswordUpdateDto {
 	private String oldPassword;
 	@NonNull
 	private String newPassword;
-	@NonNull
-	private String newPasswordConfirmed;
 }
