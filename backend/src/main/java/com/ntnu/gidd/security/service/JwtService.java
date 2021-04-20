@@ -1,9 +1,9 @@
 package com.ntnu.gidd.security.service;
 
-import com.ntnu.gidd.security.token.JwtToken;
+import com.ntnu.gidd.dto.JwtTokenResponse;
 
 public interface JwtService {
 
-    JwtToken refreshToken(String header);
+    JwtTokenResponse refreshToken(String header);
 
 }
