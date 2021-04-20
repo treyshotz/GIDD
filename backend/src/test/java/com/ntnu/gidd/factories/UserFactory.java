@@ -22,6 +22,7 @@ public class UserFactory implements FactoryBean<User> {
     @Override
     public User getObject() throws Exception {
         return User.builder()
+                .id(UUID.randomUUID())
                 .email(getRandomEmail())
                 .firstName(getRandomString(5))
                 .surname(getRandomString(5))

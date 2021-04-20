@@ -23,7 +23,6 @@ import java.util.UUID;
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 public class UUIDModel extends TimeStampedModel{
     @Id
-    @GeneratedValue
     @Column(columnDefinition = "CHAR(32)")
     private UUID id = Generators.randomBasedGenerator().generate();
 }
