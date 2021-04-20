@@ -4,12 +4,14 @@ import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.dto.UserEmailDto;
 import com.ntnu.gidd.dto.UserListDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface HostService {
-    List<ActivityListDto> getAll(UUID userId);
+    Page<ActivityListDto> getAll(Pageable pageable, UUID userId);
     ActivityDto getActivityFromUser(UUID userId, UUID activityId);
     List<UserListDto> getByActivityId(UUID id);
     List<UserListDto>  addHosts(UUID activityId, UserEmailDto users);

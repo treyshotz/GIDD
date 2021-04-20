@@ -8,6 +8,8 @@ import com.ntnu.gidd.service.ActivityService;
 import com.ntnu.gidd.util.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,8 +27,8 @@ public class ActivityController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ActivityListDto> getAll(){
-        return activityService.getActivties();
+    public Page<ActivityListDto> getAll(Pageable pageable){
+        return activityService.getActivities(pageable);
     }
     
     @GetMapping("{activityId}/")

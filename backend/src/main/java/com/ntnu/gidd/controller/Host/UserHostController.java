@@ -8,6 +8,8 @@ import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.service.Host.HostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,10 +30,10 @@ public class UserHostController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ActivityListDto> getAll(@PathVariable UUID userId){
+    public Page<ActivityListDto> getAll(Pageable pageable, @PathVariable UUID userId){
         try {
             log.debug("[X] Request to get all Activities of user with userId={}", userId);
-            return hostService.getAll(userId);
+            return hostService.getAll(pageable, userId);
         }catch (UserNotFoundException ex){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage(), ex);

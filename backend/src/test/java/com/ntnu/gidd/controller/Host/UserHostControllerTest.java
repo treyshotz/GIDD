@@ -70,7 +70,7 @@ public class UserHostControllerTest {
         this.mvc.perform(get(getURI(user)).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.[0].title").value(user.getActivities().get(0).getTitle()));
+                .andExpect(jsonPath("$.content.[0].title").value(user.getActivities().get(0).getTitle()));
     }
 
 

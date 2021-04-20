@@ -64,7 +64,7 @@ public class ActivityControllerTest {
         this.mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.[0].title").value(activity.getTitle()));
+                .andExpect(jsonPath("$.content.[0].title").value(activity.getTitle()));
     }
 
     @WithMockUser(value = "spring")

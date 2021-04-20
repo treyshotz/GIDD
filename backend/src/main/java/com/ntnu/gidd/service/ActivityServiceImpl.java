@@ -9,8 +9,11 @@ import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -56,9 +59,8 @@ public class ActivityServiceImpl implements ActivityService {
                orElseThrow(ActivityNotFoundExecption::new), ActivityDto.class);
 }
     @Override
-    public List<ActivityListDto> getActivties() {
-        return this.activityRepository.findAll().stream().map(activity->modelMapper.map(activity, ActivityListDto.class))
-                .collect(Collectors.toList());
+    public Page<ActivityListDto> getActivities(Pageable pageable) {
+        return this.activityRepository.findAll(pageable).map(s -> modelMapper.map(s, ActivityListDto.class));
     }
 
     @Override

@@ -17,6 +17,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class HostServiceImplTest {
@@ -63,9 +67,12 @@ public class HostServiceImplTest {
 
     @Test
     void testGetAllReturnAListOfActivities(){
-        assertThat(hostService.getAll(user.getId())).isInstanceOf(List.class);
-        assertThat(hostService.getAll(user.getId()).get(0).getTitle())
-                .isEqualTo(user.getActivities().get(0).getTitle());
+        PageRequest request = PageRequest.of(0,2);
+        Page<Activity> page = new PageImpl<Activity>(user.getActivities(), request, user.getActivities().size());
+        lenient().when(activityRepository.findActivitiesByHosts_Id(user.getId(), request)).thenReturn(page);
+        assertThat(hostService.getAll(request,user.getId())).isInstanceOf(Page.class);
+        assertThat(hostService.getAll(request,user.getId()).getContent().get(0).getTitle())
+                .isEqualTo(page.getContent().get(0).getTitle());
     }
 
     @Test

@@ -13,6 +13,8 @@ import com.ntnu.gidd.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,11 +36,8 @@ public class HostServiceImpl implements HostService {
     ModelMapper modelMapper = new ModelMapper();
 
     @Override
-    public List<ActivityListDto> getAll(UUID userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        return user.getActivities().stream()
-                .map(activity->modelMapper.map(activity, ActivityListDto.class))
-                .collect(Collectors.toList());
+    public Page<ActivityListDto> getAll(Pageable pageable, UUID userId) {
+        return activityRepository.findActivitiesByHosts_Id(userId, pageable).map(a-> modelMapper.map(a,ActivityListDto.class));
 
     }
 
