@@ -10,6 +10,7 @@ import java.util.UUID;
 
 
 @Data
+@ToString(of = {"jti", "isValid"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

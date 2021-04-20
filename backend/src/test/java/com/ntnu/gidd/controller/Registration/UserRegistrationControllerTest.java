@@ -1,11 +1,14 @@
 package com.ntnu.gidd.controller.Registration;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.ntnu.gidd.factories.ActivityFactory;
+import com.ntnu.gidd.factories.RegistrationFactory;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.Registration;
@@ -14,6 +17,8 @@ import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.RegistrationRepository;
 import com.ntnu.gidd.repository.UserRepository;
+import com.ntnu.gidd.security.UserDetailsImpl;
+import javax.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,8 +26,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+
 
 @SpringBootTest(webEnvironment = MOCK)
 @AutoConfigureMockMvc
@@ -48,6 +56,7 @@ public class UserRegistrationControllerTest {
   private Registration registration = new Registration();
   private Activity activity;
   private User user;
+  private UserDetailsImpl userDetails;
 
 
   @BeforeEach
@@ -67,6 +76,8 @@ public class UserRegistrationControllerTest {
     registrationId.setUserId(user.getId());
     registration.setRegistrationId(registrationId);
     registration = registrationRepository.save(registration);
+
+    userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
   }
 
   @AfterEach
@@ -77,25 +88,43 @@ public class UserRegistrationControllerTest {
   }
 
 
-  @WithMockUser(value = "spring")
   @Test
   public void testUserRegistrationControllerGetRegistrationsForUser() throws Exception {
-    this.mvc.perform(get(URI + user.getId() + "/registrations/")
+    this.mvc.perform(get(URI + "/registrations/")
+          .with(user(userDetails))
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$..user.id").value(user.getId().toString()))
-        .andExpect(jsonPath("$..activity.id").value(activity.getId().toString()));
+        .andExpect(jsonPath("$..user.email").value(user.getEmail()));
   }
 
-  @WithMockUser(value = "spring")
   @Test
   public void testUserRegistrationControllerGetRegistrationWithCompositeIdUser() throws Exception {
-    this.mvc.perform(get(URI + user.getId() + "/registrations/" + activity.getId() + "/")
+    this.mvc.perform(get(URI +  "/registrations/" + activity.getId() + "/")
+        .with(user(userDetails))
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.user.id").value(user.getId().toString()))
-        .andExpect(jsonPath("$.activity.id").value(activity.getId().toString()));
+        .andExpect(jsonPath("$.user.email").value(user.getEmail()));
   }
+
+  @Transactional
+  @Test
+  public void testRegistrationControllerDeleteRegistration() throws Exception {
+    Registration testRegistration = new RegistrationFactory().getObject();
+    userRepository.save(testRegistration.getUser());
+    activityRepository.save(testRegistration.getActivity());
+    registrationRepository.save(testRegistration);
+    UserDetailsImpl testUserDetails = UserDetailsImpl.builder().email(testRegistration.getUser().getEmail()).build();
+
+
+    this.mvc.perform(delete(URI  +  "/registrations/" + testRegistration.getActivity().getId() + "/")
+        .with(user(testUserDetails))
+        .with(csrf())
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+
+  }
+
+
 }

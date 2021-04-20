@@ -4,6 +4,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ntnu.gidd.factories.ActivityFactory;
+import com.ntnu.gidd.factories.RegistrationFactory;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.Registration;
@@ -12,6 +13,7 @@ import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.RegistrationRepository;
 import com.ntnu.gidd.repository.UserRepository;
+import javax.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -92,8 +95,7 @@ public class ActivityRegistrationControllerTest {
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$..user.id").value(user.getId().toString()))
-        .andExpect(jsonPath("$..activity.id").value(activity.getId().toString()));
+        .andExpect(jsonPath("$..user.email").value(user.getEmail()));
   }
 
 
@@ -104,36 +106,46 @@ public class ActivityRegistrationControllerTest {
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.user.id").value(user.getId().toString()))
-        .andExpect(jsonPath("$.activity.id").value(activity.getId().toString()));
+        .andExpect(jsonPath("$.user.email").value(user.getEmail()));
   }
 
 
   @WithMockUser(value = "spring")
   @Test
-  public void testAvtivityRegistrationControllerSaveReturn201Ok() throws Exception {
+  public void testActivityRegistrationControllerSaveReturn201Ok() throws Exception {
 
     User testUser = userFactory.getObject();
     Activity testActivity = activityFactory.getObject();
-    Registration testRegistration = new Registration();
-    RegistrationId testRegistrationId = new RegistrationId();
+
 
     testActivity = activityRepository.save(testActivity);
     testUser = userRepository.save(testUser);
 
-    testRegistration.setActivity(testActivity);
-    testRegistration.setUser(testUser);
-
-    testRegistrationId.setActivityId(testActivity.getId());
-    testRegistrationId.setUserId(testUser.getId());
-    testRegistration.setRegistrationId(testRegistrationId);
 
     this.mvc.perform(post(URI + "/" + testActivity.getId() + "/registrations/")
         .with(csrf())
         .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(testRegistration)))
+        .content(objectMapper.writeValueAsString(testActivity.getId()))
+        .content(objectMapper.writeValueAsString(testUser)))
         .andExpect(status().isCreated());
   }
+
+  @Transactional
+  @WithMockUser(value = "spring")
+  @Test
+  public void testRegistrationControllerDeleteRegistration() throws Exception {
+
+    Registration testRegistration = new RegistrationFactory().getObject();
+    userRepository.save(testRegistration.getUser());
+    activityRepository.save(testRegistration.getActivity());
+    registrationRepository.save(testRegistration);
+
+    this.mvc.perform(delete(URI + testRegistration.getActivity().getId() + "/registrations/" + testRegistration.getUser().getId() + "/")
+        .with(csrf())
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
+
 
 
 }

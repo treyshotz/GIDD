@@ -3,6 +3,7 @@ package com.ntnu.gidd.security.token;
 
 import com.ntnu.gidd.security.config.JWTConfig;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
@@ -36,17 +37,27 @@ public class JwtTokenFactory implements TokenFactory {
 
     @Override
     public JwtToken createRefreshToken(UserDetails userDetails) {
-        Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
+        String token = buildRefreshToken(userDetails);
+
+        Jws<Claims> claims = Jwts.parser()
+                .setSigningKey(jwtConfig.getSecret())
+                .parseClaimsJws(token);
+
+        return new JwtRefreshToken(token, claims);
+    }
+
+    private String buildRefreshToken(UserDetails userDetails) {
+        Claims claims = Jwts.claims()
+                .setSubject(userDetails.getUsername());
         claims.put("scopes", Arrays.asList(Scopes.REFRESH_TOKEN.scope()));
 
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setClaims(claims)
-                .setId(UUID.randomUUID().toString())
+                .setId(UUID.randomUUID()
+                               .toString())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getRefreshExpiration()))
                 .signWith(SignatureAlgorithm.HS512, jwtConfig.getSecret())
                 .compact();
-
-        return new JwtAccessToken(token);
     }
 }

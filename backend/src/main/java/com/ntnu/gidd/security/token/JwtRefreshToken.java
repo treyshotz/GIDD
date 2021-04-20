@@ -2,6 +2,8 @@ package com.ntnu.gidd.security.token;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,7 +16,7 @@ import java.util.UUID;
  * Implementation of {@link JwtToken} for refresh tokens.
  */
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class JwtRefreshToken implements JwtToken {
 
     private String token;

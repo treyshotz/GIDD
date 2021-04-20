@@ -8,4 +8,9 @@ public interface RefreshTokenService {
 
     RefreshToken saveRefreshToken(JwtToken token);
 
+    RefreshToken getByJti(String jti);
+
+    void invalidateSubsequentTokens(String jti);
+
+    void rotateRefreshToken(JwtRefreshToken oldRefreshToken, JwtRefreshToken newRefreshToken);
 }
