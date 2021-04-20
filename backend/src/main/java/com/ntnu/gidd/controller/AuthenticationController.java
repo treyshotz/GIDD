@@ -8,6 +8,7 @@ import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.service.JwtService;
 import com.ntnu.gidd.security.token.JwtToken;
 import com.ntnu.gidd.service.UserService;
+import com.ntnu.gidd.util.Response;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,12 +48,13 @@ public class AuthenticationController {
     
     @PostMapping("/change-password/")
     @ResponseStatus(HttpStatus.OK)
-    public void updatePassword(Principal principal, @RequestBody UserPasswordUpdateDto user) {
+    public Response updatePassword(Principal principal, @RequestBody UserPasswordUpdateDto user) {
         try {
             userService.changePassword(principal, user);
         } catch (PasswordIsIncorrectException ex) {
             log.error("[X] User {} tried to change password with incorrect current password", principal.getName() , ex);
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
         }
+        return new Response("Password was successfully changed");
     }
 }
