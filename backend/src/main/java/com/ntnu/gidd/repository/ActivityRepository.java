@@ -3,7 +3,9 @@ package com.ntnu.gidd.repository;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.GeoLocation;
 import com.ntnu.gidd.model.User;
+import com.vividsolutions.jts.geom.Polygonal;
 import org.geolatte.geom.Geometry;
+import org.geolatte.geom.Polygon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,4 +26,7 @@ public interface ActivityRepository extends JpaRepository<Activity, UUID> {
     Page<Activity> findActivitiesByHosts_Id(UUID hosts_id, Pageable pageable);
 
     List<Activity> findActivityByGeoLocationAndPosition(Geometry filter);
+
+    @Query()
+    List<Activity> findActivitiesWithin(@Param("filter") Polygonal filter);
 }

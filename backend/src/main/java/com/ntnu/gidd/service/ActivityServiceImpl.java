@@ -14,6 +14,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Polygonal;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryFactory;
 import org.geolatte.geom.Point;
 import org.geolatte.geom.PointSequence;
@@ -90,6 +91,8 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Page<ActivityListDto> findActivitiesWithinRadius(Pageable pageable, GeoLocation position, User user) {
         Point p = geometryFactory.createPoint((PointSequence) new Coordinate(position.getLatitude(), position.getLatitude()));
+        Polygonal circle = createCircle(position, user.getRadius());
+        activityRepository.findActivitiesWithin(circle);
         return null;
     }
 
