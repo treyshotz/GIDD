@@ -1,25 +1,18 @@
 package com.ntnu.gidd.controller.User;
 
 import com.ntnu.gidd.dto.UserDto;
-import com.ntnu.gidd.dto.UserPasswordUpdateDto;
 import com.ntnu.gidd.dto.UserRegistrationDto;
 import com.ntnu.gidd.exception.EmailInUseException;
-import com.ntnu.gidd.exception.InvalidJwtToken;
 import com.ntnu.gidd.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.io.InvalidClassException;
-import java.security.Principal;
 import java.util.UUID;
 
 @Slf4j

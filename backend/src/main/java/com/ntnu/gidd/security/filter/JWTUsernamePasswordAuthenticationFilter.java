@@ -2,9 +2,8 @@ package com.ntnu.gidd.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ntnu.gidd.controller.request.LoginRequest;
-import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.UserDetailsImpl;
-import com.ntnu.gidd.security.token.JwtRefreshToken;
+import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.token.JwtToken;
 import com.ntnu.gidd.security.token.JwtTokenFactory;
 import com.ntnu.gidd.security.token.TokenFactory;
