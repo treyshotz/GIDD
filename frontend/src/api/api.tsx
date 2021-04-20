@@ -2,6 +2,7 @@
 import { IFetch } from 'api/fetch';
 import { setCookie } from 'api/cookie';
 import { ACCESS_TOKEN, ACCESS_TOKEN_DURATION } from 'constant';
+import { logout } from 'hooks/User';
 import {
   LoginRequestResponse,
   Activity,
@@ -28,10 +29,15 @@ export default {
     }),
   forgotPassword: (email: string) => IFetch<RequestResponse>({ method: 'POST', url: 'auth/password/reset/', data: { email: email }, withAuth: false }),
   refreshAccessToken: () =>
-    IFetch<RefreshTokenResponse>({ method: 'GET', url: 'auth/refresh-token/', refreshAccess: true, withAuth: false, tryAgain: false }).then((tokens) => {
-      setCookie(ACCESS_TOKEN, tokens.token, ACCESS_TOKEN_DURATION);
-      return tokens;
-    }),
+    IFetch<RefreshTokenResponse>({ method: 'GET', url: 'auth/refresh-token/', refreshAccess: true, withAuth: false, tryAgain: false })
+      .then((tokens) => {
+        setCookie(ACCESS_TOKEN, tokens.token, ACCESS_TOKEN_DURATION);
+        return tokens;
+      })
+      .catch((e) => {
+        logout();
+        throw e;
+      }),
   changePassword: (oldPassword: string, newPassword: string) =>
     IFetch<RequestResponse>({ method: 'POST', url: 'auth/change-password/', data: { oldPassword, newPassword } }),
 
