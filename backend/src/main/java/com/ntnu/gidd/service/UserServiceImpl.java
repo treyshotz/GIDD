@@ -4,6 +4,7 @@ import com.ntnu.gidd.dto.UserDto;
 import com.ntnu.gidd.dto.UserPasswordUpdateDto;
 import com.ntnu.gidd.dto.UserRegistrationDto;
 import com.ntnu.gidd.exception.EmailInUseException;
+import com.ntnu.gidd.exception.PasswordIsIncorrectException;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.model.User;
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService {
 				userObj.setPassword(passwordEncoder.encode(user.getNewPassword()));
 				userRepository.save(userObj);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Password is not correct");
+			throw new PasswordIsIncorrectException();
 		}
 	}
 	
