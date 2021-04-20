@@ -33,7 +33,7 @@ export const IFetch = <T,>({ method, url, data = {}, withAuth = true, refreshAcc
     const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json') || !response.ok || response.json === undefined) {
       if (response.status === 401 && Boolean(getCookie(REFRESH_TOKEN)) && !refreshAccess && tryAgain) {
-        const tokens = await IFetch<RefreshTokenResponse>({ method: 'GET', url: 'auth/refresh-token', refreshAccess: true });
+        const tokens = await IFetch<RefreshTokenResponse>({ method: 'GET', url: 'auth/refresh-token/', refreshAccess: true });
         setCookie(ACCESS_TOKEN, tokens.token);
         return IFetch<T>({ method, url, data, withAuth, file, tryAgain: false });
       } else if (response.json) {

@@ -23,7 +23,9 @@ export default {
       withAuth: false,
     }),
   forgotPassword: (email: string) => IFetch<RequestResponse>({ method: 'POST', url: 'auth/password/reset/', data: { email: email }, withAuth: false }),
-  refreshAccessToken: () => IFetch<RequestResponse>({ method: 'GET', url: 'auth/refresh-token', refreshAccess: true, withAuth: false }),
+  changePassword: (oldPassword: string, newPassword: string) =>
+    IFetch<RequestResponse>({ method: 'POST', url: 'auth/change-password/', data: { oldPassword, newPassword } }),
+  refreshAccessToken: () => IFetch<RequestResponse>({ method: 'GET', url: 'auth/refresh-token/', refreshAccess: true, withAuth: false }),
 
   // Activity
   getActivity: (id: string) => IFetch<Activity>({ method: 'GET', url: `activities/${id}/` }),

@@ -66,3 +66,7 @@ export const useUpdateUser = (): UseMutationResult<User, RequestResponse, { user
     },
   });
 };
+
+export const useChangePassword = (): UseMutationResult<RequestResponse, RequestResponse, { oldPassword: string; newPassword: string }, unknown> => {
+  return useMutation(({ oldPassword, newPassword }) => API.changePassword(oldPassword, newPassword));
+};

@@ -80,8 +80,10 @@ export type SidebarListProps = {
 const SidebarList = ({ useHook, onItemClick, selectedItemId, title, idKey = 'id', descKey = 'location', noExpired = false }: SidebarListProps) => {
   const classes = useStyles();
   const { data, hasNextPage, fetchNextPage, isLoading } = useHook();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const items = useMemo(() => (data ? data.pages.map((page) => page.results).flat() : []), [data]);
   const { data: expiredData, hasNextPage: hasNextExpiredPage, fetchNextPage: fetchNextExpiredPage, isLoading: isExpiredLoading } = useHook({ expired: true });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const expiredItems = useMemo(() => (expiredData ? expiredData.pages.map((page) => page.results).flat() : []), [expiredData]);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -97,6 +99,7 @@ const SidebarList = ({ useHook, onItemClick, selectedItemId, title, idKey = 'id'
     setMobileOpen(false);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const ListItem = ({ item }: { item: Item }) => (
     <MuiListItem button className={classes.listItem} onClick={() => handleItemClick(item[idKey])} selected={item[idKey] === selectedItemId}>
       <ListItemText classes={{ secondary: classes.listItemSecondary }} primary={item.title} secondary={item[descKey]} />
