@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Getter
@@ -16,8 +16,8 @@ import java.util.UUID;
 public class ActivityListDto {
     private UUID id;
     private String title;
-    private LocalDateTime start_date;
-    private LocalDateTime end_date;
+    private String description;
+    private ZonedDateTime startDate;
+    private ZonedDateTime endDate;
     private boolean closed;
-
 }

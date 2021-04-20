@@ -1,6 +1,9 @@
 import { ReactElement, ReactNode, useEffect, lazy, Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import 'assets/css/index.css';
+import { useInterval } from 'hooks/Utils';
+import { getCookie } from 'api/cookie';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from 'constant';
 import { StylesProvider } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
@@ -14,7 +17,7 @@ import 'delayed-scroll-restoration-polyfill';
 // Services
 import { ThemeProvider } from 'hooks/ThemeContext';
 import { SnackbarProvider } from 'hooks/Snackbar';
-import { useUser } from 'hooks/User';
+import { useUser, useRefreshToken, useLogout } from 'hooks/User';
 
 // Project components
 import Navigation from 'components/navigation/Navigation';
@@ -80,12 +83,23 @@ export const Providers = ({ children }: ProvidersProps) => {
 
 const AppRoutes = () => {
   const location = useLocation();
+  const refreshToken = useRefreshToken();
+  const logout = useLogout();
   useEffect(() => {
     window.gtag('event', 'page_view', {
       page_location: window.location.href,
       page_path: window.location.pathname,
     });
   }, [location]);
+  useInterval(() => {
+    const access_token = getCookie(ACCESS_TOKEN);
+    const refresh_token = getCookie(REFRESH_TOKEN);
+    if (!refresh_token) {
+      logout();
+    } else if (!access_token) {
+      refreshToken.mutate(null);
+    }
+  }, 2000);
   return (
     <Routes>
       <Route element={<Landing />} path={URLS.LANDING} />

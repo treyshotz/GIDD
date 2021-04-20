@@ -1,6 +1,7 @@
-import { setCookie, getCookie } from 'api/cookie';
+import { getCookie } from 'api/cookie';
 import { API_URL, ACCESS_TOKEN, REFRESH_TOKEN } from 'constant';
-import { RequestResponse, RefreshTokenResponse } from 'types/Types';
+import { RequestResponse } from 'types/Types';
+import API from 'api/api';
 
 type RequestMethodType = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -33,15 +34,14 @@ export const IFetch = <T,>({ method, url, data = {}, withAuth = true, refreshAcc
     const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json') || !response.ok || response.json === undefined) {
       if (response.status === 401 && Boolean(getCookie(REFRESH_TOKEN)) && !refreshAccess && tryAgain) {
-        const tokens = await IFetch<RefreshTokenResponse>({ method: 'GET', url: 'auth/refresh-token/', refreshAccess: true });
-        setCookie(ACCESS_TOKEN, tokens.token);
+        await API.refreshAccessToken();
         return IFetch<T>({ method, url, data, withAuth, file, tryAgain: false });
       } else if (response.json) {
         return response.json().then((responseData: RequestResponse) => {
           throw responseData;
         });
       } else {
-        throw { detail: response.statusText } as RequestResponse;
+        throw { message: response.statusText } as RequestResponse;
       }
     }
     return response.json().then((responseData: T) => responseData);

@@ -37,10 +37,10 @@ public class ActivityServiceImpl implements ActivityService {
                 .orElseThrow(ActivityNotFoundExecption::new);
         updateActivity.setTitle(activity.getTitle());
         updateActivity.setDescription(activity.getDescription());
-        updateActivity.setStart_date(activity.getStart_date());
-        updateActivity.setEnd_date(activity.getEnd_date());
-        updateActivity.setSignup_start(activity.getSignup_start());
-        updateActivity.setSignup_end(activity.getSignup_end());
+        updateActivity.setStartDate(activity.getStartDate());
+        updateActivity.setEndDate(activity.getEndDate());
+        updateActivity.setSignupStart(activity.getSignupStart());
+        updateActivity.setSignupEnd(activity.getSignupEnd());
         updateActivity.setClosed(activity.isClosed());
         updateActivity.setCapacity(activity.getCapacity());
         if(activity.getLevel()!=null)updateActivity.setTrainingLevel(getTrainingLevel(activity.getLevel()));
@@ -67,7 +67,7 @@ public class ActivityServiceImpl implements ActivityService {
     public ActivityDto saveActivity(ActivityDto activity) {
         Activity newActivity = modelMapper.map(activity, Activity.class);
         if(activity.getLevel()!= null)newActivity.setTrainingLevel(getTrainingLevel(activity.getLevel()));
-        return modelMapper.map(newActivity, ActivityDto.class);
+        return modelMapper.map(this.activityRepository.save(newActivity), ActivityDto.class);
     }
 
     @Override

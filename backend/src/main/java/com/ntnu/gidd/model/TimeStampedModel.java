@@ -1,7 +1,7 @@
 package com.ntnu.gidd.model;
 
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +19,7 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public class TimeStampedModel {
     @CreatedDate
-    private LocalDateTime created_at;
+    private ZonedDateTime created_at;
     @LastModifiedDate
-    private LocalDateTime updated_at;
+    private ZonedDateTime updated_at;
 }

@@ -8,7 +8,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 
 // Project Components
 import Footer from 'components/navigation/Footer';
-import Topbar from 'components/navigation/Topbar';
+import Topbar, { TopbarProps } from 'components/navigation/Topbar';
 import Container from 'components/layout/Container';
 
 const useStyles = makeStyles((theme) => ({
@@ -29,11 +29,11 @@ export type NavigationProps = {
   banner?: ReactElement;
   maxWidth?: false | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   isLoading?: boolean;
-  noTransparentTopbar?: boolean;
   noFooter?: boolean;
+  topbarVariant?: TopbarProps['variant'];
 };
 
-const Navigation = ({ isLoading = false, noTransparentTopbar = false, noFooter = false, maxWidth, banner, children }: NavigationProps) => {
+const Navigation = ({ isLoading = false, noFooter = false, maxWidth, banner, children, topbarVariant = 'transparent' }: NavigationProps) => {
   const classes = useStyles();
 
   return (
@@ -41,8 +41,8 @@ const Navigation = ({ isLoading = false, noTransparentTopbar = false, noFooter =
       <Helmet>
         <title>Gidd - Det er bare å gidde</title>
       </Helmet>
-      <Topbar noTransparentTopbar={noTransparentTopbar} />
-      <main className={classnames(classes.main, noTransparentTopbar && classes.normalMain)}>
+      <Topbar variant={topbarVariant} />
+      <main className={classnames(classes.main, topbarVariant !== 'transparent' && classes.normalMain)}>
         {isLoading && <LinearProgress />}
         {banner}
         {maxWidth === false ? <>{children}</> : <Container maxWidth={maxWidth || 'xl'}>{children || <></>}</Container>}

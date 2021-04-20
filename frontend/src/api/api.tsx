@@ -1,13 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IFetch } from 'api/fetch';
+import { setCookie } from 'api/cookie';
+import { ACCESS_TOKEN, ACCESS_TOKEN_DURATION } from 'constant';
 import {
   LoginRequestResponse,
   Activity,
+  ActivityList,
   ActivityRequired,
   ActivityHost,
   PaginationResponse,
   Registration,
   RequestResponse,
+  RefreshTokenResponse,
   User,
   UserCreate,
 } from 'types/Types';
@@ -23,15 +27,19 @@ export default {
       withAuth: false,
     }),
   forgotPassword: (email: string) => IFetch<RequestResponse>({ method: 'POST', url: 'auth/password/reset/', data: { email: email }, withAuth: false }),
+  refreshAccessToken: () =>
+    IFetch<RefreshTokenResponse>({ method: 'GET', url: 'auth/refresh-token/', refreshAccess: true, withAuth: false, tryAgain: false }).then((tokens) => {
+      setCookie(ACCESS_TOKEN, tokens.token, ACCESS_TOKEN_DURATION);
+      return tokens;
+    }),
   changePassword: (oldPassword: string, newPassword: string) =>
     IFetch<RequestResponse>({ method: 'POST', url: 'auth/change-password/', data: { oldPassword, newPassword } }),
-  refreshAccessToken: () => IFetch<RequestResponse>({ method: 'GET', url: 'auth/refresh-token/', refreshAccess: true, withAuth: false }),
 
   // Activity
   getActivity: (id: string) => IFetch<Activity>({ method: 'GET', url: `activities/${id}/` }),
-  getActivities: (filters?: any) => IFetch<PaginationResponse<Activity>>({ method: 'GET', url: `activities/`, data: filters || {} }),
-  getMyParticipatingActivities: (filters?: any) => IFetch<PaginationResponse<Activity>>({ method: 'GET', url: `user/me/activities/`, data: filters || {} }),
-  getMyHostActivities: (filters?: any) => IFetch<PaginationResponse<Activity>>({ method: 'GET', url: `user/me/host-activities/`, data: filters || {} }),
+  getActivities: (filters?: any) => IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `activities/`, data: filters || {} }),
+  getMyParticipatingActivities: (filters?: any) => IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `user/me/activities/`, data: filters || {} }),
+  getMyHostActivities: (filters?: any) => IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `user/me/host-activities/`, data: filters || {} }),
   createActivity: (item: ActivityRequired) => IFetch<Activity>({ method: 'POST', url: `activities/`, data: item }),
   updateActivity: (id: string, item: ActivityRequired) => IFetch<Activity>({ method: 'PUT', url: `activities/${id}/`, data: item }),
   deleteActivity: (id: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `activities/${id}/` }),

@@ -3,7 +3,7 @@ import { useSnackbar } from 'hooks/Snackbar';
 import { useUpdateUser, useChangePassword } from 'hooks/User';
 import { User } from 'types/Types';
 import { TrainingLevel } from 'types/Enums';
-import { traningLevelToText } from 'utils';
+import { traningLevelToText, dateAsUTC } from 'utils';
 import { parseISO } from 'date-fns';
 import { useState } from 'react';
 
@@ -35,7 +35,7 @@ export type EditProfileProps = {
   user: User;
 };
 
-type UserEditData = Pick<User, 'firstName' | 'surname' | 'email' | 'traninglevel'> & {
+type UserEditData = Pick<User, 'firstName' | 'surname' | 'email' | 'level'> & {
   birthDate: Date | null;
 };
 
@@ -57,19 +57,19 @@ const EditProfile = ({ user }: EditProfileProps) => {
       firstName: user.firstName,
       surname: user.surname,
       email: user.email,
-      traninglevel: user.traninglevel,
-      birthDate: user.birthDate ? parseISO(user.birthDate.substring(0, 16)) : null,
+      level: user.level,
+      birthDate: user.birthDate ? parseISO(user.birthDate) : null,
     },
   });
   const submit = async (data: UserEditData) => {
     updateUser.mutate(
-      { userId: user.id, user: { ...data, birthDate: data.birthDate ? data.birthDate.toISOString().substring(0, 16) : null } },
+      { userId: user.id, user: { ...data, birthDate: data.birthDate ? dateAsUTC(data.birthDate).toJSON() : null } },
       {
         onSuccess: () => {
           showSnackbar('Profilen ble oppdatert', 'success');
         },
         onError: (e) => {
-          showSnackbar(e.detail, 'error');
+          showSnackbar(e.message, 'error');
         },
       },
     );
@@ -84,7 +84,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
           setOpen(false);
         },
         onError: (e) => {
-          showSnackbar(e.detail, 'error');
+          showSnackbar(e.message, 'error');
         },
       },
     );
@@ -117,7 +117,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
         />
         <DatePicker control={control} dateProps={{ disableFuture: true }} formState={formState} label='Fødselsdato' name='birthDate' type='date' />
         <Select control={control} formState={formState} label='Trenings-nivå' name='traninglevel'>
-          {Object.keys(TrainingLevel).map((value, index) => (
+          {Object.values(TrainingLevel).map((value, index) => (
             <MenuItem key={index} value={value}>
               {traningLevelToText(value as TrainingLevel)}
             </MenuItem>
@@ -128,7 +128,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
             Oppdater bruker
           </SubmitButton>
           <Button color='secondary' onClick={() => setOpen(true)} variant='outlined'>
-            Oppdater Password
+            Endre password
           </Button>
         </div>
       </form>

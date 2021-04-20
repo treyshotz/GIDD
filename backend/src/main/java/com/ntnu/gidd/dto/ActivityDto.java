@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,22 +16,21 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ActivityDto {
-    @NotNull
     private UUID id;
     @NotNull
     private String title;
     @NotNull
     private String description;
     @NotNull
-    private LocalDateTime start_date;
+    private ZonedDateTime startDate;
     @NotNull
-    private LocalDateTime end_date;
+    private ZonedDateTime endDate;
     @NotNull
-    private LocalDateTime signup_start;
+    private ZonedDateTime signupStart;
     @NotNull
-    private LocalDateTime signup_end;
-    @NotNull
+    private ZonedDateTime signupEnd;
     private boolean closed;
+    @NotNull
     private List<UserListDto> hosts;
     private TrainingLevelEnum level;
     private int capacity;
