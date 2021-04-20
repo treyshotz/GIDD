@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient, UseMutationResult } from 'react-query';
 import API from 'api/api';
 import URLS from 'URLS';
-import { User, UserCreate, LoginRequestResponse, RequestResponse } from 'types/Types';
+import { User, UserCreate, LoginRequestResponse, RequestResponse, RefreshTokenResponse } from 'types/Types';
 import { getCookie, setCookie, removeCookie } from 'api/cookie';
-import { ACCESS_TOKEN, REFRESH_TOKEN } from 'constant';
+import { ACCESS_TOKEN, REFRESH_TOKEN, ACCESS_TOKEN_DURATION, REFRESH_TOKEN_DURATION } from 'constant';
 
 export const USER_QUERY_KEY = 'user';
 export const USERS_QUERY_KEY = 'users';
@@ -24,12 +24,16 @@ export const useLogin = (): UseMutationResult<LoginRequestResponse, RequestRespo
   const queryClient = useQueryClient();
   return useMutation(({ email, password }) => API.authenticate(email, password), {
     onSuccess: (data) => {
-      setCookie(ACCESS_TOKEN, data.token, 1000 * 60 * 15);
-      setCookie(REFRESH_TOKEN, data.refreshToken);
+      setCookie(ACCESS_TOKEN, data.token, ACCESS_TOKEN_DURATION);
+      setCookie(REFRESH_TOKEN, data.refreshToken, REFRESH_TOKEN_DURATION);
       queryClient.removeQueries(USER_QUERY_KEY);
       queryClient.prefetchQuery(USER_QUERY_KEY, () => API.getUser());
     },
   });
+};
+
+export const useRefreshToken = (): UseMutationResult<RefreshTokenResponse, RequestResponse, unknown, unknown> => {
+  return useMutation(() => API.refreshAccessToken());
 };
 
 export const useForgotPassword = (): UseMutationResult<RequestResponse, RequestResponse, string, unknown> => {
@@ -47,7 +51,7 @@ export const useLogout = () => {
 };
 
 export const useIsAuthenticated = () => {
-  return typeof getCookie(ACCESS_TOKEN) !== 'undefined';
+  return typeof getCookie(REFRESH_TOKEN) !== 'undefined';
 };
 
 export const useCreateUser = (): UseMutationResult<RequestResponse, RequestResponse, UserCreate, unknown> => {
@@ -65,4 +69,8 @@ export const useUpdateUser = (): UseMutationResult<User, RequestResponse, { user
       }
     },
   });
+};
+
+export const useChangePassword = (): UseMutationResult<RequestResponse, RequestResponse, { oldPassword: string; newPassword: string }, unknown> => {
+  return useMutation(({ oldPassword, newPassword }) => API.changePassword(oldPassword, newPassword));
 };

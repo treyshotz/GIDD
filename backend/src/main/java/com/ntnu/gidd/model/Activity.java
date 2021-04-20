@@ -2,6 +2,8 @@ package com.ntnu.gidd.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.ZonedDateTime;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,13 +29,13 @@ public class Activity extends UUIDModel {
     @NotNull
     private String description;
     @NotNull
-    private LocalDateTime start_date;
+    private ZonedDateTime startDate;
     @NotNull
-    private LocalDateTime end_date;
+    private ZonedDateTime endDate;
     @NotNull
-    private LocalDateTime signup_start;
+    private ZonedDateTime signupStart;
     @NotNull
-    private LocalDateTime signup_end;
+    private ZonedDateTime signupEnd;
     @NotNull
     private boolean closed;
     @OneToOne

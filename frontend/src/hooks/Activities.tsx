@@ -1,6 +1,6 @@
 import { useMutation, useInfiniteQuery, useQuery, useQueryClient, UseMutationResult } from 'react-query';
 import API from 'api/api';
-import { Activity, ActivityRequired, ActivityHost, PaginationResponse, Registration, RequestResponse } from 'types/Types';
+import { Activity, ActivityList, ActivityRequired, ActivityHost, PaginationResponse, Registration, RequestResponse } from 'types/Types';
 
 export const ACTIVITIES_QUERY_KEY = 'activities';
 export const ACTIVITIES_QUERY_KEY_REGISTRATION = 'activity_registrations';
@@ -11,9 +11,9 @@ export const useActivityById = (id: string) => {
 };
 
 export const useActivities = () => {
-  return useInfiniteQuery<PaginationResponse<Activity>, RequestResponse>(
+  return useInfiniteQuery<PaginationResponse<ActivityList>, RequestResponse>(
     [ACTIVITIES_QUERY_KEY],
-    ({ pageParam = 1 }) => API.getActivities({ page: pageParam }),
+    ({ pageParam = 0 }) => API.getActivities({ page: pageParam }),
     {
       getNextPageParam: (lastPage) => lastPage.next,
     },
@@ -21,9 +21,9 @@ export const useActivities = () => {
 };
 
 export const useMyParticipatingActivities = () => {
-  return useInfiniteQuery<PaginationResponse<Activity>, RequestResponse>(
+  return useInfiniteQuery<PaginationResponse<ActivityList>, RequestResponse>(
     [ACTIVITIES_QUERY_KEY],
-    ({ pageParam = 1 }) => API.getMyParticipatingActivities({ page: pageParam }),
+    ({ pageParam = 0 }) => API.getMyParticipatingActivities({ page: pageParam }),
     {
       getNextPageParam: (lastPage) => lastPage.next,
     },
@@ -31,9 +31,9 @@ export const useMyParticipatingActivities = () => {
 };
 
 export const useMyHostActivities = () => {
-  return useInfiniteQuery<PaginationResponse<Activity>, RequestResponse>(
+  return useInfiniteQuery<PaginationResponse<ActivityList>, RequestResponse>(
     [ACTIVITIES_QUERY_KEY],
-    ({ pageParam = 1 }) => API.getMyHostActivities({ page: pageParam }),
+    ({ pageParam = 0 }) => API.getMyHostActivities({ page: pageParam }),
     {
       getNextPageParam: (lastPage) => lastPage.next,
     },

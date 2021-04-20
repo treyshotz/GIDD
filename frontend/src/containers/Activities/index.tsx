@@ -1,6 +1,6 @@
-//import { Fragment, useMemo } from 'react';
+import { useMemo } from 'react';
 import Helmet from 'react-helmet';
-//import { useActivities } from 'hooks/Activities';
+import { useActivities } from 'hooks/Activities';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,18 +8,15 @@ import Typography from '@material-ui/core/Typography';
 
 // Project Components
 import Navigation from 'components/navigation/Navigation';
-//import Pagination from 'components/layout/Pagination';
-//import Paper from 'components/layout/Paper';
-//import NotFoundIndicator from 'components/miscellaneous/NotFoundIndicator';
-// import ActivityCard from 'components/layout/ActivityCard';
+import Pagination from 'components/layout/Pagination';
+import Paper from 'components/layout/Paper';
+import NotFoundIndicator from 'components/miscellaneous/NotFoundIndicator';
+import ActivityCard from 'components/layout/ActivityCard';
 
 import MasonryGrid from 'components/layout/MasonryGrid';
 import SearchBar from 'components/inputs/SearchBar';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    paddingBottom: theme.spacing(2),
-  },
   list: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr 1fr',
@@ -40,29 +37,31 @@ const useStyles = makeStyles((theme) => ({
   },
   newActivities: {},
   title: {
-    height: 150,
     textAlign: 'left',
+    paddingBottom: theme.spacing(2),
   },
   wrapper: {
-    marginTop: '100px',
+    marginTop: theme.spacing(5),
     textAlign: 'center',
   },
   searchWrapper: {
     display: 'flex',
-    maxWidth: '70%',
+    width: '90%',
+    maxWidth: 600,
     maxHeight: '60px',
-    margin: 'auto',
+    margin: theme.spacing(2, 'auto'),
     gap: theme.spacing(1),
   },
 }));
 
 const Activities = () => {
   const classes = useStyles();
-  //const { data, error, hasNextPage, fetchNextPage, isFetching } = useActivities();
-  //const isEmpty = useMemo(() => (data !== undefined ? !data.pages.some((page) => Boolean(page.results.length)) : false), [data]);
+  const { data, error, hasNextPage, fetchNextPage, isFetching } = useActivities();
+  const activities = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
+  const isEmpty = useMemo(() => !activities.length, [activities]);
 
   return (
-    <Navigation>
+    <Navigation topbarVariant='dynamic'>
       <Helmet>
         <title>Aktiviteter</title>
       </Helmet>
@@ -70,44 +69,29 @@ const Activities = () => {
         <div className={classes.searchWrapper}>
           <SearchBar />
         </div>
-        <div className={classes.suggestedActivities}>
+        {/* <div className={classes.suggestedActivities}>
           <MasonryGrid>
             <div className={classes.title}>
               <Typography variant='h1'>Aktiviteter nær deg</Typography>
             </div>
-            {/*<ActivityCard /> */}
+            <ActivityCard />
           </MasonryGrid>
-        </div>
+        </div> */}
         <div className={classes.newActivities}>
-          <MasonryGrid>
-            <div className={classes.title}>
-              <Typography variant='h1'>Nye Aktiviteter</Typography>
-            </div>
-            {/*<ActivityCard /> */}
-          </MasonryGrid>
+          <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
+            <MasonryGrid>
+              <div className={classes.title}>
+                <Typography variant='h1'>Nye Aktiviteter</Typography>
+              </div>
+              {isEmpty && <NotFoundIndicator header='Fant ingen aktiviteter' />}
+              {error && <Paper>{error.message}</Paper>}
+              {activities.map((activity) => (
+                <ActivityCard activity={activity} key={activity.id} />
+              ))}
+            </MasonryGrid>
+          </Pagination>
         </div>
       </div>
-      {/*<div className={classes.root}>
-         {isLoading && <ListItemLoading />} 
-        {isEmpty && <NotFoundIndicator header='Fant ingen aktiviteter' />}
-        {error && <Paper>{error.detail}</Paper>}
-        {data !== undefined && (
-          <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
-            <div className={classes.list}>
-              {data.pages.map((page, i) => (
-                <Fragment key={i}>
-                  {page.results.map((newsItem, j) => (
-                    <Typography key={j} variant='h2'>
-                      - {newsItem.title}
-                    </Typography>
-                  ))}
-                </Fragment>
-              ))}
-            </div>
-          </Pagination>
-        )}
-        { {isFetching && <ListItemLoading />} }
-      </div>*/}
     </Navigation>
   );
 };

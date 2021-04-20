@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function SearchBar() {
-  type FormValues = Pick<Activity, 'title' | 'description' | 'endDate' | 'location' | 'startDate' | 'signupStart' | 'signupEnd' | 'capacity'>;
+  type FormValues = Pick<Activity, 'title' | 'description' | 'endDate' | 'startDate' | 'signupStart' | 'signupEnd' | 'capacity'>;
 
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
