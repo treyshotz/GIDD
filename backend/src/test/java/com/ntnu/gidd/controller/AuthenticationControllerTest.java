@@ -3,6 +3,7 @@ package com.ntnu.gidd.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ntnu.gidd.controller.request.LoginRequest;
+import com.ntnu.gidd.dto.UserPasswordUpdateDto;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.RefreshToken;
 import com.ntnu.gidd.model.User;
@@ -41,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 class AuthenticationControllerTest {
-
+	
     private static final String URI = "/auth/";
     private static final String password = "password123";
 
@@ -197,5 +198,66 @@ class AuthenticationControllerTest {
         assertThat(oldRefreshToken.isValid()).isFalse();
         assertThat(newRefreshToken.isValid()).isFalse();
     }
-
+	
+	/**
+	 * Verifies that you can change password if you have the correct token
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testChangePasswordWithToken() throws Exception {
+		LoginRequest loginRequest = new LoginRequest(user.getEmail(), "newPassword");
+		String loginJson = objectMapper.writeValueAsString(loginRequest);
+		UserPasswordUpdateDto update = new UserPasswordUpdateDto(password, "newPassword");
+		
+		
+		mvc.perform(post("/auth/change-password/")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(update))
+				.header(jwtConfig.getHeader(), jwtConfig.getPrefix() + rawAccessToken))
+				.andExpect(status().isOk());
+		
+		mvc.perform(post(URI + "login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(loginJson))
+				.andExpect(status().isOk());
+	}
+	
+	/**
+	 * Verifies that you cannot change password without a valid token
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testChangePasswordWithoutTokenFails() throws Exception {
+		UserPasswordUpdateDto update = new UserPasswordUpdateDto(password, "newPassword");
+		mvc.perform(post("/auth/change-password/")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header(jwtConfig.getHeader(), jwtConfig.getPrefix() + rawRefreshToken))
+				.andExpect(status().isBadRequest());
+	}
+	
+	/**
+	 * Tests that you cannot change the password if you submit wrong current password
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void testChangePasswordWithWrongOldPasswordFails() throws Exception {
+		LoginRequest loginRequest = new LoginRequest(user.getEmail(), "newPassword");
+		String loginJson = objectMapper.writeValueAsString(loginRequest);
+		UserPasswordUpdateDto update = new UserPasswordUpdateDto("newPassword", "newPassword");
+		
+		
+		mvc.perform(post("/auth/change-password/")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(update))
+				.header(jwtConfig.getHeader(), jwtConfig.getPrefix() + rawRefreshToken))
+				.andExpect(status().isNotAcceptable());
+		
+		mvc.perform(post(URI + "login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(loginJson))
+				.andExpect(status().isUnauthorized());
+	}
 }
