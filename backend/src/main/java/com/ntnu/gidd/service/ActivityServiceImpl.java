@@ -66,6 +66,8 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public ActivityDto saveActivity(ActivityDto activity) {
         Activity newActivity = modelMapper.map(activity, Activity.class);
+        newActivity.setId(UUID.randomUUID());
+        newActivity.setHosts(List.of());
         if(activity.getLevel()!= null)newActivity.setTrainingLevel(getTrainingLevel(activity.getLevel()));
         return modelMapper.map(this.activityRepository.save(newActivity), ActivityDto.class);
     }
