@@ -15,6 +15,7 @@
     <description>IDATT2106_2021_2</description>
     <properties>
         <java.version>11</java.version>
+        <querydsl.version>4.4.0</querydsl.version>
     </properties>
     <dependencies>
 
@@ -90,7 +91,6 @@
             <version>2.4.4</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
@@ -108,8 +108,14 @@
             <artifactId>java-uuid-generator</artifactId>
             <version>3.1.4</version>
         </dependency>
-    </dependencies>
 
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-sql-spatial</artifactId>
+            <version>${querydsl.version}</version>
+        </dependency>
+
+    </dependencies>
     <build>
         <plugins>
             <plugin>
