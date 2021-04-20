@@ -17,7 +17,7 @@ import 'delayed-scroll-restoration-polyfill';
 // Services
 import { ThemeProvider } from 'hooks/ThemeContext';
 import { SnackbarProvider } from 'hooks/Snackbar';
-import { useUser, useRefreshToken, useLogout } from 'hooks/User';
+import { useUser, useRefreshToken } from 'hooks/User';
 
 // Project components
 import Navigation from 'components/navigation/Navigation';
@@ -84,7 +84,6 @@ export const Providers = ({ children }: ProvidersProps) => {
 const AppRoutes = () => {
   const location = useLocation();
   const refreshToken = useRefreshToken();
-  const logout = useLogout();
   useEffect(() => {
     window.gtag('event', 'page_view', {
       page_location: window.location.href,
@@ -94,9 +93,7 @@ const AppRoutes = () => {
   useInterval(() => {
     const access_token = getCookie(ACCESS_TOKEN);
     const refresh_token = getCookie(REFRESH_TOKEN);
-    if (!refresh_token) {
-      logout();
-    } else if (!access_token) {
+    if (!access_token && Boolean(refresh_token)) {
       refreshToken.mutate(null);
     }
   }, 2000);
