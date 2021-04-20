@@ -10,6 +10,7 @@ import com.fasterxml.uuid.Generators;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 public class UUIDModel extends TimeStampedModel{
     @Id
+    @GeneratedValue
     @Column(columnDefinition = "CHAR(32)")
     private UUID id = Generators.randomBasedGenerator().generate();
 }

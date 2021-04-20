@@ -191,26 +191,4 @@ public class AuthenticationTest {
 				.header("Authorization", token))
 				.andExpect(status().isOk());
 	}
-	
-	@Test
-	public void testChangePasswordWithToken() throws Exception {
-		LoginRequest loginRequest = new LoginRequest(testUser.getEmail(), password);
-		String loginJson = objectMapper.writeValueAsString(loginRequest);
-		UserPasswordUpdateDto update = new UserPasswordUpdateDto(password, "newPassword", "newPassword");
-		
-		MvcResult response = mockMvc.perform(post((URI))
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(loginJson))
-				.andExpect(status().isOk())
-				.andReturn();
-		
-		//TODO: This doesn't take the whole token...
-		String token = JsonPath.read(response.getResponse().getContentAsString(), "$.token");
-		assert token != null;
-		mockMvc.perform(post("/users/change-password/")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(update))
-				.header("Authorization", "Bearer " + token))
-				.andExpect(status().isOk());
-	}
 }

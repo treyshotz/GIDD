@@ -54,8 +54,8 @@ public class UserHostControllerTest {
         user = userFactory.getObject();
         assert user != null;
         user.setActivities(List.of(Objects.requireNonNull(activityFactory.getObject())));
+        user = userRepository.saveAndFlush(user);
         activityRepository.saveAll(user.getActivities());
-        user = userRepository.save(user);
     }
 
     @AfterEach

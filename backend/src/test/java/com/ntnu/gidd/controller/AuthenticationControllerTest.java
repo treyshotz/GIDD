@@ -3,6 +3,7 @@ package com.ntnu.gidd.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ntnu.gidd.controller.request.LoginRequest;
+import com.ntnu.gidd.dto.UserPasswordUpdateDto;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.UserRepository;
@@ -105,5 +106,20 @@ class AuthenticationControllerTest {
                                         .header(jwtConfig.getHeader(), jwtConfig.getPrefix() + accessToken))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+    
+    
+    @Test
+    public void testChangePasswordWithToken() throws Exception {
+        LoginRequest loginRequest = new LoginRequest(user.getEmail(), password);
+        String loginJson = objectMapper.writeValueAsString(loginRequest);
+        UserPasswordUpdateDto update = new UserPasswordUpdateDto(password, "newPassword", "newPassword");
+        
+        
+        mvc.perform(post("/auth/change-password/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(update))
+                .header(jwtConfig.getHeader(), jwtConfig.getPrefix() + refreshToken))
+                .andExpect(status().isOk());
     }
 }

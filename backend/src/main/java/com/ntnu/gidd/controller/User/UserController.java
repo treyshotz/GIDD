@@ -51,10 +51,4 @@ public class UserController {
                   HttpStatus.FORBIDDEN, exception.getMessage(), exception);
         }
     }
-    
-    @PostMapping("/change-password")
-    @ResponseStatus(HttpStatus.OK)
-    public void updatePassword(Principal principal, @RequestBody UserPasswordUpdateDto user) {
-        userService.changePassword(principal, user);
-    }
 }

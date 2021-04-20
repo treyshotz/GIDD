@@ -45,8 +45,8 @@ public class UserServiceImpl implements UserService {
 		return modelMapper.map(user, UserDto.class);
 	}
 	@Override
-		Optional<User> user = userRepository.findByEmail(email);
 	public UserDto getUserByEmail(String email) {
+		Optional<User> user = userRepository.findByEmail(email);
 		return user.map(value -> modelMapper.map(value, UserDto.class)).orElse(null);
 	}
 	private boolean emailExist(String email) {
