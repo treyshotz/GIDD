@@ -27,4 +27,5 @@ public class UserDto {
 	private String email;
 	private LocalDate birthDate;
 	private TrainingLevelEnum level;
+	private int radius;
 }

@@ -44,7 +44,6 @@ public class Activity extends UUIDModel {
     uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
     private List<User> hosts;
     private int capacity;
-
     @OneToOne
     @JoinColumn(name = "geo_locaiton_id", referencedColumnName = "id")
     private GeoLocation geoLocation;

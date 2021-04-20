@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -13,8 +14,10 @@ import javax.validation.constraints.NotNull;
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
-public class GeoLocation extends UUIDModel{
+public class GeoLocation{
 
+    @Id
+    Long id;
     @NotNull
     private String longitude;
     @NotNull
