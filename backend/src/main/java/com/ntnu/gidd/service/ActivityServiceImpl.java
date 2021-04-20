@@ -3,13 +3,17 @@ import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.model.Activity;
+import com.ntnu.gidd.model.GeoLocation;
 import com.ntnu.gidd.model.TrainingLevel;
+import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
+import com.ntnu.gidd.service.geolocation.GeoLocationService;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,6 +34,9 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     private TrainingLevelRepository trainingLevelRepository;
+
+    @Autowired
+    private GeoLocationService geoLocationService;
 
     @Override
     public ActivityDto updateActivity(UUID activityId, ActivityDto activity) {
@@ -66,13 +73,19 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public ActivityDto saveActivity(ActivityDto activity) {
         Activity newActivity = modelMapper.map(activity, Activity.class);
-        if(activity.getLevel()!= null) newActivity.setTrainingLevel(getTrainingLevel(activity.getLevel()));
+        if (activity.getLevel()!= null) newActivity.setTrainingLevel(getTrainingLevel(activity.getLevel()));
+        if (activity.getGeoLocation() != null) newActivity.setGeoLocation(activity.getGeoLocation());
         return modelMapper.map(newActivity, ActivityDto.class);
     }
 
     @Override
     public void deleteActivity(UUID id){
         this.activityRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<ActivityListDto> findActivitiesWithinRadius(Pageable pageable, GeoLocation position, User user) {
+        return null;
     }
 }
 

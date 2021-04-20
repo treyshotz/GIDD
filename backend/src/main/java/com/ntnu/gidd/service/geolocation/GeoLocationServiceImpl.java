@@ -42,4 +42,16 @@ public class GeoLocationServiceImpl implements GeoLocationService {
                 sin_latitude * sin_latitude + Math.cos(startLatRad) * Math.cos(endLatRad) * sin_longitude * sin_longitude
         )));
     }
+
+    @Override
+    public GeoLocation findGeolocation(GeoLocation geoLocation) {
+        return geoLocationRepository.findById(geoLocation.getId()).
+                orElseThrow();
+    }
+
+    @Override
+    public GeoLocation findGeolocationByPosition(double latitude, double longitude){
+        return geoLocationRepository.findGeoLocationByLatitudeAndLongitude(latitude, longitude)
+                .orElseThrow();
+    }
 }
