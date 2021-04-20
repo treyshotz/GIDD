@@ -21,10 +21,10 @@ import lombok.*;
 @EqualsAndHashCode
 public class RegistrationId implements Serializable {
 
-  @Column(name = "user_id")
+  @Column(name = "user_id", columnDefinition = "CHAR(32)")
   private UUID userId;
 
-  @Column(name="activity_id")
+  @Column(name = "activity_id", columnDefinition = "CHAR(32)")
   private UUID activityId;
 }
 
