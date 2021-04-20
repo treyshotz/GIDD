@@ -1,6 +1,6 @@
 package com.ntnu.gidd.service;
 
-import com.ntnu.gidd.model.Registration;
+import com.ntnu.gidd.dto.RegistrationDto;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,15 +10,21 @@ import org.springframework.stereotype.Service;
 @Service
 public interface RegistrationService {
 
-  Registration saveRegistration(Registration registration);
+  RegistrationDto saveRegistration(UUID user_id, UUID activity_id);
 
-  List<Registration> getRegistrationForActivity(UUID activity_id);
+  List<RegistrationDto> getRegistrationForActivity(UUID activity_id);
 
-  List<Registration> getRegistrationsForUser(UUID user_id);
+  List<RegistrationDto> getRegistrationsForUser(UUID user_id);
 
-  Registration getRegistrationWithRegistrationId(RegistrationId id);
+  List<RegistrationDto> getRegistrationWithUsername(String username);
 
-  Registration getRegistrationWithCompositeId(UUID user_id, UUID activity_id);
+  RegistrationDto getRegistrationWithRegistrationId(RegistrationId id);
+
+  RegistrationDto getRegistrationWithCompositeId(UUID user_id, UUID activity_id);
+
+  RegistrationDto getRegistrationWithUsernameAndActivityId(String username, UUID activity_id);
 
   void deleteRegistrationWithCompositeId(UUID user_id, UUID activity_id);
+
+  void deleteRegistrationWithUsernameAndActivityId(String username, UUID activity_id);
 }

@@ -1,11 +1,10 @@
 package com.ntnu.gidd.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * Registration is a class for the registration of a user to a activity
@@ -18,6 +17,8 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
+@AllArgsConstructor
+@EqualsAndHashCode
 @Table(name="registration")
 public class Registration extends TimeStampedModel{
 
