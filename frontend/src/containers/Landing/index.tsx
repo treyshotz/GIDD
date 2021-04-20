@@ -1,4 +1,7 @@
 import Helmet from 'react-helmet';
+import { Link } from 'react-router-dom';
+import URLS from 'URLS';
+import { useIsAuthenticated } from 'hooks/User';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
   },
   img: {
+    color: theme.palette.common.white,
     background: `${theme.palette.colors.gradient}, url(${image}) center center/cover no-repeat scroll`,
     height: '100vh',
     width: '100%',
@@ -41,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Landing = () => {
   const classes = useStyles();
+  const isAuthenticated = useIsAuthenticated();
 
   return (
     <Navigation maxWidth={false}>
@@ -51,12 +56,20 @@ const Landing = () => {
         <Typography align='center' className={classes.header} color='inherit' gutterBottom variant='h2'>
           Gidd
         </Typography>
-        <Typography align='center' variant='body1'>
+        <Typography align='center' color='inherit' variant='body1'>
           Det er bare å gidde
         </Typography>
         <div className={classes.btnGroup}>
-          <Button variant='outlined'>Logg inn</Button>
-          <Button variant='outlined'>Registrer deg</Button>
+          {!isAuthenticated && (
+            <>
+              <Button component={Link} to={URLS.LOGIN} variant='outlined'>
+                Logg inn
+              </Button>
+              <Button component={Link} to={URLS.SIGNUP} variant='outlined'>
+                Registrer deg
+              </Button>
+            </>
+          )}
         </div>
       </div>
       <Container className={classes.activityContainer}>

@@ -50,7 +50,7 @@ const SignUp = () => {
           navigate(URLS.LANDING);
         },
         onError: (e) => {
-          setError('password', { message: e.detail || 'Noe gikk galt' });
+          setError('password', { message: e.message || 'Noe gikk galt' });
         },
       },
     );
@@ -106,7 +106,7 @@ const SignUp = () => {
           {...register('repeatPassword', {
             required: 'Feltet er påkrevd',
             validate: {
-              emailEqual: (value) => value === getValues().password || 'Passordene er ikke like',
+              passordEqual: (value) => value === getValues().password || 'Passordene er ikke like',
             },
           })}
           required

@@ -5,7 +5,7 @@ import com.ntnu.gidd.model.User;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Random;
 import java.util.UUID;
 

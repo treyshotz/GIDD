@@ -48,7 +48,7 @@ const LogIn = () => {
           navigate(URLS.LANDING);
         },
         onError: (e) => {
-          setError('password', { message: e.detail || 'Noe gikk galt' });
+          setError('password', { message: e.message || 'Noe gikk galt' });
         },
       },
     );

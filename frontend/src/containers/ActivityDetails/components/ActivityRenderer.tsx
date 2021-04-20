@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     wordWrap: 'break-word',
   },
   description: {
-    wordWrap: 'break-word',
+    whiteSpace: 'break-spaces',
   },
   applyButton: {
     height: 50,
@@ -112,11 +112,11 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
     if (user) {
       deleteRegistration.mutate(user.id, {
         onSuccess: (data) => {
-          showSnackbar(data.detail, 'success');
+          showSnackbar(data.message, 'success');
           setViewSignup(false);
         },
         onError: (e) => {
-          showSnackbar(e.detail, 'error');
+          showSnackbar(e.message, 'error');
         },
       });
     }
@@ -191,7 +191,6 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
             </Typography>
             <Typography>{`Fra: ${formatDate(startDate)}`}</Typography>
             <Typography>{`Til: ${formatDate(endDate)}`}</Typography>
-            <Typography>{`Sted: ${data.location}`}</Typography>
             <Typography>{`Start: ${formatDate(signupStart)}`}</Typography>
             <Typography>{`Slutt: ${formatDate(signupEnd)}`}</Typography>
             <Typography>{`Påmeldte: 0/${data.capacity}`}</Typography>

@@ -3,7 +3,7 @@ package com.ntnu.gidd.factories;
 import com.ntnu.gidd.model.Activity;
 import org.springframework.beans.factory.FactoryBean;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static com.ntnu.gidd.utils.StringRandomizer.getRandomString;
@@ -19,10 +19,10 @@ public class ActivityFactory implements FactoryBean<Activity> {
                 .id(UUID.randomUUID())
                 .title(getRandomString(5))
                 .description(getRandomString(10))
-                .start_date(LocalDateTime.now())
-                .end_date(LocalDateTime.now())
-                .signup_start(LocalDateTime.now())
-                .signup_end(LocalDateTime.now())
+                .startDate(ZonedDateTime.now())
+                .endDate(ZonedDateTime.now())
+                .signupStart(ZonedDateTime.now())
+                .signupEnd(ZonedDateTime.now())
                 .closed(false)
                 .capacity(random.nextInt(1000))
                 .trainingLevel(trainingLevelFactory.getObject())

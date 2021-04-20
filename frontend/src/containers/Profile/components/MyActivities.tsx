@@ -19,18 +19,18 @@ const useStyles = makeStyles((theme) => ({
 const MyActivities = () => {
   const classes = useStyles();
   const { data, error, hasNextPage, fetchNextPage, isFetching } = useMyParticipatingActivities();
-  const isEmpty = useMemo(() => (data !== undefined ? !data.pages.some((page) => Boolean(page.results.length)) : false), [data]);
+  const isEmpty = useMemo(() => (data !== undefined ? !data.pages.some((page) => Boolean(page.content.length)) : false), [data]);
 
   return (
     <>
       {isEmpty && <NotFoundIndicator header='Fant ingen kommende aktiviteter' />}
-      {error && error.detail}
+      {error && error.message}
       {data !== undefined && (
         <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
           <div className={classes.list}>
             {data.pages.map((page, i) => (
               <Fragment key={i}>
-                {page.results.map((activity) => (
+                {page.content.map((activity) => (
                   <Typography key={activity.id} variant='h2'>
                     - {activity.title}
                   </Typography>

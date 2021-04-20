@@ -51,7 +51,7 @@ const ActivityHosts = ({ activityId }: ActivityHostsProps) => {
         reset();
       },
       onError: (e) => {
-        showSnackbar(e.detail, 'error');
+        showSnackbar(e.message, 'error');
       },
     });
   };
