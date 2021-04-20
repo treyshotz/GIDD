@@ -1,5 +1,7 @@
 package com.ntnu.gidd.service;
 
+import com.ntnu.gidd.dto.RegistrationDto;
+import com.ntnu.gidd.dto.UserDto;
 import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.factories.RegistrationFactory;
 import com.ntnu.gidd.factories.UserFactory;
@@ -37,6 +39,12 @@ public class RegistrationServiceImplTest {
     @Mock
     private RegistrationRepository registrationRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private ActivityRepository activityRepository;
+
     private Registration registration;
     private Registration registration2;
     private List<Registration> registrationsExpected;
@@ -50,10 +58,25 @@ public class RegistrationServiceImplTest {
         assert registration != null;
         assert registration2 != null;
 
+        when(userRepository.save(registration.getUser())).thenReturn(registration.getUser());
+        when(userRepository.save(registration2.getUser())).thenReturn(registration2.getUser());
+        userRepository.save(registration.getUser());
+        userRepository.save(registration2.getUser());
+
+        when(activityRepository.save(registration.getActivity())).thenReturn(registration.getActivity());
+        when(activityRepository.save(registration2.getActivity())).thenReturn(registration2.getActivity());
+        activityRepository.save(registration.getActivity());
+        activityRepository.save(registration2.getActivity());
+
+        when(userRepository.findById(registration.getUser().getId())).thenReturn(Optional.ofNullable(registration.getUser()));
+        when(userRepository.findById(registration2.getUser().getId())).thenReturn(Optional.ofNullable(registration2.getUser()));
+        when(activityRepository.findById(registration.getActivity().getId())).thenReturn(Optional.ofNullable(registration.getActivity()));
+        when(activityRepository.findById(registration2.getActivity().getId())).thenReturn(Optional.ofNullable(registration2.getActivity()));
+
         when(registrationRepository.save(registration)).thenReturn(registration);
         when(registrationRepository.save(registration2)).thenReturn(registration2);
-        registrationService.saveRegistration(registration);
-        registrationService.saveRegistration(registration2);
+        registrationService.saveRegistration(registration.getUser().getId(), registration.getActivity().getId());
+        registrationService.saveRegistration(registration2.getUser().getId(), registration2.getActivity().getId());
     }
 
     @AfterEach
@@ -66,10 +89,10 @@ public class RegistrationServiceImplTest {
     void testRegistrationServiceImplGetRegistrationForActivityReturnsRegistration(){
         registrationsExpected = List.of(registration);
         when(registrationRepository.findRegistrationsByActivity_Id(registration.getActivity().getId())).thenReturn(Optional.of(registrationsExpected));
-        List<Registration> registrationsFound = registrationService.getRegistrationForActivity(registration.getActivity().getId());
+        List<RegistrationDto> registrationsFound = registrationService.getRegistrationForActivity(registration.getActivity().getId());
 
         for (int i = 0; i < registrationsFound.size(); i++) {
-            assertThat(registrationsFound.get(i).getRegistrationId()).isEqualTo(registrationsExpected.get(i).getRegistrationId());
+            assertThat(registrationsFound.get(i).getUser().getEmail()).isEqualTo(registrationsExpected.get(i).getUser().getEmail());
             assertThat(registrationsFound.get(i)).isNotNull();
         }
     }
@@ -77,21 +100,49 @@ public class RegistrationServiceImplTest {
     @Test
     void testRegistrationServiceImplGetRegistrationForUserReturnsRegistration(){
         registrationsExpected = List.of(registration, registration2);
-        when(registrationRepository.findRegistrationsByUser_Id(registration.getUser().getId())).thenReturn(Optional.of(registrationsExpected));
-        List<Registration> registrationsFound = registrationService.getRegistrationsForUser(registration.getUser().getId());
+        when(registrationRepository.findRegistrationsByUser_Id(registration.getUser().getId())).thenReturn(Optional.ofNullable(registrationsExpected));
+        when(userRepository.findByEmail(registration.getUser().getEmail())).thenReturn(Optional.of(registration.getUser()));
+        List<RegistrationDto> registrationsFound = registrationService.getRegistrationWithUsername(registration.getUser().getEmail());
 
         for (int i = 0; i < registrationsExpected.size(); i++) {
-            assertThat(registrationsFound.get(i).getRegistrationId()).isEqualTo(registrationsExpected.get(i).getRegistrationId());
+            assertThat(registrationsFound.get(i).getUser().getEmail()).isEqualTo(registrationsExpected.get(i).getUser().getEmail());
             assertThat(registrationsFound.get(i)).isNotNull();
         }
     }
-    
+
+    @Test
+    void testRegistrationServiceImplGetRegistrationWithUsernameReturnsRegistration(){
+        registrationsExpected = List.of(registration, registration2);
+        when(registrationRepository.findRegistrationsByUser_Id(registration.getUser().getId())).thenReturn(Optional.of(registrationsExpected));
+        when(userRepository.findByEmail(registration.getUser().getEmail())).thenReturn(Optional.ofNullable(registration.getUser()));
+        List<RegistrationDto> registrationsFound = registrationService.getRegistrationWithUsername(registration.getUser().getEmail());
+
+        for (int i = 0; i < registrationsExpected.size(); i++) {
+            assertThat(registrationsFound.get(i).getUser().getEmail()).isEqualTo(registrationsExpected.get(i).getUser().getEmail());
+            assertThat(registrationsFound.get(i)).isNotNull();
+        }
+    }
+
+    @Test
+    void testGetRegistrationWithUsernameAndActivityId(){
+        lenient().when(registrationRepository
+                .findRegistrationByUser_IdAndActivity_Id(registration.getUser().getId(), registration.getActivity().getId()))
+                .thenReturn(Optional.ofNullable(registration));
+        when(userRepository.findByEmail(registration.getUser().getEmail())).thenReturn(Optional.ofNullable(registration.getUser()));
+
+        RegistrationDto registrationFound = registrationService.getRegistrationWithUsernameAndActivityId(registration.getUser().getEmail(), registration.getActivity().getId());
+
+        assertThat(registrationFound.getUser().getEmail()).isEqualTo(registration.getUser().getEmail());
+        assertThat(registrationFound).isNotNull();
+
+    }
+
     @Test
     void testRegistrationServiceImplGetRegistrationWithRegistrationId(){
         when(registrationRepository.findById(registration.getRegistrationId())).thenReturn(Optional.ofNullable(registration));
-        Registration registrationFound = registrationService.getRegistrationWithRegistrationId(registration.getRegistrationId());
+        RegistrationDto registrationFound = registrationService.getRegistrationWithRegistrationId(registration.getRegistrationId());
 
-        assertThat(registrationFound.getRegistrationId()).isEqualTo(registration.getRegistrationId());
+        assertThat(registrationFound.getUser().getEmail()).isEqualTo(registration.getUser().getEmail());
         assertThat(registrationFound).isNotNull();
     }
 
@@ -108,7 +159,25 @@ public class RegistrationServiceImplTest {
         List<Registration> registrationsFound = registrationRepository.findAll();
 
         for (int i = 0; i < registrationsExpected.size(); i++){
-            assertThat(registrationsFound.get(i).getRegistrationId()).isEqualTo(registrationsExpected.get(i).getRegistrationId());
+            assertThat(registrationsFound.get(i).getUser().getEmail()).isEqualTo(registrationsExpected.get(i).getUser().getEmail());
+        }
+    }
+
+    @Test
+    void testRegistrationServiceImplDeleteRegistrationWithUsernameAndActivityId(){
+        registrationsExpected = List.of(registration2);
+
+        lenient().when(registrationRepository.findRegistrationByUser_IdAndActivity_Id(registration.getUser().getId(), registration.getActivity().getId())).thenReturn(Optional.ofNullable(registration));
+        when(userRepository.findByEmail(registration.getUser().getEmail())).thenReturn(Optional.ofNullable(registration.getUser()));
+        doNothing().when(registrationRepository).deleteRegistrationsByUser_IdAndActivity_Id(registration.getUser().getId(), registration.getActivity().getId());
+
+        registrationService.deleteRegistrationWithUsernameAndActivityId(registration.getUser().getEmail(), registration.getActivity().getId());
+
+        when(registrationRepository.findAll()).thenReturn(registrationsExpected);
+        List<Registration> registrationsFound = registrationRepository.findAll();
+
+        for (int i = 0; i < registrationsExpected.size(); i++){
+            assertThat(registrationsFound.get(i).getUser().getEmail()).isEqualTo(registrationsExpected.get(i).getUser().getEmail());
         }
     }
 }

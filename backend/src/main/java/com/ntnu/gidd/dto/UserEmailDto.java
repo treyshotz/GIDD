@@ -1,6 +1,7 @@
 package com.ntnu.gidd.dto;
 
 
+import java.util.UUID;
 import lombok.*;
 
 @Getter
@@ -10,4 +11,5 @@ import lombok.*;
 @Builder
 public class UserEmailDto {
     private String email;
+    private UUID id;
 }

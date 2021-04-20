@@ -1,10 +1,7 @@
 package com.ntnu.gidd.dto;
 
 import com.ntnu.gidd.util.TrainingLevelEnum;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -15,6 +12,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserDto {
 	@NotNull
 	private UUID id;
