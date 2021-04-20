@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -28,7 +28,7 @@ public class UserFactory implements FactoryBean<User> {
                 .surname(getRandomString(5))
                 .password(encoder.encode(getRandomString(10)))
                 .birthDate(LocalDate.now())
-                .created_at(LocalDateTime.now())
+                .created_at(ZonedDateTime.now())
                 .build();
     }
 

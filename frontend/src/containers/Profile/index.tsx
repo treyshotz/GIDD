@@ -23,7 +23,7 @@ import Paper from 'components/layout/Paper';
 import Tabs from 'components/layout/Tabs';
 import Http404 from 'containers/Http404';
 import EditProfile from 'containers/Profile/components/EditProfile';
-import MyActivities from 'containers/Profile/components/MyActivities';
+// import MyActivities from 'containers/Profile/components/MyActivities';
 
 const BG_IMAGE = 'https://img.mensxp.com/media/content/2020/Apr/Himalayas-Visible-From-Saharanpur-Is-A-Sight-To-Behold1400_5eaaa0a43fb97.jpeg';
 
@@ -108,9 +108,7 @@ const Profile = () => {
         <div className={classes.grid}>
           <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
           <Paper className={classes.grid}>
-            <Collapse in={tab === activitiesTab.value}>
-              <MyActivities />
-            </Collapse>
+            <Collapse in={tab === activitiesTab.value}>{/* <MyActivities /> */}</Collapse>
             <Collapse in={tab === editTab.value} mountOnEnter>
               <EditProfile user={user} />
             </Collapse>

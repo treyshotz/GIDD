@@ -50,7 +50,7 @@ const ActivityRegistration = ({ activity, user }: ActivityRegistrationProps) => 
         showSnackbar('Påmeldingen var vellykket', 'success');
       },
       onError: (e) => {
-        showSnackbar(e.detail, 'error');
+        showSnackbar(e.message, 'error');
       },
       onSettled: () => {
         setIsLoading(false);

@@ -1,7 +1,7 @@
 import { TrainingLevel } from 'types/Enums';
 
 export type RequestResponse = {
-  detail: string;
+  message: string;
 };
 
 export type LoginRequestResponse = {
@@ -14,10 +14,14 @@ export type RefreshTokenResponse = {
 };
 
 export type PaginationResponse<T> = {
-  count: number;
+  totalElements: number;
+  totalPages: number;
+  number: number;
   next: number | null;
   previous: number | null;
-  results: Array<T>;
+  content: Array<T>;
+  empty: boolean;
+  last: boolean;
 };
 
 export type User = {
@@ -26,7 +30,7 @@ export type User = {
   surname: string;
   email: string;
   birthDate: string | null;
-  traninglevel: TrainingLevel;
+  level: TrainingLevel;
 };
 export type UserCreate = Pick<User, 'email' | 'firstName' | 'surname'> & {
   password: string;
@@ -42,7 +46,7 @@ export type Activity = {
   description: string;
   closed: boolean;
   capacity: number;
-  location: string;
+  level: TrainingLevel;
   startDate: string;
   endDate: string;
   signupStart: string;
@@ -50,6 +54,8 @@ export type Activity = {
   hosts: Array<string>;
   image: string;
 };
+
+export type ActivityList = Pick<Activity, 'id' | 'title' | 'closed' | 'startDate' | 'endDate' | 'level' | 'description'>;
 
 export type ActivityHost = Pick<User, 'firstName' | 'surname' | 'email' | 'id'>;
 

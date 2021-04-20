@@ -58,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
     width: 'fit-content',
   },
   right: {
+    color: theme.palette.common.white,
     display: 'grid',
     gap: theme.spacing(1),
     gridTemplateColumns: '35px auto',
@@ -77,7 +78,10 @@ const useStyles = makeStyles((theme) => ({
   topbarItem: {
     height: 35,
     margin: 'auto 0',
-    color: theme.palette.common.white,
+    color: 'inherit',
+  },
+  reverseColor: {
+    color: theme.palette.get<string>({ light: theme.palette.common.black, dark: theme.palette.common.white }),
   },
 }));
 
@@ -104,10 +108,10 @@ const TopBarItem = ({ text, to }: TopBarItemProps) => {
 };
 
 export type TopbarProps = {
-  noTransparentTopbar?: boolean;
+  variant: 'transparent' | 'dynamic' | 'filled';
 };
 
-const Topbar = ({ noTransparentTopbar }: TopbarProps) => {
+const Topbar = ({ variant }: TopbarProps) => {
   const isAuthenticated = useIsAuthenticated();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const classes = useStyles();
@@ -118,7 +122,7 @@ const Topbar = ({ noTransparentTopbar }: TopbarProps) => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (!noTransparentTopbar) {
+    if (variant !== 'filled') {
       window.addEventListener('scroll', handleScroll, { passive: true });
       return () => window.removeEventListener('scroll', handleScroll);
     }
@@ -136,7 +140,7 @@ const Topbar = ({ noTransparentTopbar }: TopbarProps) => {
 
   return (
     <AppBar
-      className={classnames(classes.appBar, !noTransparentTopbar && scrollLength < 20 && !sidebarOpen && classes.transparentAppBar)}
+      className={classnames(classes.appBar, variant !== 'filled' && scrollLength < 20 && !sidebarOpen && classes.transparentAppBar)}
       color='primary'
       elevation={0}
       position='fixed'>
@@ -146,13 +150,13 @@ const Topbar = ({ noTransparentTopbar }: TopbarProps) => {
             <Logo className={classes.logo} size='large' />
           </Link>
           <Hidden mdDown>
-            <div className={classes.items}>
+            <div className={classnames(classes.items, variant === 'dynamic' && scrollLength < 20 && classes.reverseColor)}>
               {items.map((item, i) => (
                 <TopBarItem key={i} {...item} />
               ))}
             </div>
           </Hidden>
-          <div className={classes.right}>
+          <div className={classnames(classes.right, variant === 'dynamic' && scrollLength < 20 && classes.reverseColor)}>
             <Hidden mdDown>
               <ThemeSettings className={classes.topbarItem} />
               {isAuthenticated ? (

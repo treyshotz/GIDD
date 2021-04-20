@@ -1,8 +1,10 @@
 package com.ntnu.gidd.service;
 
 import com.ntnu.gidd.dto.UserDto;
+import com.ntnu.gidd.dto.UserPasswordUpdateDto;
 import com.ntnu.gidd.dto.UserRegistrationDto;
 import com.ntnu.gidd.exception.EmailInUseException;
+import com.ntnu.gidd.exception.PasswordIsIncorrectException;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.model.User;
@@ -13,9 +15,16 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
+import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 import java.util.UUID;
 
@@ -23,10 +32,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
-
+	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
-
+	
 	private ModelMapper modelMapper = new ModelMapper();
 	
 	@Autowired
@@ -37,20 +46,32 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 		return modelMapper.map(user, UserDto.class);
 	}
-
+	
 	private boolean emailExist(String email) {
 		return userRepository.findByEmail(email).isPresent();
 	}
 	
 	@Override
 	public UserDto saveUser(UserRegistrationDto user) {
-		if(emailExist(user.getEmail())){
+		if (emailExist(user.getEmail())) {
 			throw new EmailInUseException();
 		}
-
+		
 		User userObj = modelMapper.map(user, User.class);
 		userObj.setPassword(passwordEncoder.encode(user.getPassword()));
 		return modelMapper.map(userRepository.save(userObj), UserDto.class);
+	}
+	
+	@Override
+	public void changePassword(Principal principal, UserPasswordUpdateDto user) {
+		User userObj = userRepository.findByEmail(principal.getName()).orElseThrow(UserNotFoundException::new);
+		userRepository.flush();
+		if (passwordEncoder.matches(user.getOldPassword(), userObj.getPassword())) {
+				userObj.setPassword(passwordEncoder.encode(user.getNewPassword()));
+				userRepository.save(userObj);
+		} else {
+			throw new PasswordIsIncorrectException();
+		}
 	}
 	
 	@Override

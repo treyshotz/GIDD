@@ -3,6 +3,8 @@ import URLS from 'URLS';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from 'hooks/User';
 import { useActivities, useActivityById } from 'hooks/Activities';
+import { formatDate } from 'utils';
+import { parseISO } from 'date-fns';
 
 // Material-UI
 import { makeStyles, Theme } from '@material-ui/core/styles';
@@ -64,7 +66,6 @@ const ActivityAdmin = () => {
 
   useEffect(() => {
     if (isError || (activityId && data && !isUserLoading && (!user || !data.hosts.includes(user.id)))) {
-      // TODO: Add when backend works
       // goToActivity(null);
     }
   }, [isError, data, user, isUserLoading, activityId]);
@@ -72,8 +73,17 @@ const ActivityAdmin = () => {
   useEffect(() => setTab(editTab.value), [activityId]);
 
   return (
-    <Navigation maxWidth={false} noFooter noTransparentTopbar>
-      <SidebarList onItemClick={(id: string | null) => goToActivity(id || null)} selectedItemId={activityId} title='Aktiviteter' useHook={useActivities} />
+    <Navigation maxWidth={false} noFooter topbarVariant='filled'>
+      <SidebarList
+        descKey='startDate'
+        formatDesc={(date: string) => formatDate(parseISO(date))}
+        idKey='id'
+        onItemClick={(id: string | null) => goToActivity(id || null)}
+        selectedItemId={activityId}
+        title='Aktiviteter'
+        titleKey='title'
+        useHook={useActivities}
+      />
       <div className={classes.root}>
         <div className={classes.content}>
           <Typography className={classes.header} variant='h2'>

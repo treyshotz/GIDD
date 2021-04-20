@@ -26,6 +26,8 @@ const DatePicker = ({ type, name, label, control, formState, rules = {}, default
         <Picker
           {...field}
           {...dateProps}
+          ampm={false}
+          inputFormat={type === 'date' ? 'dd/MM/yyyy' : 'dd/MM/yyyy HH:mm'}
           label={label}
           renderInput={(params) => (
             <MuiTextField

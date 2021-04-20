@@ -38,7 +38,7 @@ const ActivityDetails = () => {
   }
 
   return (
-    <Navigation noTransparentTopbar>
+    <Navigation topbarVariant='dynamic'>
       {data && (
         <Helmet>
           <title>{data.title} - GIDD</title>
