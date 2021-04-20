@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -45,11 +46,7 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 		return modelMapper.map(user, UserDto.class);
 	}
-	@Override
-	public UserDto getUserByEmail(String email) {
-		Optional<User> user = userRepository.findByEmail(email);
-		return user.map(value -> modelMapper.map(value, UserDto.class)).orElse(null);
-	}
+	
 	private boolean emailExist(String email) {
 		return userRepository.findByEmail(email).isPresent();
 	}
@@ -67,7 +64,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public void changePassword(Principal principal, UserPasswordUpdateDto user) {
-		User userObj = userRepository.findByEmail(principal.getName()).get();
+		User userObj = userRepository.findByEmail(principal.getName()).orElseThrow(UserNotFoundException::new);
 		userRepository.flush();
 		if (passwordEncoder.matches(user.getOldPassword(), userObj.getPassword())) {
 				userObj.setPassword(passwordEncoder.encode(user.getNewPassword()));
