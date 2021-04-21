@@ -1,5 +1,6 @@
 package com.ntnu.gidd.dto;
 
+import com.ntnu.gidd.model.GeoLocation;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,4 +35,5 @@ public class ActivityDto {
     private List<UserListDto> hosts;
     private TrainingLevelEnum level;
     private int capacity;
+    private GeoLocation geoLocation;
 }

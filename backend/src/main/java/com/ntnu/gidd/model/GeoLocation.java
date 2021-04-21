@@ -3,6 +3,7 @@ package com.ntnu.gidd.model;
 import lombok.*;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -11,8 +12,10 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class GeoLocation extends UUIDModel{
+public class GeoLocation {
 
+    @Id
+    Long id;
     @NotNull
     private String longitude;
     @NotNull
