@@ -6,6 +6,7 @@ import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.UserRepository;
+import com.ntnu.gidd.security.UserDetailsImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,10 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -27,6 +30,7 @@ import java.util.Objects;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -36,10 +40,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserHostControllerTest {
 
 
+    private String URI = "/users/me/hosts/";
     private String getURI(User user) {
         return "/user/" + user.getId().toString() + "/hosts/";
     }
-
     @Autowired
     private MockMvc mvc;
 
@@ -74,7 +78,8 @@ public class UserHostControllerTest {
     @WithMockUser(value = "spring")
     @Test
     public void testUserHostControllerGetAllReturnsListOActivities() throws Exception {
-        this.mvc.perform(get(getURI(user)).accept(MediaType.APPLICATION_JSON))
+        UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
+        this.mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON).with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content.length()").value(user.getActivities().size()))
@@ -86,9 +91,9 @@ public class UserHostControllerTest {
     @WithMockUser(value = "spring")
     @Test
     public void testUserHostGetReturnsTheWantedActivity() throws Exception {
-
-        this.mvc.perform(get(getURI(user)+user.getActivities().get(0).getId().toString()+"/")
-                .with(csrf())
+        UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
+        this.mvc.perform(get(URI+user.getActivities().get(0).getId().toString()+"/")
+                .with(user(userDetails))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(user.getActivities().get(0).getTitle()));
@@ -98,6 +103,7 @@ public class UserHostControllerTest {
     @WithMockUser(value = "spring")
     @Test
     public void testUserHostControllerDeletesHostAndReturnsUpdatedList() throws Exception {
+        UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
         ArrayList<Activity> list = new ArrayList<>(user.getActivities());
         Activity deleteActivity = activityFactory.getObject();
         assert deleteActivity != null;
@@ -106,8 +112,8 @@ public class UserHostControllerTest {
         activityRepository.save(deleteActivity);
         userRepository.save(user);
         assert user.getActivities().size() == list.size();
-        this.mvc.perform(delete(getURI(user)+deleteActivity.getId().toString()+"/")
-                .with(csrf())
+        this.mvc.perform(delete(URI+deleteActivity.getId().toString()+"/")
+                .with(user(userDetails))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(list.size()-1));
@@ -117,12 +123,14 @@ public class UserHostControllerTest {
     @WithMockUser(value = "spring")
     @Test
     public void testFilterActivitiesOnWantedFieldsForTitle() throws Exception {
+        UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
         String expectedActivity = user.getActivities()
                 .get(0)
                 .getTitle();
 
-        this.mvc.perform(get(getURI(user)).accept(MediaType.APPLICATION_JSON)
-                .param("title", expectedActivity))
+        this.mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON)
+                .param("title", expectedActivity)
+                .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content.length()").value(1))
@@ -132,6 +140,7 @@ public class UserHostControllerTest {
     @Test
     @WithMockUser
     public void testFilterActivitiesPartialTitleReturnsCorrectResults() throws Exception {
+        UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
         String TITLE = "Long testing string that does not mean anything";
         Activity expectedActivity = user.getActivities()
                 .get(0);
@@ -140,9 +149,10 @@ public class UserHostControllerTest {
         user = userRepository.save(user);
 
 
-        mvc.perform(get(getURI(user))
+        mvc.perform(get(URI)
                 .accept(MediaType.APPLICATION_JSON)
-                .param("title", TITLE.substring(0, TITLE.length() - 1)))
+                .param("title", TITLE.substring(0, TITLE.length() - 1))
+                .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(1))
                 .andExpect(jsonPath("$.content.[0].title").value(expectedActivity
@@ -153,7 +163,7 @@ public class UserHostControllerTest {
     @Test
     @WithMockUser
     public void testFilterActivitiesByStartDateBetweenReturnActivitiesStartingInRange() throws Exception {
-
+        UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
         Activity priorActivity = user.getActivities()
                 .get(1);
         priorActivity
@@ -166,15 +176,13 @@ public class UserHostControllerTest {
         Activity latterActivity = user.getActivities()
                 .get(0);
 
-        mvc.perform(get(getURI(user)).accept(MediaType.APPLICATION_JSON)
+        mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON)
                 .param("startDateAfter", String.valueOf(latterActivity.getStartDate().minusHours(1)))
-                .param("startDateBefore", String.valueOf(latterActivity.getStartDate().plusHours(1))))
+                .param("startDateBefore", String.valueOf(latterActivity.getStartDate().plusHours(1)))
+                .with(user(userDetails)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(1))
                 .andExpect(jsonPath("$.content.[0].title").value(latterActivity
                                                                          .getTitle()));
     }
-
-
-
 }

@@ -46,12 +46,28 @@ public class HostServiceImpl implements HostService {
         return activityRepository.findAll(predicate, pageable).map(a-> modelMapper.map(a,ActivityListDto.class));
 
     }
-
+    
+    @Override
+    public Page<ActivityListDto> getAllByEmail(Predicate predicate, Pageable pageable, String email) {
+        QActivity activity = QActivity.activity;
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        predicate = ExpressionUtils.allOf(predicate, activity.hosts.any().id.eq(user.getId()));
+        return activityRepository.findAll(predicate, pageable).map(a -> modelMapper.map(a, ActivityListDto.class));
+    }
+    
     @Override
     public ActivityDto getActivityFromUser(UUID userId, UUID activityId) {
         return modelMapper.map(activityRepository.findActivityByIdAndHosts_Id(activityId, userId)
                 .orElseThrow(ActivityNotFoundExecption::new), ActivityDto.class);
 
+    }
+    
+    @Override
+    public ActivityDto getActivityFromUserByEmail(String email, UUID activityId) {
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        return modelMapper.map(activityRepository.findActivityByIdAndHosts_Id(activityId, user.getId())
+                .orElseThrow(ActivityNotFoundExecption::new), ActivityDto.class);
+        
     }
 
     @Override
@@ -97,5 +113,16 @@ public class HostServiceImpl implements HostService {
        return userRepository.save(user).getActivities().stream()
                .map(a -> modelMapper.map(a, ActivityListDto.class))
                .collect(Collectors.toList());
+    }
+    
+    @Override
+    public List<ActivityListDto> deleteHostfromUserByEmail(UUID activityId, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        ArrayList<Activity> list = new ArrayList<>(user.getActivities());
+        list.remove(activityRepository.findById(activityId).orElseThrow(ActivityNotFoundExecption::new));
+        user.setActivities(list);
+        return userRepository.save(user).getActivities().stream()
+                .map(a -> modelMapper.map(a, ActivityListDto.class))
+                .collect(Collectors.toList());
     }
 }
