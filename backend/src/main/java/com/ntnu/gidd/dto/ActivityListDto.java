@@ -19,5 +19,6 @@ public class ActivityListDto {
     private String description;
     private ZonedDateTime startDate;
     private ZonedDateTime endDate;
+    private UserListDto creator;
     private boolean closed;
 }

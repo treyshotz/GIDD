@@ -2,17 +2,18 @@ package com.ntnu.gidd.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.time.ZonedDateTime;
+
+import java.time.ZonedDateTime ;
 import java.util.List;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.util.List;
+
+import com.querydsl.core.annotations.PropertyType;
+import com.querydsl.core.annotations.QueryType;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Getter
@@ -28,18 +29,21 @@ public class Activity extends UUIDModel {
     @NotNull
     private String description;
     @NotNull
-    private ZonedDateTime startDate;
+    private ZonedDateTime  startDate;
     @NotNull
-    private ZonedDateTime endDate;
+    private ZonedDateTime  endDate;
     @NotNull
-    private ZonedDateTime signupStart;
+    private ZonedDateTime  signupStart;
     @NotNull
-    private ZonedDateTime signupEnd;
+    private ZonedDateTime  signupEnd;
     @NotNull
     private boolean closed;
     @OneToOne
     @JoinColumn(name = "traning_level_id", referencedColumnName = "id")
     private TrainingLevel trainingLevel;
+    @OneToOne
+    @JoinColumn(name = "creator_id", referencedColumnName = "id")
+    private User creator;
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id" ),
@@ -54,4 +58,15 @@ public class Activity extends UUIDModel {
             user.getActivities().remove(this);
         }
     }
+
+    @Transient
+    @QueryType(PropertyType.DATETIME)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private ZonedDateTime  startDateBefore;
+
+    @Transient
+    @QueryType(PropertyType.DATETIME)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private ZonedDateTime  startDateAfter;
+
 }

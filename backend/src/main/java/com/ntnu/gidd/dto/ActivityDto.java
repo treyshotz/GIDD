@@ -29,6 +29,8 @@ public class ActivityDto {
     private ZonedDateTime signupStart;
     @NotNull
     private ZonedDateTime signupEnd;
+    @NotNull
+    private UserListDto creator;
     private boolean closed;
     @NotNull
     private List<UserListDto> hosts;
