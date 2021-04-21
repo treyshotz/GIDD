@@ -136,6 +136,7 @@ public class ActivityRegistrationControllerTest {
   public void testRegistrationControllerDeleteRegistration() throws Exception {
 
     Registration testRegistration = new RegistrationFactory().getObject();
+    assert testRegistration != null;
     userRepository.save(testRegistration.getUser());
     activityRepository.save(testRegistration.getActivity());
     registrationRepository.save(testRegistration);

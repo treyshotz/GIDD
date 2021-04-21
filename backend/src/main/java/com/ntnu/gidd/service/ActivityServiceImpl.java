@@ -3,10 +3,13 @@ package com.ntnu.gidd.service;
 import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
+import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.TrainingLevel;
+import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
+import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -29,6 +32,9 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     private TrainingLevelRepository trainingLevelRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     public ActivityDto updateActivity(UUID activityId, ActivityDto activity) {
@@ -63,9 +69,11 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public ActivityDto saveActivity(ActivityDto activity) {
+    public ActivityDto saveActivity(ActivityDto activity, String creatorEmail) {
         Activity newActivity = modelMapper.map(activity, Activity.class);
+        User user = userRepository.findByEmail(creatorEmail).orElseThrow(UserNotFoundException::new);
         newActivity.setId(UUID.randomUUID());
+        newActivity.setCreator(user);
         newActivity.setHosts(List.of());
         if(activity.getLevel()!= null)newActivity.setTrainingLevel(getTrainingLevel(activity.getLevel()));
         return modelMapper.map(this.activityRepository.save(newActivity), ActivityDto.class);

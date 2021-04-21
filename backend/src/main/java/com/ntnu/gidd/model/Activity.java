@@ -41,6 +41,9 @@ public class Activity extends UUIDModel {
     @OneToOne
     @JoinColumn(name = "traning_level_id", referencedColumnName = "id")
     private TrainingLevel trainingLevel;
+    @OneToOne
+    @JoinColumn(name = "creator_id", referencedColumnName = "id")
+    private User creator;
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id" ),

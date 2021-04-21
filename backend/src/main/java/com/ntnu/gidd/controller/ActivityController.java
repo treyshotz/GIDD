@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -56,8 +58,9 @@ public class ActivityController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ActivityDto postActivity(@RequestBody ActivityDto activity){
-        return activityService.saveActivity(activity);
+    public ActivityDto postActivity(Authentication authentication, @RequestBody ActivityDto activity){
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return activityService.saveActivity(activity, userDetails.getUsername());
     }
 
     @DeleteMapping("/{activityId}/")

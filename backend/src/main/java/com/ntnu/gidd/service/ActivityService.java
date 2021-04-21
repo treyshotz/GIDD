@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface ActivityService {
     ActivityDto updateActivity(UUID id, ActivityDto activity);
     ActivityDto getActivityById(UUID id);
-    ActivityDto saveActivity(ActivityDto activity);
+    ActivityDto saveActivity(ActivityDto activity, String creatorEmail);
     void deleteActivity(UUID id);
     Page<ActivityListDto> getActivities(Pageable pageable);
 

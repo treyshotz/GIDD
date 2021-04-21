@@ -2,14 +2,18 @@ package com.ntnu.gidd.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ntnu.gidd.factories.ActivityFactory;
+import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.Activity;
+import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.UserRepository;
+import com.ntnu.gidd.security.UserDetailsImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,6 +21,8 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+
+import java.util.Objects;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -34,9 +40,11 @@ public class ActivityControllerTest {
     private MockMvc mvc;
 
     private ActivityFactory activityFactory = new ActivityFactory();
-
+    private UserFactory userFactory = new UserFactory();
     @Autowired
     private ActivityRepository  activityRepository;
+
+
 
     @Autowired
     private UserRepository userRepository;
@@ -86,12 +94,18 @@ public class ActivityControllerTest {
     public void testActivityControllerSaveReturn201ok() throws Exception {
 
         Activity testActivity = activityFactory.getObject();
-
-        this.mvc.perform(post(URI)
-            .with(csrf())
+        User user = userFactory.getObject();
+        assert user !=null;
+        userRepository.save(user);
+        UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
+        assert testActivity != null;
+        this.mvc.perform(post(URI).with(user(userDetails))
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(testActivity)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.title").value(testActivity.getTitle()))
+            .andExpect(jsonPath("$.creator.firstName").value(user.getFirstName()))
+            .andExpect(jsonPath("$.hosts").isArray());
 
     }
 
@@ -107,7 +121,9 @@ public class ActivityControllerTest {
         this.mvc.perform(delete(URI + testActivity.getId().toString() + "/")
             .with(csrf())
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk());
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.message").value("Activity has been deleted"));
 
     }
 
