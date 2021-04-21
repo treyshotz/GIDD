@@ -3,10 +3,8 @@ package com.ntnu.gidd.service.token;
 import com.ntnu.gidd.exception.RefreshTokenNotFound;
 import com.ntnu.gidd.model.RefreshToken;
 import com.ntnu.gidd.repository.RefreshTokenRepository;
-import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.token.JwtRefreshToken;
 import com.ntnu.gidd.security.token.JwtToken;
-import com.ntnu.gidd.security.token.RawJwtAccessToken;
 import com.ntnu.gidd.util.JwtUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.UUID;
 
 /**

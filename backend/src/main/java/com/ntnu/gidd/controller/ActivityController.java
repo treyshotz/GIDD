@@ -3,7 +3,6 @@ package com.ntnu.gidd.controller;
 import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
-import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.service.ActivityService;
 import com.ntnu.gidd.util.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j

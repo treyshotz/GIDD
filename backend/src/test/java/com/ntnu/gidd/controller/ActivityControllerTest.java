@@ -107,7 +107,6 @@ public class ActivityControllerTest {
         this.mvc.perform(delete(URI + testActivity.getId().toString() + "/")
             .with(csrf())
             .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
             .andExpect(status().isOk());
 
     }

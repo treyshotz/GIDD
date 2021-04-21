@@ -3,26 +3,16 @@ package com.ntnu.gidd.controller.Registration;
 import com.ntnu.gidd.dto.RegistrationDto;
 import com.ntnu.gidd.dto.UserEmailDto;
 import com.ntnu.gidd.exception.RegistrationNotFoundException;
-import com.ntnu.gidd.model.Registration;
-import com.ntnu.gidd.model.User;
-import java.util.List;
-import java.util.UUID;
-
-import com.ntnu.gidd.model.RegistrationId;
+import com.ntnu.gidd.service.RegistrationService;
 import com.ntnu.gidd.util.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.parameters.P;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.ntnu.gidd.service.RegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController

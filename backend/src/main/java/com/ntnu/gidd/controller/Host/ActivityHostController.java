@@ -1,12 +1,10 @@
 package com.ntnu.gidd.controller.Host;
 
-import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.dto.UserEmailDto;
 import com.ntnu.gidd.dto.UserListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.service.Host.HostService;
-import com.ntnu.gidd.util.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
