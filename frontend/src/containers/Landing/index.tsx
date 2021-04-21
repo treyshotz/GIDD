@@ -61,7 +61,7 @@ const Landing = () => {
           GIDD
         </Typography>
         <Typography align='center' color='inherit' variant='h3'>
-          Det er bare å GIDDe
+          Det er bare å gidde
         </Typography>
         <div className={classes.btnGroup}>
           {!isAuthenticated && (

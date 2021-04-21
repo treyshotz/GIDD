@@ -77,11 +77,10 @@ export const useActivityHostsById = (activityId: string) => {
 export const useAddActivityHost = (activityId: string): UseMutationResult<Array<ActivityHost>, RequestResponse, string, unknown> => {
   const queryClient = useQueryClient();
   return useMutation((email) => API.addActivityHost(activityId, email), {
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries([ACTIVITIES_QUERY_KEY, activityId]);
       queryClient.invalidateQueries([ACTIVITIES_QUERY_KEY, activityId, HOSTS_QUERY_KEY]);
-      // TODO: uncomment when backend sends a list of new hosts on success
-      // queryClient.setQueryData([ACTIVITIES_QUERY_KEY, activityId, HOSTS_QUERY_KEY], data);
+      queryClient.setQueryData([ACTIVITIES_QUERY_KEY, activityId, HOSTS_QUERY_KEY], data);
     },
   });
 };
@@ -102,7 +101,7 @@ export const useCreateActivityRegistration = (activityId: string): UseMutationRe
   return useMutation((userId) => API.createRegistration(activityId, userId), {
     onSuccess: (data) => {
       queryClient.invalidateQueries([ACTIVITIES_QUERY_KEY, activityId]);
-      queryClient.setQueryData([ACTIVITIES_QUERY_KEY, activityId, ACTIVITIES_QUERY_KEY_REGISTRATION, data.id], data);
+      queryClient.setQueryData([ACTIVITIES_QUERY_KEY, activityId, ACTIVITIES_QUERY_KEY_REGISTRATION, data.user.id], data);
     },
   });
 };

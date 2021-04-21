@@ -35,9 +35,10 @@ const useStyles = makeStyles((theme) => ({
 export type ActivityRegistrationProps = {
   activity: Activity;
   user: User;
+  closeDialog: () => void;
 };
 
-const ActivityRegistration = ({ activity, user }: ActivityRegistrationProps) => {
+const ActivityRegistration = ({ activity, user, closeDialog }: ActivityRegistrationProps) => {
   const classes = useStyles();
   const createRegistration = useCreateActivityRegistration(activity.id);
   const showSnackbar = useSnackbar();
@@ -48,6 +49,7 @@ const ActivityRegistration = ({ activity, user }: ActivityRegistrationProps) => 
     createRegistration.mutate(user.id, {
       onSuccess: () => {
         showSnackbar('Påmeldingen var vellykket', 'success');
+        closeDialog();
       },
       onError: (e) => {
         showSnackbar(e.message, 'error');

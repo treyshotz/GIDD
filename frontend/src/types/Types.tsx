@@ -63,7 +63,6 @@ export type ActivityList = Pick<Activity, 'id' | 'title' | 'closed' | 'startDate
 
 export type ActivityHost = Pick<User, 'firstName' | 'surname' | 'email' | 'id'>;
 
-export type Registration = Pick<User, 'firstName' | 'surname' | 'email' | 'id'> & {
-  registrationId: string;
-  createdDate: string;
+export type Registration = {
+  user: User;
 };

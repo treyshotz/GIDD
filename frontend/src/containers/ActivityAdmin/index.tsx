@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import URLS from 'URLS';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { useUser } from 'hooks/User';
 import { useMyHostActivities, useActivityById } from 'hooks/Activities';
 import { formatDate } from 'utils';
@@ -15,6 +15,7 @@ import Collapse from '@material-ui/core/Collapse';
 import EditIcon from '@material-ui/icons/EditRounded';
 import ParticipantsIcon from '@material-ui/icons/PeopleRounded';
 import HostsIcon from '@material-ui/icons/AdminPanelSettingsRounded';
+import OpenIcon from '@material-ui/icons/OpenInBrowserRounded';
 
 // Project components
 import Paper from 'components/layout/Paper';
@@ -53,7 +54,8 @@ const ActivityAdmin = () => {
   const editTab = { value: 'edit', label: activityId ? 'Endre' : 'Opprett', icon: EditIcon };
   const participantsTab = { value: 'participants', label: 'Påmeldte', icon: ParticipantsIcon };
   const hostsTab = { value: 'hosts', label: 'Arrangører', icon: HostsIcon };
-  const tabs = [editTab, ...(activityId ? [participantsTab, hostsTab] : [])];
+  const navigateTab = { value: 'navigate', label: 'Se arrangement', icon: OpenIcon };
+  const tabs = [editTab, ...(activityId ? [participantsTab, hostsTab, navigateTab] : [])];
   const [tab, setTab] = useState(editTab.value);
 
   const goToActivity = (newActivity: string | null) => {
@@ -100,6 +102,7 @@ const ActivityAdmin = () => {
             <Collapse in={tab === hostsTab.value} mountOnEnter>
               <ActivityHosts activityId={activityId} />
             </Collapse>
+            {tab === navigateTab.value && <Navigate to={`${URLS.ACTIVITIES}${activityId}/`} />}
           </Paper>
         </div>
       </div>

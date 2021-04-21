@@ -63,7 +63,7 @@ export default {
     IFetch<Registration>({ method: 'GET', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/${userId}/` }),
   getActivityRegistrations: (activityId: string) => IFetch<Array<Registration>>({ method: 'GET', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/` }),
   createRegistration: (activityId: string, userId: string) =>
-    IFetch<Registration>({ method: 'POST', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/`, data: { userId } }),
+    IFetch<Registration>({ method: 'POST', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/`, data: { id: userId } }),
   deleteRegistration: (activityId: string, userId: string) =>
     IFetch<RequestResponse>({ method: 'DELETE', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/${userId}/` }),
 
