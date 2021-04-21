@@ -3,13 +3,13 @@ package com.ntnu.gidd.service;
 import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.factories.ActivityFactory;
-import com.ntnu.gidd.factories.TrainingLevelFactory;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
+import com.ntnu.gidd.utils.JpaUtils;
 import com.ntnu.gidd.utils.StringRandomizer;
-import org.junit.jupiter.api.AfterEach;
+import com.querydsl.core.types.Predicate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,23 +17,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.doesNotHave;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,12 +43,16 @@ public class ActivityServiceImplTest {
     ModelMapper modelMapper = new ModelMapper();
 
     private Activity activity;
+    private Predicate predicate;
+    private Pageable pageable;
 
     @BeforeEach
     public void setUp() throws Exception {
         activity = new ActivityFactory().getObject();
         assert activity != null;
         lenient().when(activityRepository.save(activity)).thenReturn(activity);
+        predicate = JpaUtils.getEmptyPredicate();
+        pageable = JpaUtils.getDefaultPageable();
     }
 
     @Test
@@ -73,6 +69,8 @@ public class ActivityServiceImplTest {
         assertThat(activity.getTitle()).isEqualTo(updateActivity.getTitle());
         assertThat(activity.getDescription()).isEqualTo(updateActivity.getDescription());
         assertThat(activity.getCapacity()).isEqualTo(updateActivity.getCapacity());
+
+
     }
 
     @Test
@@ -89,12 +87,12 @@ public class ActivityServiceImplTest {
 
         Activity secondActivity = new ActivityFactory().getObject();
         assert secondActivity != null;
-        PageRequest request = PageRequest.of(0,2);
-        Page<Activity> activities = new PageImpl<>(List.of(activity, secondActivity), request, 2);
+        List<Activity> testList = List.of(activity, secondActivity);
+        Page<Activity> activities = new PageImpl<>(testList, pageable, testList.size());
 
-        lenient().when(activityRepository.findAll(PageRequest.of(0, 2))).thenReturn(activities);
+        lenient().when(activityRepository.findAll(any(Predicate.class),any(Pageable.class))).thenReturn(activities);
 
-        Page<ActivityListDto> getActivities = activityService.getActivities(PageRequest.of(0, 2));
+        Page<ActivityListDto> getActivities = activityService.getActivities(predicate, pageable);
 
         for (int i = 0; i < activities.getContent().size(); i++){
             assertThat(activities.getContent().get(i).getTitle()).isEqualTo(getActivities.getContent().get(i).getTitle());

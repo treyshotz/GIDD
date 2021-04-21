@@ -13,6 +13,9 @@ restart:
 	docker-compose build
 	docker-compose up
 
+build:
+    mvn compile
+
 deploy:
 	docker login ${registry}.azurecr.io -u ${registry} -p ${password}
 	docker build -t ${registry}.azurecr.io/gidd:latest .

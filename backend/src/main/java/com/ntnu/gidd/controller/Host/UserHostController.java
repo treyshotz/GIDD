@@ -4,11 +4,17 @@ import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.exception.UserNotFoundException;
+import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.service.Host.HostService;
+import com.ntnu.gidd.util.Constants;
+import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,13 +32,14 @@ public class UserHostController {
     private HostService hostService;
 
 
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<ActivityListDto> getAll(Pageable pageable, @PathVariable UUID userId){
+    public Page<ActivityListDto> getAll(@QuerydslPredicate(root = Activity.class) Predicate predicate,
+                                        @PageableDefault(size = Constants.PAGINATION_SIZE, sort="startDate", direction = Sort.Direction.ASC) Pageable pageable,
+                                        @PathVariable UUID userId){
         try {
             log.debug("[X] Request to get all Activities of user with userId={}", userId);
-            return hostService.getAll(pageable, userId);
+            return hostService.getAll(predicate, pageable, userId);
         }catch (UserNotFoundException ex){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage(), ex);

@@ -11,8 +11,10 @@ import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.util.TrainingLevelEnum;
+import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,8 +66,9 @@ public class ActivityServiceImpl implements ActivityService {
                orElseThrow(ActivityNotFoundExecption::new), ActivityDto.class);
 }
     @Override
-    public Page<ActivityListDto> getActivities(Pageable pageable) {
-        return this.activityRepository.findAll(pageable).map(s -> modelMapper.map(s, ActivityListDto.class));
+    public Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable) {
+        return this.activityRepository.findAll(predicate, pageable)
+                .map(s -> modelMapper.map(s, ActivityListDto.class));
     }
 
     @Override

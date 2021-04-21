@@ -1,29 +1,28 @@
 package com.ntnu.gidd.service;
 
 import com.ntnu.gidd.dto.RegistrationDto;
-import com.ntnu.gidd.dto.UserDto;
-import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.factories.RegistrationFactory;
-import com.ntnu.gidd.factories.UserFactory;
-import com.ntnu.gidd.model.Activity;
+import com.ntnu.gidd.model.QActivity;
+import com.ntnu.gidd.model.QRegistration;
 import com.ntnu.gidd.model.Registration;
-import com.ntnu.gidd.model.RegistrationId;
-import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.RegistrationRepository;
-import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
-import org.aspectj.lang.annotation.Before;
+import com.ntnu.gidd.utils.JpaUtils;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -48,6 +47,8 @@ public class RegistrationServiceImplTest {
     private Registration registration;
     private Registration registration2;
     private List<Registration> registrationsExpected;
+    private Predicate predicate;
+    private Pageable pageable;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -77,6 +78,9 @@ public class RegistrationServiceImplTest {
         when(registrationRepository.save(registration2)).thenReturn(registration2);
         registrationService.saveRegistration(registration.getUser().getId(), registration.getActivity().getId());
         registrationService.saveRegistration(registration2.getUser().getId(), registration2.getActivity().getId());
+
+        predicate = JpaUtils.getEmptyPredicate();
+        pageable = JpaUtils.getDefaultPageable();
     }
 
     @AfterEach
@@ -88,8 +92,11 @@ public class RegistrationServiceImplTest {
     @Test
     void testRegistrationServiceImplGetRegistrationForActivityReturnsRegistration(){
         registrationsExpected = List.of(registration);
-        when(registrationRepository.findRegistrationsByActivity_Id(registration.getActivity().getId())).thenReturn(Optional.of(registrationsExpected));
-        List<RegistrationDto> registrationsFound = registrationService.getRegistrationForActivity(registration.getActivity().getId());
+
+        when(registrationRepository.findAll(any(Predicate.class), any(PageRequest.class))).thenReturn(new PageImpl<>(registrationsExpected, pageable, registrationsExpected.size()));
+        List<RegistrationDto> registrationsFound = registrationService.getRegistrationForActivity(predicate, pageable,
+                                                                                                  registration.getActivity().getId())
+                .getContent();
 
         for (int i = 0; i < registrationsFound.size(); i++) {
             assertThat(registrationsFound.get(i).getUser().getEmail()).isEqualTo(registrationsExpected.get(i).getUser().getEmail());
@@ -100,9 +107,11 @@ public class RegistrationServiceImplTest {
     @Test
     void testRegistrationServiceImplGetRegistrationForUserReturnsRegistration(){
         registrationsExpected = List.of(registration, registration2);
-        when(registrationRepository.findRegistrationsByUser_Id(registration.getUser().getId())).thenReturn(Optional.ofNullable(registrationsExpected));
+        when(registrationRepository.findAll(any(Predicate.class), any(PageRequest.class))).thenReturn(new PageImpl<>(registrationsExpected, pageable, registrationsExpected.size()));
         when(userRepository.findByEmail(registration.getUser().getEmail())).thenReturn(Optional.of(registration.getUser()));
-        List<RegistrationDto> registrationsFound = registrationService.getRegistrationWithUsername(registration.getUser().getEmail());
+        List<RegistrationDto> registrationsFound = registrationService.getRegistrationWithUsername(predicate, pageable,
+                                                                                                   registration.getUser().getEmail())
+                .getContent();
 
         for (int i = 0; i < registrationsExpected.size(); i++) {
             assertThat(registrationsFound.get(i).getUser().getEmail()).isEqualTo(registrationsExpected.get(i).getUser().getEmail());
@@ -113,9 +122,10 @@ public class RegistrationServiceImplTest {
     @Test
     void testRegistrationServiceImplGetRegistrationWithUsernameReturnsRegistration(){
         registrationsExpected = List.of(registration, registration2);
-        when(registrationRepository.findRegistrationsByUser_Id(registration.getUser().getId())).thenReturn(Optional.of(registrationsExpected));
+        when(registrationRepository.findAll(any(Predicate.class), any(PageRequest.class))).thenReturn(new PageImpl<>(registrationsExpected, pageable, registrationsExpected.size()));
         when(userRepository.findByEmail(registration.getUser().getEmail())).thenReturn(Optional.ofNullable(registration.getUser()));
-        List<RegistrationDto> registrationsFound = registrationService.getRegistrationWithUsername(registration.getUser().getEmail());
+        List<RegistrationDto> registrationsFound = registrationService.getRegistrationWithUsername(predicate, pageable,
+                                                                                                   registration.getUser().getEmail()).getContent();
 
         for (int i = 0; i < registrationsExpected.size(); i++) {
             assertThat(registrationsFound.get(i).getUser().getEmail()).isEqualTo(registrationsExpected.get(i).getUser().getEmail());
@@ -180,4 +190,6 @@ public class RegistrationServiceImplTest {
             assertThat(registrationsFound.get(i).getUser().getEmail()).isEqualTo(registrationsExpected.get(i).getUser().getEmail());
         }
     }
+
+
 }

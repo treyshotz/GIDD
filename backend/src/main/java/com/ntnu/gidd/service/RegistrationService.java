@@ -1,7 +1,13 @@
 package com.ntnu.gidd.service;
 
 import com.ntnu.gidd.dto.RegistrationDto;
+
+import java.util.UUID;
+
 import com.ntnu.gidd.model.RegistrationId;
+import com.querydsl.core.types.Predicate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,11 +18,9 @@ public interface RegistrationService {
 
   RegistrationDto saveRegistration(UUID user_id, UUID activity_id);
 
-  List<RegistrationDto> getRegistrationForActivity(UUID activity_id);
+  Page<RegistrationDto> getRegistrationForActivity(Predicate predicate, Pageable pageable, UUID activity_id);
 
-  List<RegistrationDto> getRegistrationsForUser(UUID user_id);
-
-  List<RegistrationDto> getRegistrationWithUsername(String username);
+  Page<RegistrationDto> getRegistrationWithUsername(Predicate predicate, Pageable pageable, String username);
 
   RegistrationDto getRegistrationWithRegistrationId(RegistrationId id);
 

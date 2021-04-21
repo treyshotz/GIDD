@@ -22,7 +22,7 @@ import java.util.UUID;
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, UUID>, QuerydslPredicateExecutor<Activity>, QuerydslBinderCustomizer<QActivity> {
     Optional<Activity> findActivityByIdAndHosts_Id(UUID id, UUID hosts_id);
-    Page<Activity> findActivitiesByHosts_Id(UUID hosts_id, Pageable pageable);
+    Page<Activity> findActivitiesByHosts_Id(Predicate predicate,  Pageable pageable,  UUID hosts_id);
 
     @Override
     default void customize(QuerydslBindings bindings, QActivity activity) {

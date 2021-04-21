@@ -2,6 +2,7 @@ package com.ntnu.gidd.service;
 
 import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
+import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,7 +13,7 @@ public interface ActivityService {
     ActivityDto getActivityById(UUID id);
     ActivityDto saveActivity(ActivityDto activity, String creatorEmail);
     void deleteActivity(UUID id);
-    Page<ActivityListDto> getActivities(Pageable pageable);
+    Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable);
 
 
 }

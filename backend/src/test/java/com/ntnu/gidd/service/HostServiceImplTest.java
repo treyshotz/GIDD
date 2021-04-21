@@ -2,15 +2,15 @@ package com.ntnu.gidd.service;
 
 
 import com.ntnu.gidd.dto.UserEmailDto;
-import com.ntnu.gidd.dto.UserListDto;
 import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.UserRepository;
-import com.ntnu.gidd.service.Host.HostService;
 import com.ntnu.gidd.service.Host.HostServiceImpl;
+import com.ntnu.gidd.utils.JpaUtils;
+import com.querydsl.core.types.Predicate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
@@ -47,6 +49,8 @@ public class HostServiceImplTest {
 
     private User user;
     private Activity activity;
+    private Predicate predicate;
+    private Pageable pageable;
 
 
     @BeforeEach
@@ -63,15 +67,17 @@ public class HostServiceImplTest {
 
         lenient().when(userRepository.findById(user.getId())).thenReturn(Optional.ofNullable(user));
         lenient().when(activityRepository.findById(activity.getId())).thenReturn(Optional.ofNullable(activity));
+
+        predicate = JpaUtils.getEmptyPredicate();
+        pageable = JpaUtils.getDefaultPageable();
     }
 
     @Test
     void testGetAllReturnAListOfActivities(){
-        PageRequest request = PageRequest.of(0,2);
-        Page<Activity> page = new PageImpl<Activity>(user.getActivities(), request, user.getActivities().size());
-        lenient().when(activityRepository.findActivitiesByHosts_Id(user.getId(), request)).thenReturn(page);
-        assertThat(hostService.getAll(request,user.getId())).isInstanceOf(Page.class);
-        assertThat(hostService.getAll(request,user.getId()).getContent().get(0).getTitle())
+        Page<Activity> page = new PageImpl<>(user.getActivities(), pageable, user.getActivities().size());
+        when(activityRepository.findAll(any(Predicate.class), any(PageRequest.class))).thenReturn(page);
+        assertThat(hostService.getAll(predicate, pageable, user.getId())).isInstanceOf(Page.class);
+        assertThat(hostService.getAll(predicate, pageable, user.getId()).getContent().get(0).getTitle())
                 .isEqualTo(page.getContent().get(0).getTitle());
     }
 
@@ -129,6 +135,6 @@ public class HostServiceImplTest {
 
         assertThat(hostService.deleteHostfromUser(deleteActivity.getId(),user.getId()))
                 .isInstanceOf(List.class);
-        assertThat(hostService.deleteHostfromUser(deleteActivity.getId(),user.getId()).size()).isEqualTo(2);
+        assertThat(hostService.deleteHostfromUser(deleteActivity.getId(),user.getId()).size()).isEqualTo(list.size()-1);
     }
 }

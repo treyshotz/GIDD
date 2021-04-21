@@ -19,6 +19,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +29,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class ActivityHostControllerTest {
+
 
     private String getURI(Activity activity) {
         return "/activities/" + activity.getId() + "/hosts/";
@@ -83,7 +87,7 @@ public class ActivityHostControllerTest {
 
     @WithMockUser(value = "spring")
     @Test
-    public void testActivtyHostControllerAddHostReturnsNewListOfHosts() throws Exception {
+    public void testActivityHostControllerAddHostReturnsNewListOfHosts() throws Exception {
         User user = userFactory.getObject();
         assert user != null;
         userRepository.save(user);
@@ -116,4 +120,6 @@ public class ActivityHostControllerTest {
                 .andExpect(jsonPath("$.[0].email").value(deleteUser.getEmail()));
 
     }
+
+
 }

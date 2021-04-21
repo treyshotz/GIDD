@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.Activity;
+import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.UserRepository;
+import com.ntnu.gidd.service.traininglevel.TrainingLevelService;
 import com.ntnu.gidd.security.UserDetailsImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +26,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 
 import java.util.Objects;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
@@ -35,6 +41,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 public class ActivityControllerTest {
 
     private  String URI = "/activities/";
+    private final String TITLE = "Test activity";
 
     @Autowired
     private MockMvc mvc;
@@ -50,6 +57,9 @@ public class ActivityControllerTest {
     private UserRepository userRepository;
 
     @Autowired
+    private TrainingLevelService trainingLevelService;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     private Activity activity;
@@ -58,6 +68,7 @@ public class ActivityControllerTest {
     public void setUp() throws Exception {
         activity = activityFactory.getObject();
         assert activity != null;
+        activity.setTitle(TITLE);
         activity = activityRepository.save(activity);
     }
 
@@ -127,4 +138,106 @@ public class ActivityControllerTest {
 
     }
 
+    @WithMockUser(value = "spring")
+    @Test
+    public void testActivityControllerFiltersOnWantedFieldsForTitle() throws Exception {
+        Activity dummy = activityFactory.getObject();
+        dummy.setTitle("Dummy title");
+        activityRepository.save(dummy);
+
+        this.mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON)
+                .param("title", activity.getTitle()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content.[0].title").value(activity.getTitle()));
+    }
+
+    @Test
+    @WithMockUser
+    public void testFilterActivitiesPartialTitleReturnsCorrectResults() throws Exception {
+        Activity dummy = activityFactory.getObject();
+        dummy.setTitle("Dummy title");
+        activityRepository.save(dummy);
+        mvc.perform(get(URI)
+                            .accept(MediaType.APPLICATION_JSON)
+                .param("title", TITLE.substring(0, TITLE.length() - 1)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content.[0].title").value(activity.getTitle()));
+    }
+
+    @Test
+    @WithMockUser
+    public void testFilterActivitiesByStartDateAfterReturnActivitiesStartingAfterGivenDateTime() throws Exception {
+        Activity dummy = activityFactory.getObject();
+        dummy.setStartDate(ZonedDateTime.now().minusDays(100));
+        activityRepository.save(dummy);
+
+
+        mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON)
+                .param("startDateAfter", String.valueOf(activity.getStartDate().minusHours(1))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content.[0].title").value(activity.getTitle()));
+    }
+
+    @Test
+    @WithMockUser
+    public void testFilterActivitiesByStartDateBeforeReturnActivitiesStartingBeforeGivenDateTime() throws Exception {
+        Activity expectedActivity = activityFactory.getObject();
+        expectedActivity.setStartDate(ZonedDateTime.now().minusDays(100));
+        activityRepository.save(expectedActivity);
+
+        mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON)
+                .param("startDateBefore", String.valueOf(activity.getStartDate().minusHours(1))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content.[0].title").value(expectedActivity.getTitle()));
+    }
+
+
+    @Test
+    @WithMockUser
+    public void testFilterActivitiesByStartDateBetweenReturnActivitiesStartingInRange() throws Exception {
+        Activity dummy = activityFactory.getObject();
+        dummy.setStartDate(ZonedDateTime.now().minusDays(100));
+        activityRepository.save(dummy);
+
+        Activity between = activityFactory.getObject();
+        between.setStartDate(ZonedDateTime.now().minusDays(50));
+        activityRepository.save(between);
+
+        // Due to decimal precision these where sometimes rounded down/up
+        // causing the test to fail spontaneously
+
+        mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON)
+                .param("startDateAfter", String.valueOf(dummy.getStartDate().plusHours(1)))
+                .param("startDateBefore", String.valueOf(activity.getStartDate().minusHours(1))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content.[0].title").value(between.getTitle()));
+    }
+
+    // TODO: test with multiple levels
+    @Test
+    @WithMockUser
+    public void testFilterByActivityTrainingLevelReturnsActivitiesWithGivenTrainingLevel() throws Exception {
+
+        TrainingLevel mediumTrainingLevel = trainingLevelService.getTrainingLevelMedium();
+        activity.setTrainingLevel(mediumTrainingLevel);
+        activityRepository.save(activity);
+
+        TrainingLevel lowTrainingLevel = trainingLevelService.getTrainingLevelLow();
+        Activity dummy = activityFactory.getObject();
+        dummy.setTrainingLevel(lowTrainingLevel);
+        activityRepository.save(dummy);
+
+
+        mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON)
+                .param("trainingLevel.level", String.valueOf(mediumTrainingLevel.getLevel())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content.[0].title").value(activity.getTitle()));
+    }
 }

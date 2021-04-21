@@ -7,9 +7,12 @@ import com.ntnu.gidd.dto.UserListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.Activity;
+import com.ntnu.gidd.model.QActivity;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.UserRepository;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 
 
 @Slf4j
@@ -36,8 +40,10 @@ public class HostServiceImpl implements HostService {
     ModelMapper modelMapper = new ModelMapper();
 
     @Override
-    public Page<ActivityListDto> getAll(Pageable pageable, UUID userId) {
-        return activityRepository.findActivitiesByHosts_Id(userId, pageable).map(a-> modelMapper.map(a,ActivityListDto.class));
+    public Page<ActivityListDto> getAll(Predicate predicate, Pageable pageable, UUID userId) {
+        QActivity activity = QActivity.activity;
+        predicate = ExpressionUtils.allOf(predicate, activity.hosts.any().id.eq(userId));
+        return activityRepository.findAll(predicate, pageable).map(a-> modelMapper.map(a,ActivityListDto.class));
 
     }
 

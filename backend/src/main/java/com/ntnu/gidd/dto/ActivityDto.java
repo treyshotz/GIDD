@@ -16,6 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ActivityDto {
+
     private UUID id;
     @NotNull
     private String title;

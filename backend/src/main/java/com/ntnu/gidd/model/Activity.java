@@ -45,7 +45,7 @@ public class Activity extends UUIDModel {
     @JoinColumn(name = "creator_id", referencedColumnName = "id")
     private User creator;
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST) // TODO: this persist transient instances
     @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id" ),
     inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
     uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))

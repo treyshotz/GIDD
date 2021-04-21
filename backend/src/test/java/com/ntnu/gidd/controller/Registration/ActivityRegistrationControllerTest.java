@@ -90,12 +90,12 @@ public class ActivityRegistrationControllerTest {
 
   @WithMockUser(value = "spring")
   @Test
-  public void testAvtivityRegistrationControllerGetRegistrationForActivity() throws Exception {
+  public void testActivityRegistrationControllerGetRegistrationForActivity() throws Exception {
     this.mvc.perform(get(URI + activity.getId() + "/registrations/")
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$..user.email").value(user.getEmail()));
+        .andExpect(jsonPath("$.content[0].user.email").value(user.getEmail()));
   }
 
 
@@ -112,13 +112,15 @@ public class ActivityRegistrationControllerTest {
 
   @WithMockUser(value = "spring")
   @Test
-  public void testActivityRegistrationControllerSaveReturn201Ok() throws Exception {
+  public void testActivityRegistrationControllerSaveReturn201OCreated() throws Exception {
 
     User testUser = userFactory.getObject();
     Activity testActivity = activityFactory.getObject();
 
 
+    assert testActivity != null;
     testActivity = activityRepository.save(testActivity);
+    assert testUser != null;
     testUser = userRepository.save(testUser);
 
 

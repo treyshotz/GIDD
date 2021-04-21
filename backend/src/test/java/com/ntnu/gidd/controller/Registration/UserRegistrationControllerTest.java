@@ -95,7 +95,7 @@ public class UserRegistrationControllerTest {
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$..user.email").value(user.getEmail()));
+        .andExpect(jsonPath("$.content.[0].user.email").value(user.getEmail()));
   }
 
   @Test
