@@ -49,6 +49,10 @@ public class Activity extends UUIDModel {
     private List<User> hosts;
     private int capacity;
 
+    @OneToOne
+    @JoinColumn(name = "geo_location_id", referencedColumnName = "id")
+    private GeoLocation geoLocation;
+
     @PreRemove
     private void removeHostsFromActivity() {
         if(this.hosts != null)for (User user : hosts) {

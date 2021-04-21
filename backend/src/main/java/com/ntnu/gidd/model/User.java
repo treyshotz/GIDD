@@ -36,6 +36,7 @@ public class User extends UUIDModel {
     @OneToOne
     @JoinColumn(name = "traning_level_id", referencedColumnName = "id")
     private TrainingLevel trainingLevel;
+    private int radius; 
 
     @PreRemove
     private void removeActivitiesFromUsers() {
@@ -44,5 +45,7 @@ public class User extends UUIDModel {
             activity.getHosts().remove(this);
         }
     }
+
+
 
 }
