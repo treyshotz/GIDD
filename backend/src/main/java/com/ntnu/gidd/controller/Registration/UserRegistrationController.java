@@ -29,7 +29,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("users/registrations/")
+@RequestMapping("users/me/registrations/")
 public class UserRegistrationController {
 
   @Autowired
