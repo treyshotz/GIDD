@@ -1,8 +1,9 @@
 package com.ntnu.gidd.dto;
 
 
-import java.util.UUID;
 import lombok.*;
+
+import java.util.UUID;
 
 @Getter
 @Setter

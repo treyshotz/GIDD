@@ -92,7 +92,6 @@ public class AuthenticationTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(loginJson))
 				.andExpect(status().isOk())
-				.andDo(print())
 				.andReturn();
 		
 		String token = mvcResult.getResponse().getHeader(jwtConfig.getHeader());

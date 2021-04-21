@@ -1,11 +1,11 @@
 package com.ntnu.gidd.service;
 
 import com.ntnu.gidd.dto.RegistrationDto;
-import java.util.List;
-import java.util.UUID;
-
 import com.ntnu.gidd.model.RegistrationId;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public interface RegistrationService {

@@ -3,7 +3,10 @@ package com.ntnu.gidd.util;
 import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.token.JwtRefreshToken;
 import com.ntnu.gidd.security.token.RawJwtAccessToken;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 

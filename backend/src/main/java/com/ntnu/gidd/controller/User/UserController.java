@@ -1,7 +1,6 @@
 package com.ntnu.gidd.controller.User;
 
 import com.ntnu.gidd.dto.UserDto;
-import com.ntnu.gidd.dto.UserPasswordUpdateDto;
 import com.ntnu.gidd.dto.UserRegistrationDto;
 import com.ntnu.gidd.exception.EmailInUseException;
 import com.ntnu.gidd.service.UserService;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.security.Principal;
 import java.util.UUID;
 
 @Slf4j
@@ -46,7 +44,7 @@ public class UserController {
             return userService.saveUser(userRegistrationDto);
         }
         catch (EmailInUseException exception){
-            log.error("Email is already in use", exception);
+            log.error("[X] Email is already in use", exception);
             throw new ResponseStatusException(
                   HttpStatus.FORBIDDEN, exception.getMessage(), exception);
         }

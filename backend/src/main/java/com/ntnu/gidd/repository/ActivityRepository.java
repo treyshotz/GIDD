@@ -1,19 +1,18 @@
 package com.ntnu.gidd.repository;
 
+
 import com.ntnu.gidd.model.Activity;
-import com.ntnu.gidd.model.GeoLocation;
-import com.ntnu.gidd.model.User;
-import com.vividsolutions.jts.geom.Polygonal;
-import org.geolatte.geom.Geometry;
-import org.geolatte.geom.Polygon;
+import com.ntnu.gidd.model.QActivity;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.StringExpression;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
+import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,10 +20,14 @@ import java.util.UUID;
  * ActivityRepository extending JpaRepository with Activity and UUID as id
  */
 @Repository
-public interface ActivityRepository extends JpaRepository<Activity, UUID> {
+public interface ActivityRepository extends JpaRepository<Activity, UUID>, QuerydslPredicateExecutor<Activity>, QuerydslBinderCustomizer<QActivity> {
     Optional<Activity> findActivityByIdAndHosts_Id(UUID id, UUID hosts_id);
     Page<Activity> findActivitiesByHosts_Id(UUID hosts_id, Pageable pageable);
 
-    @Query()
-    List<Activity> findActivitiesWithin(@Param("filter") Geometry filter, int radius);
+    @Override
+    default void customize(QuerydslBindings bindings, QActivity activity) {
+        bindings.bind(activity.title).first(StringExpression::contains);
+        bindings.bind(activity.startDateAfter).first((path, value) -> activity.startDate.after(value));
+        bindings.bind(activity.startDateBefore).first((path, value) -> activity.startDate.before(value));
+    }
 }

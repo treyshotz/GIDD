@@ -1,8 +1,7 @@
 package com.ntnu.gidd.security.filter;
 
-import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.UserDetailsImpl;
-import com.ntnu.gidd.security.extractor.TokenExtractor;
+import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.AllArgsConstructor;

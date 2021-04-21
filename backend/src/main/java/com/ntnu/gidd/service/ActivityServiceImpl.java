@@ -1,4 +1,5 @@
 package com.ntnu.gidd.service;
+
 import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
@@ -20,13 +21,13 @@ import org.geolatte.geom.Point;
 import org.geolatte.geom.PointSequence;
 import org.geolatte.geom.codec.Wkt;
 import org.modelmapper.ModelMapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j

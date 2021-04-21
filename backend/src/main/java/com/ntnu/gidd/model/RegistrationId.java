@@ -1,12 +1,11 @@
 package com.ntnu.gidd.model;
 
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.UUID;
+import lombok.*;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
-import lombok.*;
+import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * RegistrationId is a class defining the id of a registration
@@ -21,10 +20,10 @@ import lombok.*;
 @EqualsAndHashCode
 public class RegistrationId implements Serializable {
 
-  @Column(name = "user_id")
+  @Column(name = "user_id", columnDefinition = "CHAR(32)")
   private UUID userId;
 
-  @Column(name="activity_id")
+  @Column(name = "activity_id", columnDefinition = "CHAR(32)")
   private UUID activityId;
 }
 

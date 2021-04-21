@@ -2,14 +2,12 @@ package com.ntnu.gidd.security.token;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 
 /**
