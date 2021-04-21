@@ -43,6 +43,7 @@ public class ActivityServiceImpl implements ActivityService {
         updateActivity.setClosed(activity.isClosed());
         updateActivity.setCapacity(activity.getCapacity());
         if(activity.getLevel()!=null)updateActivity.setTrainingLevel(getTrainingLevel(activity.getLevel()));
+        if(activity.getGeoLocation() != null) updateActivity.setGeoLocation(activity.getGeoLocation());
 
         return modelMapper.map(this.activityRepository.save(updateActivity),ActivityDto.class);
     }
@@ -68,6 +69,7 @@ public class ActivityServiceImpl implements ActivityService {
         newActivity.setId(UUID.randomUUID());
         newActivity.setHosts(List.of());
         if(activity.getLevel()!= null)newActivity.setTrainingLevel(getTrainingLevel(activity.getLevel()));
+        if (activity.getGeoLocation() != null) newActivity.setGeoLocation(activity.getGeoLocation());
         return modelMapper.map(this.activityRepository.save(newActivity), ActivityDto.class);
     }
 
