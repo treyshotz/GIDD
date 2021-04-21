@@ -14,7 +14,7 @@ restart:
 	docker-compose up
 
 build:
-    mvn compile
+	mvn compile
 
 deploy:
 	docker login ${registry}.azurecr.io -u ${registry} -p ${password}

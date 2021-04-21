@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,7 +26,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("user/{userId}/hosts/")
+@RequestMapping("users/me/hosts/")
 public class UserHostController {
 
     @Autowired
@@ -35,11 +36,10 @@ public class UserHostController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<ActivityListDto> getAll(@QuerydslPredicate(root = Activity.class) Predicate predicate,
-                                        @PageableDefault(size = Constants.PAGINATION_SIZE, sort="startDate", direction = Sort.Direction.ASC) Pageable pageable,
-                                        @PathVariable UUID userId){
+                                        @PageableDefault(size = Constants.PAGINATION_SIZE, sort = "startDate", direction = Sort.Direction.ASC) Pageable pageable, Authentication authentication){
         try {
-            log.debug("[X] Request to get all Activities of user with userId={}", userId);
-            return hostService.getAll(predicate, pageable, userId);
+            log.debug("[X] Request to get all Activities of user with userEmail={}", authentication.getName());
+            return hostService.getAllByEmail(predicate, pageable, authentication.getName());
         }catch (UserNotFoundException ex){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage(), ex);
@@ -49,21 +49,22 @@ public class UserHostController {
 
     @GetMapping("{activityId}/")
     @ResponseStatus(HttpStatus.OK)
-    public ActivityDto get(@PathVariable UUID userId, @PathVariable UUID activityId){
+    public ActivityDto get(@PathVariable UUID activityId, Authentication authentication){
         try {
-            return hostService.getActivityFromUser(userId, activityId);
+            return hostService.getActivityFromUserByEmail(authentication.getName(), activityId);
         }catch (ActivityNotFoundExecption | UserNotFoundException ex ){
-            log.debug("[X] Request to get Activity of user with userId={} and activityId={} failed", userId,activityId);
+            log.debug("[X] Request to get Activity of user with userEmail={} and activityId={} failed", authentication.getName(),activityId);
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage(), ex);
         }
     }
     @DeleteMapping("{activityId}/")
     @ResponseStatus(HttpStatus.OK)
-    public List<ActivityListDto>  delete(@PathVariable UUID userId, @PathVariable UUID activityId ){
+    public List<ActivityListDto>  delete(Authentication authentication, @PathVariable UUID activityId ){
         try {
-            log.debug("[X] Request to deleted host on user with id={}", userId);
-            return hostService.deleteHostfromUser(activityId, userId);
+            
+            log.debug("[X] Request to deleted host on user with userEmail={}", authentication.getName());
+            return hostService.deleteHostfromUserByEmail(activityId, authentication.getName());
         }catch (UserNotFoundException | ActivityNotFoundExecption ex){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage(), ex);
