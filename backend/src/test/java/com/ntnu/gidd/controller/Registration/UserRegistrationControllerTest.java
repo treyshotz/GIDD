@@ -36,7 +36,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @AutoConfigureMockMvc
 public class UserRegistrationControllerTest {
 
-  private String URI = "/users/";
+  private String URI = "/users/me";
 
   @Autowired
   private MockMvc mvc;
