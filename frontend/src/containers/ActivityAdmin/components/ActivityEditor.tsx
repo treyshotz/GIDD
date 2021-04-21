@@ -9,7 +9,7 @@ import { parseISO } from 'date-fns';
 import { traningLevelToText } from 'utils';
 
 // Material-UI
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -21,7 +21,7 @@ import SubmitButton from 'components/inputs/SubmitButton';
 import TextField from 'components/inputs/TextField';
 import Select from 'components/inputs/Select';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
   grid: {
     display: 'grid',
     gridGap: theme.spacing(2),

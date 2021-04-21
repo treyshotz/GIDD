@@ -3,7 +3,7 @@ import { InfiniteQueryObserverResult } from 'react-query';
 import { PaginationResponse } from 'types/Types';
 
 // Material UI Components
-import { makeStyles, useTheme, Theme } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
@@ -24,7 +24,7 @@ import AddIcon from '@material-ui/icons/AddRounded';
 // Project components
 import Pagination from 'components/layout/Pagination';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
   header: {
     display: 'flex',
     justifyContent: 'space-between',

@@ -7,7 +7,7 @@ import { useSnackbar } from 'hooks/Snackbar';
 import { EMAIL_REGEX } from 'constant';
 
 // Material-UI
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { LinearProgress, Divider, Typography, List, ListItem, ListItemText, ListItemSecondaryAction } from '@material-ui/core';
 
 // Icons
@@ -19,7 +19,7 @@ import SubmitButton from 'components/inputs/SubmitButton';
 import TextField from 'components/inputs/TextField';
 import VerifyDialog from 'components/layout/VerifyDialog';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
   list: {
     display: 'grid',
     gridGap: theme.spacing(1),
