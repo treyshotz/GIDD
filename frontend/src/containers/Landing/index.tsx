@@ -54,14 +54,14 @@ const Landing = () => {
   return (
     <Navigation maxWidth={false}>
       <Helmet>
-        <title>Forsiden - Gidd</title>
+        <title>Forsiden - GIDD</title>
       </Helmet>
       <div className={classes.img}>
         <Typography align='center' className={classes.header} color='inherit' gutterBottom variant='h1'>
-          Gidd
+          GIDD
         </Typography>
         <Typography align='center' color='inherit' variant='h3'>
-          Det er bare å gidde
+          Det er bare å GIDDe
         </Typography>
         <div className={classes.btnGroup}>
           {!isAuthenticated && (

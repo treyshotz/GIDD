@@ -96,7 +96,7 @@ const Profile = () => {
   return (
     <Navigation maxWidth={false}>
       <Helmet>
-        <title>Profil - Gidd</title>
+        <title>Profil - GIDD</title>
       </Helmet>
       <div className={classes.backgroundImg} />
       <Container className={classnames(classes.grid, classes.root)}>

@@ -45,7 +45,7 @@ const ActivityDetails = () => {
           <meta content={data.title} property='og:title' />
           <meta content='website' property='og:type' />
           <meta content={window.location.href} property='og:url' />
-          <meta content={data.image || 'https://gidd.no' + BACKGROUND} property='og:image' />
+          <meta content={data.image || 'https://GIDD.no' + BACKGROUND} property='og:image' />
         </Helmet>
       )}
       <div className={classes.wrapper}>{isLoading ? <ActivityRendererLoading /> : data !== undefined && <ActivityRenderer data={data} />}</div>
