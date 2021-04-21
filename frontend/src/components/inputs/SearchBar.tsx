@@ -1,70 +1,69 @@
-import React from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import InputBase from '@material-ui/core/InputBase';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Activity } from 'types/Types';
 
 // Material UI Components
-import Popper, { PopperPlacementType } from '@material-ui/core/Popper';
-import Fade from '@material-ui/core/Fade';
-import DatePicker from './DatePicker';
-import Bool from './Bool';
-import { Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { PopperPlacementType } from '@material-ui/core/Popper';
+import DatePicker from 'components/inputs/DatePicker';
+import Bool from 'components/inputs/Bool';
+import { Button, Fade, Popper, IconButton, InputBase } from '@material-ui/core';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      padding: '2px 4px',
-      display: 'flex',
-      alignItems: 'center',
-      width: '100%',
-      borderRadius: '20px',
-    },
-    input: {
-      marginLeft: theme.spacing(1),
-      flex: 1,
-    },
-    iconButton: {
-      padding: 10,
-    },
-    divider: {
-      height: 28,
-      margin: 4,
-    },
-    paper: {
-      border: '1px solid',
-      padding: theme.spacing(1),
-      marginTop: theme.spacing(1),
-      borderRadius: theme.shape.borderRadius,
-      width: '100%',
-      backgroundColor: theme.palette.background.paper,
-    },
-    level: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    rowTwo: {
-      display: 'flex',
-    },
-    grid: {
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      gap: theme.spacing(1),
-    },
-  }),
-);
+// Icons
+import FilterIcon from '@material-ui/icons/TuneRounded';
+import SearchIcon from '@material-ui/icons/SearchRounded';
+
+// Project components
+import Paper from 'components/layout/Paper';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    padding: theme.spacing(0.25, 0.5),
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    borderRadius: 25,
+  },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
+  },
+  divider: {
+    height: 28,
+    margin: 4,
+  },
+  paper: {
+    border: '1px solid',
+    padding: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    borderRadius: theme.shape.borderRadius,
+    width: '100%',
+    backgroundColor: theme.palette.background.paper,
+  },
+  level: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  rowTwo: {
+    display: 'flex',
+  },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: theme.spacing(1),
+  },
+}));
+
+type FormValues = Pick<Activity, 'title' | 'description' | 'endDate' | 'startDate' | 'signupStart' | 'signupEnd' | 'capacity'>;
 
 export default function SearchBar() {
-  type FormValues = Pick<Activity, 'title' | 'description' | 'endDate' | 'startDate' | 'signupStart' | 'signupEnd' | 'capacity'>;
-
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-  const [open, setOpen] = React.useState(false);
-  const [placement, setPlacement] = React.useState<PopperPlacementType>();
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [open, setOpen] = useState(false);
+  const [placement, setPlacement] = useState<PopperPlacementType>();
   const { control, formState } = useForm<FormValues>();
 
   const handleClick = (newPlacement: PopperPlacementType) => (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -75,9 +74,9 @@ export default function SearchBar() {
   const id = open ? 'transitions-popper' : undefined;
 
   return (
-    <Paper className={classes.root} component='form'>
+    <Paper className={classes.root}>
       <IconButton aria-label='menu' className={classes.iconButton} onClick={handleClick('bottom-end')}>
-        <MenuIcon />
+        <FilterIcon />
       </IconButton>
       <Popper anchorEl={anchorEl} id={id} open={open} placement={placement} transition>
         {({ TransitionProps }) => (

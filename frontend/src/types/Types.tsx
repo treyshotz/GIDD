@@ -32,6 +32,9 @@ export type User = {
   birthDate: string | null;
   level: TrainingLevel;
 };
+
+export type UserList = Pick<User, 'id' | 'firstName' | 'surname' | 'email'>;
+
 export type UserCreate = Pick<User, 'email' | 'firstName' | 'surname'> & {
   password: string;
   matchingPassword: string;
@@ -51,8 +54,9 @@ export type Activity = {
   endDate: string;
   signupStart: string;
   signupEnd: string;
-  hosts: Array<string>;
+  hosts: Array<UserList>;
   image: string;
+  creator: UserList;
 };
 
 export type ActivityList = Pick<Activity, 'id' | 'title' | 'closed' | 'startDate' | 'endDate' | 'level' | 'description'>;

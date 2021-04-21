@@ -206,7 +206,7 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
             swipeAreaWidth={56}>
             {user && <ActivityRegistration activity={data} user={user} />}
           </SwipeableDrawer>
-          {!preview && data.hosts.includes(user?.id || '') && (
+          {!preview && (data.hosts.some((host) => host.id === user?.id) || data.creator.id === user?.id) && (
             <Button component={Link} fullWidth to={`${URLS.ADMIN_ACTIVITIES}${data.id}/`} variant='outlined'>
               Endre aktivitet
             </Button>

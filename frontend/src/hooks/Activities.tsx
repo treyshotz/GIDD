@@ -22,7 +22,7 @@ export const useActivities = () => {
 
 export const useMyParticipatingActivities = () => {
   return useInfiniteQuery<PaginationResponse<ActivityList>, RequestResponse>(
-    [ACTIVITIES_QUERY_KEY],
+    [ACTIVITIES_QUERY_KEY, 'me_participating'],
     ({ pageParam = 0 }) => API.getMyParticipatingActivities({ page: pageParam }),
     {
       getNextPageParam: (lastPage) => lastPage.next,
@@ -32,7 +32,7 @@ export const useMyParticipatingActivities = () => {
 
 export const useMyHostActivities = () => {
   return useInfiniteQuery<PaginationResponse<ActivityList>, RequestResponse>(
-    [ACTIVITIES_QUERY_KEY],
+    [ACTIVITIES_QUERY_KEY, 'me_host'],
     ({ pageParam = 0 }) => API.getMyHostActivities({ page: pageParam }),
     {
       getNextPageParam: (lastPage) => lastPage.next,

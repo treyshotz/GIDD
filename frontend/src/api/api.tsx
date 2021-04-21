@@ -17,19 +17,26 @@ import {
   UserCreate,
 } from 'types/Types';
 
+const USERS = 'users';
+const ME = 'me';
+const AUTH = 'auth';
+const ACTIVITIES = 'activities';
+const REGISTRATIONS = 'registrations';
+const HOSTS = 'hosts';
+
 export default {
   // Auth
-  createUser: (item: UserCreate) => IFetch<RequestResponse>({ method: 'POST', url: 'users/', data: item, withAuth: false, tryAgain: false }),
+  createUser: (item: UserCreate) => IFetch<RequestResponse>({ method: 'POST', url: `${USERS}/`, data: item, withAuth: false, tryAgain: false }),
   authenticate: (email: string, password: string) =>
     IFetch<LoginRequestResponse>({
       method: 'POST',
-      url: 'auth/login',
+      url: `${AUTH}/login`,
       data: { email, password },
       withAuth: false,
     }),
-  forgotPassword: (email: string) => IFetch<RequestResponse>({ method: 'POST', url: 'auth/password/reset/', data: { email: email }, withAuth: false }),
+  forgotPassword: (email: string) => IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/password/reset/`, data: { email: email }, withAuth: false }),
   refreshAccessToken: () =>
-    IFetch<RefreshTokenResponse>({ method: 'GET', url: 'auth/refresh-token/', refreshAccess: true, withAuth: false, tryAgain: false })
+    IFetch<RefreshTokenResponse>({ method: 'GET', url: `${AUTH}/refresh-token/`, refreshAccess: true, withAuth: false, tryAgain: false })
       .then((tokens) => {
         setCookie(ACCESS_TOKEN, tokens.token, ACCESS_TOKEN_DURATION);
         return tokens;
@@ -39,25 +46,28 @@ export default {
         throw e;
       }),
   changePassword: (oldPassword: string, newPassword: string) =>
-    IFetch<RequestResponse>({ method: 'POST', url: 'auth/change-password/', data: { oldPassword, newPassword } }),
+    IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/change-password/`, data: { oldPassword, newPassword } }),
 
   // Activity
-  getActivity: (id: string) => IFetch<Activity>({ method: 'GET', url: `activities/${id}/` }),
-  getActivities: (filters?: any) => IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `activities/`, data: filters || {} }),
-  getMyParticipatingActivities: (filters?: any) => IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `user/me/activities/`, data: filters || {} }),
-  getMyHostActivities: (filters?: any) => IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `user/me/host-activities/`, data: filters || {} }),
-  createActivity: (item: ActivityRequired) => IFetch<Activity>({ method: 'POST', url: `activities/`, data: item }),
-  updateActivity: (id: string, item: ActivityRequired) => IFetch<Activity>({ method: 'PUT', url: `activities/${id}/`, data: item }),
-  deleteActivity: (id: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `activities/${id}/` }),
-  getActivityHosts: (id: string) => IFetch<Array<ActivityHost>>({ method: 'GET', url: `activities/${id}/hosts/` }),
-  addActivityHost: (id: string, email: string) => IFetch<Array<ActivityHost>>({ method: 'POST', url: `activities/${id}/hosts/`, data: { email } }),
-  getRegistration: (activityId: string, userId: string) => IFetch<Registration>({ method: 'GET', url: `activities/${activityId}/users/${userId}/` }),
-  getActivityRegistrations: (activityId: string) => IFetch<Array<Registration>>({ method: 'GET', url: `activities/${activityId}/users/` }),
+  getActivity: (id: string) => IFetch<Activity>({ method: 'GET', url: `${ACTIVITIES}/${id}/` }),
+  getActivities: (filters?: any) => IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `${ACTIVITIES}/`, data: filters || {} }),
+  getMyParticipatingActivities: (filters?: any) =>
+    IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `${USERS}/${ME}/${REGISTRATIONS}/`, data: filters || {} }),
+  getMyHostActivities: (filters?: any) => IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `${USERS}/${ME}/${HOSTS}/`, data: filters || {} }),
+  createActivity: (item: ActivityRequired) => IFetch<Activity>({ method: 'POST', url: `${ACTIVITIES}/`, data: item }),
+  updateActivity: (id: string, item: ActivityRequired) => IFetch<Activity>({ method: 'PUT', url: `${ACTIVITIES}/${id}/`, data: item }),
+  deleteActivity: (id: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${ACTIVITIES}/${id}/` }),
+  getActivityHosts: (id: string) => IFetch<Array<ActivityHost>>({ method: 'GET', url: `${ACTIVITIES}/${id}/${HOSTS}/` }),
+  addActivityHost: (id: string, email: string) => IFetch<Array<ActivityHost>>({ method: 'POST', url: `${ACTIVITIES}/${id}/${HOSTS}/`, data: { email } }),
+  getRegistration: (activityId: string, userId: string) =>
+    IFetch<Registration>({ method: 'GET', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/${userId}/` }),
+  getActivityRegistrations: (activityId: string) => IFetch<Array<Registration>>({ method: 'GET', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/` }),
   createRegistration: (activityId: string, userId: string) =>
-    IFetch<Registration>({ method: 'POST', url: `activities/${activityId}/users/`, data: { userId } }),
-  deleteRegistration: (activityId: string, userId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `activities/${activityId}/users/${userId}/` }),
+    IFetch<Registration>({ method: 'POST', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/`, data: { userId } }),
+  deleteRegistration: (activityId: string, userId: string) =>
+    IFetch<RequestResponse>({ method: 'DELETE', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/${userId}/` }),
 
   // User
-  getUser: () => IFetch<User>({ method: 'GET', url: `users/me/` }),
-  updateUser: (userId: string, item: Partial<User>) => IFetch<User>({ method: 'PUT', url: `users/${userId}/`, data: item }),
+  getUser: () => IFetch<User>({ method: 'GET', url: `${USERS}/${ME}/` }),
+  updateUser: (userId: string, item: Partial<User>) => IFetch<User>({ method: 'PUT', url: `${USERS}/${userId}/`, data: item }),
 };

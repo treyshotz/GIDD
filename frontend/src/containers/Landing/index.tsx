@@ -1,16 +1,23 @@
+import { useMemo } from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router-dom';
 import URLS from 'URLS';
 import { useIsAuthenticated } from 'hooks/User';
+import { useActivities } from 'hooks/Activities';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Button, Container } from '@material-ui/core';
+import { Typography, Button } from '@material-ui/core';
 
 // Project Components
 import Navigation from 'components/navigation/Navigation';
 import image from 'assets/img/DefaultBackground.jpg';
-// import ActivityCard from 'components/layout/ActivityCard';
+import Pagination from 'components/layout/Pagination';
+import Paper from 'components/layout/Paper';
+import NotFoundIndicator from 'components/miscellaneous/NotFoundIndicator';
+import ActivityCard from 'components/layout/ActivityCard';
+import Container from 'components/layout/Container';
+import MasonryGrid from 'components/layout/MasonryGrid';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -30,12 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
   activityContainer: {
     textAlign: 'center',
-  },
-  activities: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    margin: 'auto',
+    paddingTop: theme.spacing(2),
   },
   btnGroup: {
     display: 'flex',
@@ -46,6 +48,9 @@ const useStyles = makeStyles((theme) => ({
 const Landing = () => {
   const classes = useStyles();
   const isAuthenticated = useIsAuthenticated();
+  const { data, error, hasNextPage, fetchNextPage, isFetching } = useActivities();
+  const activities = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
+  const isEmpty = useMemo(() => !activities.length && !isFetching, [activities, isFetching]);
 
   return (
     <Navigation maxWidth={false}>
@@ -53,10 +58,10 @@ const Landing = () => {
         <title>Forsiden - Gidd</title>
       </Helmet>
       <div className={classes.img}>
-        <Typography align='center' className={classes.header} color='inherit' gutterBottom variant='h2'>
+        <Typography align='center' className={classes.header} color='inherit' gutterBottom variant='h1'>
           Gidd
         </Typography>
-        <Typography align='center' color='inherit' variant='body1'>
+        <Typography align='center' color='inherit' variant='h3'>
           Det er bare å gidde
         </Typography>
         <div className={classes.btnGroup}>
@@ -73,8 +78,16 @@ const Landing = () => {
         </div>
       </div>
       <Container className={classes.activityContainer}>
-        <Typography variant='h1'>Nye Aktiviteter</Typography>
-        <div className={classes.activities}>{/*<ActivityCard /> */}</div>
+        <Typography variant='h1'>Nye aktiviteter</Typography>
+        <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
+          <MasonryGrid>
+            {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen aktiviteter'} />}
+            {error && <Paper>{error.message}</Paper>}
+            {activities.map((activity) => (
+              <ActivityCard activity={activity} key={activity.id} />
+            ))}
+          </MasonryGrid>
+        </Pagination>
       </Container>
     </Navigation>
   );

@@ -45,9 +45,11 @@ const Http404 = () => {
         <Button color='primary' component={Link} to={URLS.LANDING}>
           Til forsiden
         </Button>
-        <Button color='primary' component={Link} to={URLS.LOGIN} variant='outlined'>
-          Logg inn
-        </Button>
+        {!isAuthenticated && (
+          <Button color='primary' component={Link} to={URLS.LOGIN} variant='outlined'>
+            Logg inn
+          </Button>
+        )}
       </div>
     </Navigation>
   );

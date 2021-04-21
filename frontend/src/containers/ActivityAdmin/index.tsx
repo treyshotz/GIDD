@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import URLS from 'URLS';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from 'hooks/User';
-import { useActivities, useActivityById } from 'hooks/Activities';
+import { useMyHostActivities, useActivityById } from 'hooks/Activities';
 import { formatDate } from 'utils';
 import { parseISO } from 'date-fns';
 
@@ -65,8 +65,8 @@ const ActivityAdmin = () => {
   };
 
   useEffect(() => {
-    if (isError || (activityId && data && !isUserLoading && (!user || !data.hosts.includes(user.id)))) {
-      // goToActivity(null);
+    if (isError || !user || (activityId && data && !isUserLoading && !data.hosts.some((host) => host.id === user.id) && data.creator.id !== user.id)) {
+      goToActivity(null);
     }
   }, [isError, data, user, isUserLoading, activityId]);
 
@@ -82,7 +82,7 @@ const ActivityAdmin = () => {
         selectedItemId={activityId}
         title='Aktiviteter'
         titleKey='title'
-        useHook={useActivities}
+        useHook={useMyHostActivities}
       />
       <div className={classes.root}>
         <div className={classes.content}>
