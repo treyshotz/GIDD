@@ -1,8 +1,5 @@
 package com.ntnu.gidd.config;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.TrainingLevelRepository;

@@ -2,12 +2,9 @@ package com.ntnu.gidd.service;
 
 import com.ntnu.gidd.dto.ActivityDto;
 import com.ntnu.gidd.dto.ActivityListDto;
-import com.ntnu.gidd.model.Activity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface ActivityService {

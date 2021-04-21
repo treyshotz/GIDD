@@ -1,23 +1,18 @@
 package com.ntnu.gidd.controller;
 
-import com.ntnu.gidd.dto.UserPasswordUpdateDto;
 import com.ntnu.gidd.dto.JwtTokenResponse;
+import com.ntnu.gidd.dto.UserPasswordUpdateDto;
 import com.ntnu.gidd.exception.PasswordIsIncorrectException;
 import com.ntnu.gidd.exception.RefreshTokenNotFound;
 import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.service.JwtService;
-import com.ntnu.gidd.security.token.JwtToken;
 import com.ntnu.gidd.service.UserService;
 import com.ntnu.gidd.util.Response;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;

@@ -1,6 +1,5 @@
 package com.ntnu.gidd.validation;
 
-import com.ntnu.gidd.dto.UserRegistrationDto;
 import org.springframework.beans.BeanWrapperImpl;
 
 import javax.validation.ConstraintValidator;
