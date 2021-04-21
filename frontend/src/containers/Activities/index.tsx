@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Helmet from 'react-helmet';
 import { useActivities } from 'hooks/Activities';
 import URLS from 'URLS';
@@ -11,12 +11,12 @@ import { Typography, Button } from '@material-ui/core';
 // Project Components
 import Navigation from 'components/navigation/Navigation';
 import Pagination from 'components/layout/Pagination';
-import Paper from 'components/layout/Paper';
 import NotFoundIndicator from 'components/miscellaneous/NotFoundIndicator';
 import ActivityCard from 'components/layout/ActivityCard';
 import Container from 'components/layout/Container';
 import MasonryGrid from 'components/layout/MasonryGrid';
 import SearchBar from 'components/inputs/SearchBar';
+import { Activity } from 'types/Types';
 
 const useStyles = makeStyles((theme) => ({
   top: {
@@ -40,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.getContrastText(theme.palette.colors.topbar),
     paddingBottom: theme.spacing(2),
   },
+  subtitle: {
+    margin: 'auto 0',
+  },
   row: {
     display: 'grid',
     gap: theme.spacing(1),
@@ -48,9 +51,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+export type ActivityFilters = Partial<Pick<Activity, 'title' | 'level'>> & {
+  startDateAfter?: string;
+  startDateBefore?: string;
+};
+
 const Activities = () => {
   const classes = useStyles();
-  const { data, error, hasNextPage, fetchNextPage, isFetching } = useActivities();
+  const [filters, setFilters] = useState<ActivityFilters>({});
+  const { data, error, hasNextPage, fetchNextPage, isFetching } = useActivities(filters);
   const activities = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !activities.length && !isFetching, [activities, isFetching]);
 
@@ -64,7 +73,7 @@ const Activities = () => {
           <Typography align='center' className={classes.title} variant='h1'>
             Aktiviteter
           </Typography>
-          <SearchBar />
+          <SearchBar updateFilters={setFilters} />
         </div>
       </div>
       <Container>
@@ -79,7 +88,7 @@ const Activities = () => {
         </div> */}
           <div className={classes.newActivities}>
             <div className={classes.row}>
-              <Typography align='left' variant='h2'>
+              <Typography align='left' className={classes.subtitle} variant='h2'>
                 Nytt
               </Typography>
               <Button color='primary' component={Link} to={URLS.ADMIN_ACTIVITIES} variant='outlined'>
@@ -89,7 +98,6 @@ const Activities = () => {
             <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
               <MasonryGrid>
                 {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen aktiviteter'} />}
-                {error && <Paper>{error.message}</Paper>}
                 {activities.map((activity) => (
                   <ActivityCard activity={activity} key={activity.id} />
                 ))}

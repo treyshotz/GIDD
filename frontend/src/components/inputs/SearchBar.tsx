@@ -1,54 +1,50 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Activity } from 'types/Types';
+import { TrainingLevel } from 'types/Enums';
+import { traningLevelToText } from 'utils';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
-import { PopperPlacementType } from '@material-ui/core/Popper';
-import DatePicker from 'components/inputs/DatePicker';
-import Bool from 'components/inputs/Bool';
-import { Button, Fade, Popper, IconButton, InputBase } from '@material-ui/core';
+import MenuItem from '@material-ui/core/MenuItem';
+import { Typography, Button, IconButton, InputBase, Collapse, Divider } from '@material-ui/core';
 
 // Icons
 import FilterIcon from '@material-ui/icons/TuneRounded';
 import SearchIcon from '@material-ui/icons/SearchRounded';
 
 // Project components
+import { ActivityFilters } from 'containers/Activities';
+import DatePicker from 'components/inputs/DatePicker';
+import Select from 'components/inputs/Select';
 import Paper from 'components/layout/Paper';
+import SubmitButton from 'components/inputs/SubmitButton';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  paper: {
+    borderRadius: 20,
     padding: theme.spacing(0.25, 0.5),
+    overflow: 'hidden',
+  },
+  root: {
     display: 'flex',
     alignItems: 'center',
     width: '100%',
-    borderRadius: 25,
   },
   input: {
     marginLeft: theme.spacing(1),
     flex: 1,
   },
   iconButton: {
-    padding: 10,
-  },
-  divider: {
-    height: 28,
-    margin: 4,
-  },
-  paper: {
-    border: '1px solid',
     padding: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    borderRadius: theme.shape.borderRadius,
-    width: '100%',
+  },
+  filterPaper: {
+    padding: theme.spacing(1),
     backgroundColor: theme.palette.background.paper,
   },
   level: {
     display: 'flex',
     flexDirection: 'column',
-  },
-  rowTwo: {
-    display: 'flex',
   },
   grid: {
     display: 'grid',
@@ -57,54 +53,90 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type FormValues = Pick<Activity, 'title' | 'description' | 'endDate' | 'startDate' | 'signupStart' | 'signupEnd' | 'capacity'>;
+type FormValues = Partial<Pick<Activity, 'title'>> & {
+  endDate?: Date;
+  startDate?: Date;
+  level?: Activity['level'] | '';
+};
 
-export default function SearchBar() {
+export type SearchBarProps = {
+  updateFilters: (newFilters: ActivityFilters) => void;
+};
+
+const SearchBar = ({ updateFilters }: SearchBarProps) => {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
-  const [placement, setPlacement] = useState<PopperPlacementType>();
-  const { control, formState } = useForm<FormValues>();
+  const { reset, register, handleSubmit, control, formState } = useForm<FormValues>();
 
-  const handleClick = (newPlacement: PopperPlacementType) => (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-    setOpen((prev) => placement !== newPlacement || !prev);
-    setPlacement(newPlacement);
+  const submit = async (data: FormValues) => {
+    setOpen(false);
+    const filters: ActivityFilters = {};
+    if (data.endDate) {
+      filters.startDateBefore = data.endDate.toJSON();
+    }
+    if (data.startDate) {
+      filters.startDateAfter = data.startDate.toJSON();
+    }
+    if (data.title) {
+      filters.title = data.title;
+    }
+    if (data.level) {
+      filters.level = data.level;
+    }
+    updateFilters(filters);
   };
-  const id = open ? 'transitions-popper' : undefined;
+
+  const resetFilters = async () => {
+    setOpen(false);
+    reset({
+      title: '',
+      level: '',
+      endDate: undefined,
+      startDate: undefined,
+    });
+    updateFilters({});
+  };
+
+  const { ref: titleRef, name: titleName } = register('title');
 
   return (
-    <Paper className={classes.root}>
-      <IconButton aria-label='menu' className={classes.iconButton} onClick={handleClick('bottom-end')}>
-        <FilterIcon />
-      </IconButton>
-      <Popper anchorEl={anchorEl} id={id} open={open} placement={placement} transition>
-        {({ TransitionProps }) => (
-          <Fade {...TransitionProps} timeout={350}>
-            <div className={classes.paper}>
-              <div className={classes.grid}>
-                <DatePicker control={control} formState={formState} label='Start' name='startDate' rules={{ required: 'Feltet er påkrevd' }} type='date-time' />
-                <DatePicker control={control} formState={formState} label='Slutt' name='endDate' rules={{ required: 'Feltet er påkrevd' }} type='date-time' />
-              </div>
-              <div className={classes.rowTwo}>
-                <div className={classes.level}>
-                  <Bool control={control} formState={formState} label='Høy' name='level_high' type='checkbox' />
-                  <Bool control={control} formState={formState} label='Middels' name='level_med' type='checkbox' />
-                  <Bool control={control} formState={formState} label='Lav' name='level_low' type='checkbox' />
-                </div>
-              </div>
-              <div className={classes.grid}>
-                <Button>Nullstill Filtre</Button>
-                <Button>Bruk Filtre</Button>
-              </div>
+    <Paper className={classes.paper} noPadding>
+      <form onSubmit={handleSubmit(submit)}>
+        <div className={classes.root}>
+          <IconButton aria-label='menu' className={classes.iconButton} onClick={() => setOpen((prev) => !prev)}>
+            <FilterIcon />
+          </IconButton>
+          <InputBase className={classes.input} inputRef={titleRef} name={titleName} placeholder='Søk etter aktivitet' />
+          <IconButton className={classes.iconButton} type='submit'>
+            <SearchIcon />
+          </IconButton>
+        </div>
+        <Collapse in={open}>
+          <Divider />
+          <div className={classes.filterPaper}>
+            <Typography variant='h3'>Filtre</Typography>
+            <div className={classes.grid}>
+              <DatePicker control={control} formState={formState} label='Start' margin='dense' name='startDate' type='date-time' />
+              <DatePicker control={control} formState={formState} label='Slutt' margin='dense' name='endDate' type='date-time' />
             </div>
-          </Fade>
-        )}
-      </Popper>
-      <InputBase className={classes.input} inputProps={{ 'aria-label': 'search google maps' }} placeholder='Søk etter aktivitet' />
-      <IconButton aria-label='search' className={classes.iconButton} type='submit'>
-        <SearchIcon />
-      </IconButton>
+            <Select control={control} formState={formState} label='Trenings-nivå' name='level'>
+              {Object.values(TrainingLevel).map((value, index) => (
+                <MenuItem key={index} value={value}>
+                  {traningLevelToText(value as TrainingLevel)}
+                </MenuItem>
+              ))}
+            </Select>
+            <div className={classes.grid}>
+              <Button onClick={resetFilters} variant='outlined'>
+                Nullstill filtre
+              </Button>
+              <SubmitButton formState={formState}>Aktiver filtre</SubmitButton>
+            </div>
+          </div>
+        </Collapse>
+      </form>
     </Paper>
   );
-}
+};
+
+export default SearchBar;

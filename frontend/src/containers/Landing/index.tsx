@@ -13,7 +13,6 @@ import { Typography, Button } from '@material-ui/core';
 import Navigation from 'components/navigation/Navigation';
 import image from 'assets/img/DefaultBackground.jpg';
 import Pagination from 'components/layout/Pagination';
-import Paper from 'components/layout/Paper';
 import NotFoundIndicator from 'components/miscellaneous/NotFoundIndicator';
 import ActivityCard from 'components/layout/ActivityCard';
 import Container from 'components/layout/Container';
@@ -82,7 +81,6 @@ const Landing = () => {
         <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
           <MasonryGrid>
             {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen aktiviteter'} />}
-            {error && <Paper>{error.message}</Paper>}
             {activities.map((activity) => (
               <ActivityCard activity={activity} key={activity.id} />
             ))}

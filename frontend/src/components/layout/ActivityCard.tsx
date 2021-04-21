@@ -33,24 +33,26 @@ export type ActivityCardProps = {
   activity: ActivityList;
 };
 
-export default function ActivityCard(props: ActivityCardProps) {
+const ActivityCard = ({ activity }: ActivityCardProps) => {
   const classes = useStyles();
 
   return (
-    <Link className={classes.link} to={`${URLS.ACTIVITIES}${props.activity.id}/`}>
+    <Link className={classes.link} to={`${URLS.ACTIVITIES}${activity.id}/`}>
       <Card className={classes.root}>
         <CardActionArea>
           <CardMedia className={classes.media} image={LOGO} />
           <CardContent>
             <Typography component='h2' gutterBottom variant='h5'>
-              {props.activity.title}
+              {activity.title}
             </Typography>
             <Typography className={classes.description} variant='body2'>
-              {props.activity.description}
+              {activity.description}
             </Typography>
           </CardContent>
         </CardActionArea>
       </Card>
     </Link>
   );
-}
+};
+
+export default ActivityCard;

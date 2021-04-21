@@ -10,10 +10,11 @@ export const useActivityById = (id: string) => {
   return useQuery<Activity, RequestResponse>([ACTIVITIES_QUERY_KEY, id], () => API.getActivity(id), { enabled: id !== '' });
 };
 
-export const useActivities = () => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const useActivities = (filters?: any) => {
   return useInfiniteQuery<PaginationResponse<ActivityList>, RequestResponse>(
-    [ACTIVITIES_QUERY_KEY],
-    ({ pageParam = 0 }) => API.getActivities({ page: pageParam }),
+    [ACTIVITIES_QUERY_KEY, filters],
+    ({ pageParam = 0 }) => API.getActivities({ ...filters, page: pageParam }),
     {
       getNextPageParam: (lastPage) => lastPage.next,
     },
