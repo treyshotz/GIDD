@@ -10,10 +10,11 @@ export const useActivityById = (id: string) => {
   return useQuery<Activity, RequestResponse>([ACTIVITIES_QUERY_KEY, id], () => API.getActivity(id), { enabled: id !== '' });
 };
 
-export const useActivities = () => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const useActivities = (filters?: any) => {
   return useInfiniteQuery<PaginationResponse<ActivityList>, RequestResponse>(
-    [ACTIVITIES_QUERY_KEY],
-    ({ pageParam = 0 }) => API.getActivities({ page: pageParam }),
+    [ACTIVITIES_QUERY_KEY, filters],
+    ({ pageParam = 0 }) => API.getActivities({ ...filters, page: pageParam }),
     {
       getNextPageParam: (lastPage) => lastPage.next,
     },
@@ -22,7 +23,7 @@ export const useActivities = () => {
 
 export const useMyParticipatingActivities = () => {
   return useInfiniteQuery<PaginationResponse<ActivityList>, RequestResponse>(
-    [ACTIVITIES_QUERY_KEY],
+    [ACTIVITIES_QUERY_KEY, 'me_participating'],
     ({ pageParam = 0 }) => API.getMyParticipatingActivities({ page: pageParam }),
     {
       getNextPageParam: (lastPage) => lastPage.next,
@@ -32,7 +33,7 @@ export const useMyParticipatingActivities = () => {
 
 export const useMyHostActivities = () => {
   return useInfiniteQuery<PaginationResponse<ActivityList>, RequestResponse>(
-    [ACTIVITIES_QUERY_KEY],
+    [ACTIVITIES_QUERY_KEY, 'me_host'],
     ({ pageParam = 0 }) => API.getMyHostActivities({ page: pageParam }),
     {
       getNextPageParam: (lastPage) => lastPage.next,
@@ -76,11 +77,21 @@ export const useActivityHostsById = (activityId: string) => {
 export const useAddActivityHost = (activityId: string): UseMutationResult<Array<ActivityHost>, RequestResponse, string, unknown> => {
   const queryClient = useQueryClient();
   return useMutation((email) => API.addActivityHost(activityId, email), {
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries([ACTIVITIES_QUERY_KEY, activityId]);
       queryClient.invalidateQueries([ACTIVITIES_QUERY_KEY, activityId, HOSTS_QUERY_KEY]);
-      // TODO: uncomment when backend sends a list of new hosts on success
-      // queryClient.setQueryData([ACTIVITIES_QUERY_KEY, activityId, HOSTS_QUERY_KEY], data);
+      queryClient.setQueryData([ACTIVITIES_QUERY_KEY, activityId, HOSTS_QUERY_KEY], data);
+    },
+  });
+};
+
+export const useRemoveActivityHost = (activityId: string): UseMutationResult<Array<ActivityHost>, RequestResponse, string, unknown> => {
+  const queryClient = useQueryClient();
+  return useMutation((hostId) => API.removeActivityHost(activityId, hostId), {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries([ACTIVITIES_QUERY_KEY, activityId]);
+      queryClient.invalidateQueries([ACTIVITIES_QUERY_KEY, activityId, HOSTS_QUERY_KEY]);
+      queryClient.setQueryData([ACTIVITIES_QUERY_KEY, activityId, HOSTS_QUERY_KEY], data);
     },
   });
 };
@@ -101,7 +112,7 @@ export const useCreateActivityRegistration = (activityId: string): UseMutationRe
   return useMutation((userId) => API.createRegistration(activityId, userId), {
     onSuccess: (data) => {
       queryClient.invalidateQueries([ACTIVITIES_QUERY_KEY, activityId]);
-      queryClient.setQueryData([ACTIVITIES_QUERY_KEY, activityId, ACTIVITIES_QUERY_KEY_REGISTRATION, data.id], data);
+      queryClient.setQueryData([ACTIVITIES_QUERY_KEY, activityId, ACTIVITIES_QUERY_KEY_REGISTRATION, data.user.id], data);
     },
   });
 };

@@ -88,6 +88,8 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: theme.breakpoints.values.md,
     margin: 'auto',
     padding: theme.spacing(3, 2, 5),
+    borderRadius: `${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0 0`,
+    background: theme.palette.background.paper,
   },
 }));
 
@@ -204,9 +206,9 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
             onOpen={() => setViewSignup(true)}
             open={viewSignup}
             swipeAreaWidth={56}>
-            {user && <ActivityRegistration activity={data} user={user} />}
+            {user && <ActivityRegistration activity={data} closeDialog={() => setViewSignup(false)} user={user} />}
           </SwipeableDrawer>
-          {!preview && data.hosts.includes(user?.id || '') && (
+          {!preview && (data.hosts.some((host) => host.id === user?.id) || data.creator.id === user?.id) && (
             <Button component={Link} fullWidth to={`${URLS.ADMIN_ACTIVITIES}${data.id}/`} variant='outlined'>
               Endre aktivitet
             </Button>

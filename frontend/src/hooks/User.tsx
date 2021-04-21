@@ -43,11 +43,15 @@ export const useForgotPassword = (): UseMutationResult<RequestResponse, RequestR
 export const useLogout = () => {
   const queryClient = useQueryClient();
   return () => {
-    removeCookie(ACCESS_TOKEN);
-    removeCookie(REFRESH_TOKEN);
     queryClient.removeQueries(USER_QUERY_KEY);
-    location.href = URLS.LANDING;
+    logout();
   };
+};
+
+export const logout = () => {
+  removeCookie(ACCESS_TOKEN);
+  removeCookie(REFRESH_TOKEN);
+  location.href = URLS.LANDING;
 };
 
 export const useIsAuthenticated = () => {

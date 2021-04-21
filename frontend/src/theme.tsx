@@ -58,6 +58,13 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
       },
     },
     components: {
+      MuiTypography: {
+        styleOverrides: {
+          root: {
+            wordBreak: 'break-word',
+          },
+        },
+      },
       MuiAvatar: {
         styleOverrides: {
           root: {

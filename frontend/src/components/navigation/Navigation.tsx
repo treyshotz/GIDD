@@ -39,7 +39,7 @@ const Navigation = ({ isLoading = false, noFooter = false, maxWidth, banner, chi
   return (
     <>
       <Helmet>
-        <title>Gidd - Det er bare å gidde</title>
+        <title>GIDD - Det er bare å gidde</title>
       </Helmet>
       <Topbar variant={topbarVariant} />
       <main className={classnames(classes.main, topbarVariant !== 'transparent' && classes.normalMain)}>

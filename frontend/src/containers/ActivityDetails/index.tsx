@@ -10,7 +10,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Http404 from 'containers/Http404';
 import Navigation from 'components/navigation/Navigation';
 import ActivityRenderer, { ActivityRendererLoading } from 'containers/ActivityDetails/components/ActivityRenderer';
-import BACKGROUND from 'assets/img/DefaultBackground.jpg';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -45,7 +44,6 @@ const ActivityDetails = () => {
           <meta content={data.title} property='og:title' />
           <meta content='website' property='og:type' />
           <meta content={window.location.href} property='og:url' />
-          <meta content={data.image || 'https://gidd.no' + BACKGROUND} property='og:image' />
         </Helmet>
       )}
       <div className={classes.wrapper}>{isLoading ? <ActivityRendererLoading /> : data !== undefined && <ActivityRenderer data={data} />}</div>

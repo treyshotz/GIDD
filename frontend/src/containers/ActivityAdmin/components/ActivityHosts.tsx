@@ -1,20 +1,23 @@
+import { useMemo } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { ActivityHost } from 'types/Types';
-import { useActivityHostsById, useAddActivityHost } from 'hooks/Activities';
+import { useActivityHostsById, useActivityById, useAddActivityHost, useRemoveActivityHost } from 'hooks/Activities';
+import { useUser } from 'hooks/User';
 import { useSnackbar } from 'hooks/Snackbar';
 import { EMAIL_REGEX } from 'constant';
 
 // Material-UI
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import Typography from '@material-ui/core/Typography';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import { LinearProgress, Divider, Typography, List, ListItem, ListItemText, ListItemSecondaryAction } from '@material-ui/core';
+
+// Icons
+import DeleteIcon from '@material-ui/icons/DeleteOutlineRounded';
 
 // Project components
 import Paper from 'components/layout/Paper';
 import SubmitButton from 'components/inputs/SubmitButton';
 import TextField from 'components/inputs/TextField';
+import VerifyDialog from 'components/layout/VerifyDialog';
 
 const useStyles = makeStyles((theme: Theme) => ({
   list: {
@@ -39,8 +42,12 @@ type FormValues = {
 
 const ActivityHosts = ({ activityId }: ActivityHostsProps) => {
   const classes = useStyles();
+  const { data: user } = useUser();
+  const { data: activity } = useActivityById(activityId);
   const { data: hosts, isLoading } = useActivityHostsById(activityId);
+  const isCreator = useMemo(() => activity?.creator.id === user?.id, [activity, user]);
   const addHost = useAddActivityHost(activityId);
+  const removeActivityHost = useRemoveActivityHost(activityId);
   const showSnackbar = useSnackbar();
   const { handleSubmit, register, formState, reset } = useForm<FormValues>();
 
@@ -56,13 +63,35 @@ const ActivityHosts = ({ activityId }: ActivityHostsProps) => {
     });
   };
 
+  const removeHost = async (hostId: string) => {
+    removeActivityHost.mutate(hostId, {
+      onSuccess: () => {
+        showSnackbar('Arrangøren ble fjernet', 'success');
+      },
+      onError: (e) => {
+        showSnackbar(e.message, 'error');
+      },
+    });
+  };
+
   type HostProps = {
     host: ActivityHost;
   };
   const Host = ({ host }: HostProps) => (
     <Paper className={classes.paper} noPadding>
       <ListItem>
-        <ListItemText classes={{ secondary: classes.secondaryText }} primary={`${host.firstName} ${host.surname}`} secondary={`${host.email}`} />
+        <ListItemText
+          classes={{ secondary: classes.secondaryText }}
+          primary={`${host.firstName} ${host.surname} ${host.id === user?.id ? '- (Deg)' : ''}`}
+          secondary={`${host.email}`}
+        />
+        {isCreator && host.id !== user?.id && (
+          <ListItemSecondaryAction>
+            <VerifyDialog iconButton onConfirm={() => removeHost(host.id)} titleText='Fjern arrangør'>
+              <DeleteIcon />
+            </VerifyDialog>
+          </ListItemSecondaryAction>
+        )}
       </ListItem>
     </Paper>
   );
@@ -72,10 +101,19 @@ const ActivityHosts = ({ activityId }: ActivityHostsProps) => {
   }
 
   return (
-    <div className={classes.list}>
-      {hosts?.map((host) => (
-        <Host host={host} key={host.id} />
-      ))}
+    <List className={classes.list}>
+      <Typography variant='subtitle1'>Opprettet av:</Typography>
+      {activity !== undefined && <Host host={activity.creator} />}
+      <Divider />
+      {Boolean(hosts?.length) && (
+        <>
+          <Typography variant='subtitle1'>Andre arrangører:</Typography>
+          {hosts?.map((host) => (
+            <Host host={host} key={host.id} />
+          ))}
+          <Divider />
+        </>
+      )}
       <Paper className={classes.paper}>
         <Typography variant='h3'>Legg til arrangør</Typography>
         <form className={classes.list} onSubmit={handleSubmit(submit)}>
@@ -96,7 +134,7 @@ const ActivityHosts = ({ activityId }: ActivityHostsProps) => {
           </SubmitButton>
         </form>
       </Paper>
-    </div>
+    </List>
   );
 };
 

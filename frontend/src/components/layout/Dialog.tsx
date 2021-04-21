@@ -1,17 +1,15 @@
 import { ReactNode } from 'react';
 
 // Material UI Components
-import { makeStyles, Theme } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import MaterialDialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
+import { makeStyles } from '@material-ui/core/styles';
+import { Button, Dialog as MaterialDialog, DialogActions, DialogTitle, DialogContent, DialogContentText } from '@material-ui/core';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
   contentText: {
     color: theme.palette.text.secondary,
+  },
+  paper: {
+    background: theme.palette.background.paper,
   },
 }));
 
@@ -46,7 +44,13 @@ const Dialog = ({
 }: DialogProps) => {
   const classes = useStyles();
   return (
-    <MaterialDialog aria-labelledby='form-dialog-title' fullWidth={fullWidth} maxWidth={maxWidth} onClose={onClose} open={open}>
+    <MaterialDialog
+      aria-labelledby='form-dialog-title'
+      classes={{ paper: classes.paper }}
+      fullWidth={fullWidth}
+      maxWidth={maxWidth}
+      onClose={onClose}
+      open={open}>
       {titleText && <DialogTitle id='form-dialog-title'>{titleText}</DialogTitle>}
       {(contentText || children) && (
         <DialogContent>

@@ -25,6 +25,7 @@ import Navigation from 'components/navigation/Navigation';
 // Project containers
 import Landing from 'containers/Landing';
 const Http404 = lazy(() => import('containers/Http404'));
+const About = lazy(() => import('containers/About'));
 const Auth = lazy(() => import('containers/Auth'));
 const Activities = lazy(() => import('containers/Activities'));
 const ActivityDetails = lazy(() => import('containers/ActivityDetails'));
@@ -100,6 +101,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<Landing />} path={URLS.LANDING} />
+      <Route element={<About />} path={URLS.ABOUT} />
       <Route path={URLS.ACTIVITIES}>
         <Route element={<ActivityDetails />} path=':id/*' />
         <Route element={<Activities />} path='' />

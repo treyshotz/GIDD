@@ -116,7 +116,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
           type='email'
         />
         <DatePicker control={control} dateProps={{ disableFuture: true }} formState={formState} label='Fødselsdato' name='birthDate' type='date' />
-        <Select control={control} formState={formState} label='Trenings-nivå' name='traninglevel'>
+        <Select control={control} formState={formState} label='Trenings-nivå' name='level'>
           {Object.values(TrainingLevel).map((value, index) => (
             <MenuItem key={index} value={value}>
               {traningLevelToText(value as TrainingLevel)}
