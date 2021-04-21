@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
 
 // Material UI Components
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
   button: {
     padding: theme.spacing(1),
     backgroundColor: theme.palette.background.paper,

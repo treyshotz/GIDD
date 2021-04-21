@@ -1,9 +1,9 @@
 import { ReactNode } from 'react';
 import MaterialPaper from '@material-ui/core/Paper';
 import classnames from 'classnames';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
   main: {
     border: theme.palette.borderWidth + ' solid ' + theme.palette.divider,
   },

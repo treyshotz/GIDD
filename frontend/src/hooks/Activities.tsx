@@ -95,6 +95,22 @@ export const useRemoveActivityHost = (activityId: string): UseMutationResult<Arr
     },
   });
 };
+export const useMyHostActivisties = () => {
+  return useInfiniteQuery<PaginationResponse<ActivityList>, RequestResponse>(
+    [ACTIVITIES_QUERY_KEY, 'me_host'],
+    ({ pageParam = 0 }) => API.getMyHostActivities({ page: pageParam }),
+    {
+      getNextPageParam: (lastPage) => lastPage.next,
+    },
+  );
+};
+
+export const useActivityRegistrations = (activityId: string) => {
+  return useInfiniteQuery<PaginationResponse<Registration>, RequestResponse>(
+    [ACTIVITIES_QUERY_KEY, activityId, ACTIVITIES_QUERY_KEY_REGISTRATION],
+    ({ pageParam = 0 }) => API.getRegistrations(activityId, { page: pageParam }),
+  );
+};
 
 export const useActivityRegistration = (activityId: string, userId: string) => {
   return useQuery<Registration, RequestResponse>(

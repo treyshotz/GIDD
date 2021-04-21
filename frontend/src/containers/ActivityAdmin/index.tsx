@@ -7,7 +7,7 @@ import { formatDate } from 'utils';
 import { parseISO } from 'date-fns';
 
 // Material-UI
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Collapse from '@material-ui/core/Collapse';
 
@@ -24,9 +24,9 @@ import Navigation from 'components/navigation/Navigation';
 import SidebarList from 'components/layout/SidebarList';
 import ActivityEditor from 'containers/ActivityAdmin/components/ActivityEditor';
 import ActivityHosts from 'containers/ActivityAdmin/components/ActivityHosts';
-// import ActivityParticipants from 'containers/ActivityAdmin/components/ActivityParticipants';
+import ActivityRegistrations from 'containers/ActivityAdmin/components/ActivityRegistrations';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(4),
     marginLeft: theme.spacing(35),
@@ -97,7 +97,7 @@ const ActivityAdmin = () => {
               <ActivityEditor activityId={activityId} goToActivity={goToActivity} />
             </Collapse>
             <Collapse in={tab === participantsTab.value} mountOnEnter>
-              {/* <ActivityParticipants activityId={activityId} /> */}
+              <ActivityRegistrations activityId={activityId} />
             </Collapse>
             <Collapse in={tab === hostsTab.value} mountOnEnter>
               <ActivityHosts activityId={activityId} />

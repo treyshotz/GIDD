@@ -64,10 +64,10 @@ export default {
   removeActivityHost: (id: string, hostId: string) => IFetch<Array<ActivityHost>>({ method: 'DELETE', url: `${ACTIVITIES}/${id}/${HOSTS}/${hostId}/` }),
 
   // Activity registrations
+  getRegistrations: (activityId: string, filters?: any) =>
+    IFetch<PaginationResponse<Registration>>({ method: 'GET', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/`, data: filters || {} }),
   getRegistration: (activityId: string, userId: string) =>
     IFetch<Registration>({ method: 'GET', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/${userId}/` }),
-  getActivityRegistrations: (activityId: string) =>
-    IFetch<PaginationResponse<Registration>>({ method: 'GET', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/` }),
   createRegistration: (activityId: string, userId: string) =>
     IFetch<Registration>({ method: 'POST', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/`, data: { id: userId } }),
   deleteRegistration: (activityId: string, userId: string) =>
