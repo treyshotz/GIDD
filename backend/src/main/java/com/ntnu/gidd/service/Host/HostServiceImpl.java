@@ -51,7 +51,7 @@ public class HostServiceImpl implements HostService {
     public Page<ActivityListDto> getAllByEmail(Predicate predicate, Pageable pageable, String email) {
         QActivity activity = QActivity.activity;
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-        predicate = ExpressionUtils.allOf(predicate, activity.hosts.any().id.eq(user.getId()));
+        predicate = ExpressionUtils.allOf(predicate, activity.hosts.any().id.eq(user.getId()).or(activity.creator.id.eq(user.getId())));
         return activityRepository.findAll(predicate, pageable).map(a -> modelMapper.map(a, ActivityListDto.class));
     }
     
