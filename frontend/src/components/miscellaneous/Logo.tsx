@@ -40,7 +40,7 @@ const Logo = ({ size, className }: LogoProps) => {
         <g id='g12'>
           <g clipPath='url(#clipPath18)' id='g14'>
             <image height='330' href={LOGO_URL} transform='translate(200.4761,340.4263)' width='330' />
-            {size === 'large' && <text>Gidd</text>}
+            {size === 'large' && <text>GIDD</text>}
           </g>
         </g>
       </g>

@@ -47,7 +47,7 @@ const SignUp = () => {
       { firstName: data.firstName, surname: data.surname, email: data.email, password: data.password, matchingPassword: data.repeatPassword },
       {
         onSuccess: () => {
-          navigate(URLS.LANDING);
+          navigate(URLS.LOGIN);
         },
         onError: (e) => {
           setError('password', { message: e.message || 'Noe gikk galt' });

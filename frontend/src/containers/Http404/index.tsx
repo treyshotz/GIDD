@@ -33,7 +33,7 @@ const Http404 = () => {
   const isAuthenticated = useIsAuthenticated();
 
   return (
-    <Navigation>
+    <Navigation topbarVariant='filled'>
       <Helmet>
         <title>404</title>
       </Helmet>
@@ -45,9 +45,11 @@ const Http404 = () => {
         <Button color='primary' component={Link} to={URLS.LANDING}>
           Til forsiden
         </Button>
-        <Button color='primary' component={Link} to={URLS.LOGIN} variant='outlined'>
-          Logg inn
-        </Button>
+        {!isAuthenticated && (
+          <Button color='primary' component={Link} to={URLS.LOGIN} variant='outlined'>
+            Logg inn
+          </Button>
+        )}
       </div>
     </Navigation>
   );

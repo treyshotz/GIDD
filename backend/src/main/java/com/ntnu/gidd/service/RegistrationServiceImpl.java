@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -126,6 +127,7 @@ public class RegistrationServiceImpl implements RegistrationService {
    * @return deletion or throws exception
    */
   @Override
+  @Transactional
   public void deleteRegistrationWithCompositeId(UUID user_id, UUID activity_id) {
     registrationRepository.findRegistrationByUser_IdAndActivity_Id(user_id, activity_id)
             .orElseThrow(RegistrationNotFoundException::new);

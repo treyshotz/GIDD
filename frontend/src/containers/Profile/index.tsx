@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Helmet from 'react-helmet';
 import classnames from 'classnames';
-import { useUser } from 'hooks/User';
+import { useUser, useLogout } from 'hooks/User';
 import { Link } from 'react-router-dom';
 import URLS from 'URLS';
 
@@ -23,24 +23,24 @@ import Paper from 'components/layout/Paper';
 import Tabs from 'components/layout/Tabs';
 import Http404 from 'containers/Http404';
 import EditProfile from 'containers/Profile/components/EditProfile';
-// import MyActivities from 'containers/Profile/components/MyActivities';
+import MyActivities from 'containers/Profile/components/MyActivities';
 
-const BG_IMAGE = 'https://img.mensxp.com/media/content/2020/Apr/Himalayas-Visible-From-Saharanpur-Is-A-Sight-To-Behold1400_5eaaa0a43fb97.jpeg';
+import BACKGROUND from 'assets/img/snow_mountains.jpg';
 
 const useStyles = makeStyles((theme) => ({
   backgroundImg: {
-    background: `${theme.palette.colors.gradient}, url(${BG_IMAGE}) center center/cover no-repeat scroll`,
+    background: `${theme.palette.colors.gradient}, url(${BACKGROUND}) center center/cover no-repeat scroll`,
     width: '100%',
     height: 300,
     backgroundSize: 'cover',
   },
   avatarContainer: {
     position: 'relative',
-    margin: theme.spacing('-120px', 'auto', 2),
+    marginTop: -120,
     zIndex: 2,
     alignItems: 'center',
     [theme.breakpoints.down('lg')]: {
-      margin: theme.spacing('-80px', 'auto', 1),
+      marginTop: -80,
     },
   },
   avatar: {
@@ -67,12 +67,21 @@ const useStyles = makeStyles((theme) => ({
       gridTemplateColumns: '1fr',
     },
   },
+  logout: {
+    color: theme.palette.error.main,
+    borderColor: theme.palette.error.main,
+    '&:hover': {
+      color: theme.palette.error.light,
+      borderColor: theme.palette.error.light,
+    },
+  },
 }));
 
 const Profile = () => {
   const classes = useStyles();
   const { data: user, isLoading, isError } = useUser();
-  const activitiesTab = { value: 'activities', label: 'Aktiviteter', icon: AktivitiesIcon };
+  const logout = useLogout();
+  const activitiesTab = { value: 'activities', label: 'Påmeldte aktiviteter', icon: AktivitiesIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
   const tabs = [activitiesTab, editTab];
   const [tab, setTab] = useState(activitiesTab.value);
@@ -87,11 +96,11 @@ const Profile = () => {
   return (
     <Navigation maxWidth={false}>
       <Helmet>
-        <title>Profil - Gidd</title>
+        <title>Profil - GIDD</title>
       </Helmet>
       <div className={classes.backgroundImg} />
       <Container className={classnames(classes.grid, classes.root)}>
-        <div>
+        <div className={classes.grid}>
           <Paper className={classnames(classes.grid, classes.avatarContainer)}>
             <Avatar className={classes.avatar}>{`${user.firstName.substr(0, 1)}${user.surname.substr(0, 1)}`}</Avatar>
             <div>
@@ -104,15 +113,22 @@ const Profile = () => {
           <Button component={Link} fullWidth to={URLS.ADMIN_ACTIVITIES}>
             Administrer aktiviteter
           </Button>
+          <Button className={classes.logout} fullWidth onClick={logout} variant='outlined'>
+            Logg ut
+          </Button>
         </div>
         <div className={classes.grid}>
           <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
-          <Paper className={classes.grid}>
-            <Collapse in={tab === activitiesTab.value}>{/* <MyActivities /> */}</Collapse>
-            <Collapse in={tab === editTab.value} mountOnEnter>
-              <EditProfile user={user} />
+          <div className={classes.grid}>
+            <Collapse in={tab === activitiesTab.value}>
+              <MyActivities />
             </Collapse>
-          </Paper>
+            <Collapse in={tab === editTab.value} mountOnEnter>
+              <Paper>
+                <EditProfile user={user} />
+              </Paper>
+            </Collapse>
+          </div>
         </div>
       </Container>
     </Navigation>

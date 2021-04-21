@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import URLS from 'URLS';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { useUser } from 'hooks/User';
-import { useActivities, useActivityById } from 'hooks/Activities';
+import { useMyHostActivities, useActivityById } from 'hooks/Activities';
 import { formatDate } from 'utils';
 import { parseISO } from 'date-fns';
 
@@ -15,6 +15,7 @@ import Collapse from '@material-ui/core/Collapse';
 import EditIcon from '@material-ui/icons/EditRounded';
 import ParticipantsIcon from '@material-ui/icons/PeopleRounded';
 import HostsIcon from '@material-ui/icons/AdminPanelSettingsRounded';
+import OpenIcon from '@material-ui/icons/OpenInBrowserRounded';
 
 // Project components
 import Paper from 'components/layout/Paper';
@@ -53,7 +54,8 @@ const ActivityAdmin = () => {
   const editTab = { value: 'edit', label: activityId ? 'Endre' : 'Opprett', icon: EditIcon };
   const participantsTab = { value: 'participants', label: 'Påmeldte', icon: ParticipantsIcon };
   const hostsTab = { value: 'hosts', label: 'Arrangører', icon: HostsIcon };
-  const tabs = [editTab, ...(activityId ? [participantsTab, hostsTab] : [])];
+  const navigateTab = { value: 'navigate', label: 'Se arrangement', icon: OpenIcon };
+  const tabs = [editTab, ...(activityId ? [participantsTab, hostsTab, navigateTab] : [])];
   const [tab, setTab] = useState(editTab.value);
 
   const goToActivity = (newActivity: string | null) => {
@@ -65,8 +67,8 @@ const ActivityAdmin = () => {
   };
 
   useEffect(() => {
-    if (isError || (activityId && data && !isUserLoading && (!user || !data.hosts.includes(user.id)))) {
-      // goToActivity(null);
+    if (isError || !user || (activityId && data && !isUserLoading && !data.hosts.some((host) => host.id === user.id) && data.creator.id !== user.id)) {
+      goToActivity(null);
     }
   }, [isError, data, user, isUserLoading, activityId]);
 
@@ -82,7 +84,7 @@ const ActivityAdmin = () => {
         selectedItemId={activityId}
         title='Aktiviteter'
         titleKey='title'
-        useHook={useActivities}
+        useHook={useMyHostActivities}
       />
       <div className={classes.root}>
         <div className={classes.content}>
@@ -100,6 +102,7 @@ const ActivityAdmin = () => {
             <Collapse in={tab === hostsTab.value} mountOnEnter>
               <ActivityHosts activityId={activityId} />
             </Collapse>
+            {tab === navigateTab.value && <Navigate to={`${URLS.ACTIVITIES}${activityId}/`} />}
           </Paper>
         </div>
       </div>
