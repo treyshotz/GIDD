@@ -25,8 +25,6 @@ public interface ActivityRepository extends JpaRepository<Activity, UUID> {
     Optional<Activity> findActivityByIdAndHosts_Id(UUID id, UUID hosts_id);
     Page<Activity> findActivitiesByHosts_Id(UUID hosts_id, Pageable pageable);
 
-    List<Activity> findActivityByGeoLocationAndPosition(Geometry filter);
-
     @Query()
-    List<Activity> findActivitiesWithin(@Param("filter") Polygonal filter);
+    List<Activity> findActivitiesWithin(@Param("filter") Geometry filter, int radius);
 }

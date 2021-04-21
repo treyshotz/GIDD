@@ -10,14 +10,15 @@ import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.service.geolocation.GeoLocationService;
 import com.ntnu.gidd.util.TrainingLevelEnum;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Polygonal;
-import com.vividsolutions.jts.util.GeometricShapeFactory;
+//import com.vividsolutions.jts.geom.Coordinate;
+//import com.vividsolutions.jts.geom.Polygonal;
+//import com.vividsolutions.jts.util.GeometricShapeFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryFactory;
 import org.geolatte.geom.Point;
 import org.geolatte.geom.PointSequence;
+import org.geolatte.geom.codec.Wkt;
 import org.modelmapper.ModelMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ import java.util.UUID;
 public class ActivityServiceImpl implements ActivityService {
     ModelMapper modelMapper = new ModelMapper();
     private final GeometryFactory geometryFactory = new GeometryFactory();
-    private final GeometricShapeFactory geometricShapeFactory = new GeometricShapeFactory();
+    private final GeometryFactory geometricShapeFactory = new GeometryFactory();
     @Autowired
     private ActivityRepository activityRepository;
 
@@ -90,17 +91,14 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Page<ActivityListDto> findActivitiesWithinRadius(Pageable pageable, GeoLocation position, User user) {
-        Point p = geometryFactory.createPoint((PointSequence) new Coordinate(position.getLatitude(), position.getLatitude()));
-        Polygonal circle = createCircle(position, user.getRadius());
-        activityRepository.findActivitiesWithin(circle);
+        Geometry point = Wkt.fromWkt("Point("+position.getLatitude()+ " " +position.getLongitude()+")");
+        int radius = user.getRadius();
+        activityRepository.findActivitiesWithin(point, radius);
         return null;
     }
 
-    private Polygonal createCircle(GeoLocation geo, int radius){
-        geometricShapeFactory.setNumPoints(12);
-        geometricShapeFactory.setCentre(new Coordinate(geo.getLatitude(), geo.getLongitude()));
-        geometricShapeFactory.setSize(radius * 2);
-        return geometricShapeFactory.createCircle();
+    void test(GeoLocation geoLocation){
+        Geometry point = Wkt.fromWkt("Point("+geoLocation.getLatitude()+ " " +geoLocation.getLongitude()+")");
     }
 }
 
