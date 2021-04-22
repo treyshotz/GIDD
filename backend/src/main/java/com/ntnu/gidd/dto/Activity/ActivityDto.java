@@ -1,5 +1,6 @@
 package com.ntnu.gidd.dto.Activity;
 
+import com.ntnu.gidd.dto.ActivityImageDto;
 import com.ntnu.gidd.dto.User.UserListDto;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import lombok.AllArgsConstructor;
@@ -38,4 +39,5 @@ public class ActivityDto {
     private List<UserListDto> hosts;
     private TrainingLevelEnum level;
     private int capacity;
+    private List<ActivityImageDto> images;
 }

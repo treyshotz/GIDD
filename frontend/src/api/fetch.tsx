@@ -30,7 +30,7 @@ export const IFetch = <T,>({ method, url, data = {}, withAuth = true, refreshAcc
     headers.append('authorization', `Bearer ${getCookie(ACCESS_TOKEN)}`);
   }
 
-  return fetch(request(method, urlAddress, headers, data, file)).then(async (response) => {
+  return fetch(request(method, file ? url : urlAddress, headers, data, file)).then(async (response) => {
     const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json') || !response.ok || response.json === undefined) {
       if (response.status === 401 && Boolean(getCookie(REFRESH_TOKEN)) && !refreshAccess && tryAgain) {
@@ -51,7 +51,7 @@ const request = (method: RequestMethodType, url: string, headers: Headers, data:
   const getBody = () => {
     if (file) {
       const data = new FormData();
-      data.append('file', file);
+      data.append('image', file);
       return data;
     } else {
       return method !== 'GET' ? JSON.stringify(data) : undefined;

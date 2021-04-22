@@ -3,8 +3,8 @@ import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { ReactNode } from 'react';
 
 // Project Components
-import Masonry from 'react-masonry-css';
-import ActivityCard from 'components/layout/ActivityCard';
+import Masonry, { MasonryProps } from 'react-masonry-css';
+
 const useStyles = makeStyles((theme) => ({
   myMasonryGrid: {
     display: 'flex',
@@ -19,11 +19,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export type ActivityCard = {
+export type MasonryGridProps = {
   children: ReactNode;
+  breakpoints?: MasonryProps['breakpointCols'];
 };
 
-export default function MasonryGrid(props: ActivityCard) {
+export default function MasonryGrid(props: MasonryGridProps) {
   const classes = useStyles();
   const theme = useTheme();
   const breakpointColumnsObj = {
@@ -33,7 +34,7 @@ export default function MasonryGrid(props: ActivityCard) {
     [theme.breakpoints.values.md]: 1,
   };
   return (
-    <Masonry breakpointCols={breakpointColumnsObj} className={classes.myMasonryGrid} columnClassName={classes.myMasonryGridColumn}>
+    <Masonry breakpointCols={props.breakpoints || breakpointColumnsObj} className={classes.myMasonryGrid} columnClassName={classes.myMasonryGridColumn}>
       {props.children}
     </Masonry>
   );

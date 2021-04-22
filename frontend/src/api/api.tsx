@@ -4,11 +4,12 @@ import { setCookie } from 'api/cookie';
 import { ACCESS_TOKEN, ACCESS_TOKEN_DURATION } from 'constant';
 import { logout } from 'hooks/User';
 import {
-  LoginRequestResponse,
   Activity,
   ActivityList,
   ActivityRequired,
   ActivityHost,
+  FileUploadResponse,
+  LoginRequestResponse,
   PaginationResponse,
   Registration,
   RequestResponse,
@@ -76,4 +77,8 @@ export default {
   // User
   getUser: () => IFetch<User>({ method: 'GET', url: `${USERS}/${ME}/` }),
   updateUser: (userId: string, item: Partial<User>) => IFetch<User>({ method: 'PUT', url: `${USERS}/${userId}/`, data: item }),
+
+  // Upload file
+  uploadFile: (file: File | Blob) =>
+    IFetch<FileUploadResponse>({ method: 'POST', url: 'https://api.imgbb.com/1/upload?key=909df01fa93bd63405c9a36d662523f3', file, withAuth: false }),
 };

@@ -4,6 +4,7 @@ package com.ntnu.gidd.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.ZonedDateTime ;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
@@ -52,6 +53,10 @@ public class Activity extends UUIDModel {
     uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
     private List<User> hosts;
     private int capacity;
+    @OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
+    @JoinColumn(name = "activity_id", nullable = false, insertable = false)
+    private List<ActivityImage> images;
+
 
     @PreRemove
     private void removeHostsFromActivity() {

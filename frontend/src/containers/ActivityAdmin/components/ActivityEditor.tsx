@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import classnames from 'classnames';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { TrainingLevel } from 'types/Enums';
@@ -10,13 +10,13 @@ import { traningLevelToText } from 'utils';
 
 // Material-UI
 import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import MenuItem from '@material-ui/core/MenuItem';
+import { Grid, LinearProgress, MenuItem, Button } from '@material-ui/core';
 
 // Project components
 import DatePicker from 'components/inputs/DatePicker';
+import { ImageUpload } from 'components/inputs/Upload';
 import VerifyDialog from 'components/layout/VerifyDialog';
+import Dialog from 'components/layout/Dialog';
 import SubmitButton from 'components/inputs/SubmitButton';
 import TextField from 'components/inputs/TextField';
 import Select from 'components/inputs/Select';
@@ -50,7 +50,7 @@ export type ActivityEditorProps = {
   goToActivity: (newActivity: string | null) => void;
 };
 
-type FormValues = Pick<Activity, 'title' | 'description' | 'capacity' | 'level'> & {
+type FormValues = Pick<Activity, 'title' | 'description' | 'capacity' | 'level' | 'images'> & {
   startDate: Date;
   endDate: Date;
   signupStart: Date;
@@ -59,12 +59,13 @@ type FormValues = Pick<Activity, 'title' | 'description' | 'capacity' | 'level'>
 
 const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
   const classes = useStyles();
+  const [openImages, setOpenImages] = useState(false);
   const { data, isLoading } = useActivityById(activityId || '');
   const createActivity = useCreateActivity();
   const updateActivity = useUpdateActivity(activityId || '');
   const deleteActivity = useDeleteActivity(activityId || '');
   const showSnackbar = useSnackbar();
-  const { control, handleSubmit, register, formState, setError, reset } = useForm<FormValues>();
+  const { control, handleSubmit, register, formState, setError, reset, setValue, watch } = useForm<FormValues>();
 
   const setValues = useCallback(
     (newValues: Activity | null) => {
@@ -73,6 +74,7 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
         description: newValues?.description || '',
         endDate: newValues?.endDate ? parseISO(newValues.endDate) : new Date(),
         level: newValues?.level || TrainingLevel.MEDIUM,
+        images: newValues?.images || [],
         startDate: newValues?.startDate ? parseISO(newValues.startDate) : new Date(),
         signupEnd: newValues?.signupEnd ? parseISO(newValues.signupEnd) : new Date(),
         signupStart: newValues?.signupStart ? parseISO(newValues.signupStart) : new Date(),
@@ -208,6 +210,12 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
                 </MenuItem>
               ))}
             </Select>
+            <Button className={classes.margin} onClick={() => setOpenImages(true)} variant='outlined'>
+              Endre bilder
+            </Button>
+            <Dialog onClose={() => setOpenImages(false)} open={openImages} titleText='Endre bilder'>
+              <ImageUpload formState={formState} label='Legg til bilde' name='images' register={register('images')} setValue={setValue} watch={watch} />
+            </Dialog>
           </div>
           <TextField
             formState={formState}

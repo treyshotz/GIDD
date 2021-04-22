@@ -20,10 +20,10 @@ import Alert from '@material-ui/core/Alert';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 
 // Project Components
-import AspectRatioImg, { AspectRatioLoading } from 'components/miscellaneous/AspectRatioImg';
 import ActivityRegistration from 'containers/ActivityDetails/components/ActivityRegistration';
 import Paper from 'components/layout/Paper';
 import VerifyDialog from 'components/layout/VerifyDialog';
+import MasonryGrid from 'components/layout/MasonryGrid';
 
 const useStyles = makeStyles((theme) => ({
   image: {
@@ -90,6 +90,10 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3, 2, 5),
     borderRadius: `${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0 0`,
     background: theme.palette.background.paper,
+  },
+  img: {
+    width: '100%',
+    borderRadius: theme.shape.borderRadius,
   },
 }));
 
@@ -216,10 +220,15 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
         </div>
       </div>
       <div className={classnames(classes.grid, classes.images)}>
-        <AspectRatioImg alt={data.title} imgClassName={classes.image} src={data.image} />
-        <AspectRatioImg alt={data.title} imgClassName={classes.image} src={data.image} />
-        <AspectRatioImg alt={data.title} imgClassName={classes.image} src={data.image} />
-        <AspectRatioImg alt={data.title} imgClassName={classes.image} src={data.image} />
+        <MasonryGrid
+          breakpoints={{
+            default: 2,
+            900: 1,
+          }}>
+          {data.images.map((image, i) => (
+            <img className={classes.img} key={i} src={image.url} />
+          ))}
+        </MasonryGrid>
       </div>
     </div>
   );
@@ -232,27 +241,35 @@ export const ActivityRendererLoading = () => {
 
   return (
     <div className={classes.rootGrid}>
-      <div className={classes.grid}>
-        <Paper className={classes.details} noPadding>
-          {/* <DetailContentLoading /> */}
-          {/* <DetailContentLoading /> */}
-          {/* <DetailContentLoading /> */}
-        </Paper>
-        <Paper className={classes.details} noPadding>
-          {/* <DetailContentLoading /> */}
-          {/* <DetailContentLoading /> */}
-        </Paper>
-      </div>
       <div className={classnames(classes.grid, classes.content)}>
-        <AspectRatioLoading imgClassName={classes.image} />
-        <Paper className={classes.content}>
+        <div>
           <Skeleton className={classes.skeleton} height={80} width='60%' />
           <Skeleton className={classes.skeleton} height={40} width={250} />
           <Skeleton className={classes.skeleton} height={40} width='80%' />
           <Skeleton className={classes.skeleton} height={40} width='85%' />
           <Skeleton className={classes.skeleton} height={40} width='75%' />
           <Skeleton className={classes.skeleton} height={40} width='90%' />
-        </Paper>
+        </div>
+        <div className={classes.grid}>
+          <Paper>
+            <Skeleton className={classes.skeleton} height={80} width='60%' />
+            <Skeleton className={classes.skeleton} height={40} width={250} />
+            <Skeleton className={classes.skeleton} height={40} width='80%' />
+            <Skeleton className={classes.skeleton} height={40} width='85%' />
+          </Paper>
+        </div>
+      </div>
+      <div className={classnames(classes.grid, classes.images)}>
+        <MasonryGrid
+          breakpoints={{
+            default: 2,
+            900: 1,
+          }}>
+          <Skeleton className={classes.img} height={150} />
+          <Skeleton className={classes.img} height={200} />
+          <Skeleton className={classes.img} height={180} />
+          <Skeleton className={classes.img} height={120} />
+        </MasonryGrid>
       </div>
     </div>
   );

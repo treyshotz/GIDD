@@ -55,7 +55,9 @@ export type Activity = {
   signupStart: string;
   signupEnd: string;
   hosts: Array<UserList>;
-  image: string;
+  images: Array<{
+    url: string;
+  }>;
   creator: UserList;
 };
 
@@ -66,3 +68,9 @@ export type ActivityHost = Pick<User, 'firstName' | 'surname' | 'email' | 'id'>;
 export type Registration = {
   user: User;
 };
+
+export interface FileUploadResponse {
+  data: {
+    display_url: string;
+  };
+}
