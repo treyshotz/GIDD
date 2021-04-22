@@ -1,12 +1,12 @@
 package com.ntnu.gidd.controller;
 
 import com.ntnu.gidd.dto.JwtTokenResponse;
-import com.ntnu.gidd.dto.UserPasswordUpdateDto;
+import com.ntnu.gidd.dto.User.UserPasswordUpdateDto;
 import com.ntnu.gidd.exception.PasswordIsIncorrectException;
 import com.ntnu.gidd.exception.RefreshTokenNotFound;
 import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.service.JwtService;
-import com.ntnu.gidd.service.UserService;
+import com.ntnu.gidd.service.User.UserService;
 import com.ntnu.gidd.util.Response;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

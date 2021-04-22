@@ -1,14 +1,12 @@
 package com.ntnu.gidd.controller.Registration;
 
-import com.ntnu.gidd.dto.RegistrationDto;
+import com.ntnu.gidd.dto.Registration.RegistrationActivityDto;
+import com.ntnu.gidd.dto.Registration.RegistrationActivityListDto;
 import com.ntnu.gidd.exception.RegistrationNotFoundException;
 import com.ntnu.gidd.model.Activity;
-import com.ntnu.gidd.model.Registration;
-import java.util.List;
 import java.util.UUID;
-
-import com.ntnu.gidd.service.RegistrationService;
 import com.ntnu.gidd.util.Constants;
+import com.ntnu.gidd.service.Registration.RegistrationService;
 import com.ntnu.gidd.util.Response;
 import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +22,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -37,10 +33,10 @@ public class UserRegistrationController {
 
   @GetMapping("")
   @ResponseStatus(HttpStatus.OK)
-  public Page<RegistrationDto> getRegistrationsForUser(@QuerydslPredicate(root = Activity.class) Predicate predicate,
-                                                       @PageableDefault(size = Constants.PAGINATION_SIZE,
+  public Page<RegistrationActivityListDto> getRegistrationsForUser(@QuerydslPredicate(root = Activity.class) Predicate predicate,
+                                                                   @PageableDefault(size = Constants.PAGINATION_SIZE,
                                                                sort="activity.startDate", direction = Sort.Direction.ASC) Pageable pageable,
-                                                       Authentication authentication) {
+                                                                   Authentication authentication) {
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     log.debug("[X] Request to look up acivites registered for user with username={}", userDetails.getUsername());
     return registrationService.getRegistrationWithUsername(predicate, pageable, userDetails.getUsername());
@@ -48,7 +44,7 @@ public class UserRegistrationController {
 
   @GetMapping("{activityId}/")
   @ResponseStatus(HttpStatus.OK)
-  public RegistrationDto getRegistrationWithCompositeIdUser(Authentication authentication, @PathVariable UUID activityId) {
+  public RegistrationActivityDto getRegistrationWithCompositeIdUser(Authentication authentication, @PathVariable UUID activityId) {
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     return registrationService.getRegistrationWithUsernameAndActivityId(userDetails.getUsername(), activityId);
   }

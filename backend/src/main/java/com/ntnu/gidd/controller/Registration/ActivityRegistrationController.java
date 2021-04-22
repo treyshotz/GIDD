@@ -1,7 +1,7 @@
 package com.ntnu.gidd.controller.Registration;
 
-import com.ntnu.gidd.dto.RegistrationDto;
-import com.ntnu.gidd.dto.UserEmailDto;
+import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
+import com.ntnu.gidd.dto.User.UserEmailDto;
 import com.ntnu.gidd.exception.RegistrationNotFoundException;
 import com.ntnu.gidd.model.Activity;
 import java.util.UUID;
@@ -18,13 +18,10 @@ import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.ntnu.gidd.service.RegistrationService;
+import com.ntnu.gidd.service.Registration.RegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -36,23 +33,23 @@ public class ActivityRegistrationController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public RegistrationDto postRegistration(@PathVariable UUID activityId, @RequestBody UserEmailDto user) {
+  public RegistrationUserDto postRegistration(@PathVariable UUID activityId, @RequestBody UserEmailDto user) {
     log.debug("[X] Request to Post Registration with userid={}", user.getEmail());
     return registrationService.saveRegistration(user.getId(), activityId);
   }
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  public Page<RegistrationDto> getRegistrationForActivity(@QuerydslPredicate(root = Activity.class) Predicate predicate,
-                                                          @PageableDefault(size = Constants.PAGINATION_SIZE, sort="activity.startDate", direction = Sort.Direction.ASC) Pageable pageable,
-                                                          @PathVariable UUID activityId) {
+  public Page<RegistrationUserDto> getRegistrationForActivity(@QuerydslPredicate(root = Activity.class) Predicate predicate,
+                                                              @PageableDefault(size = Constants.PAGINATION_SIZE, sort="activity.startDate", direction = Sort.Direction.ASC) Pageable pageable,
+                                                              @PathVariable UUID activityId) {
     log.debug("[X] Request to look up user registered for activity with id={}", activityId);
     return registrationService.getRegistrationForActivity(predicate, pageable, activityId);
   }
 
   @GetMapping("{userId}/")
   @ResponseStatus(HttpStatus.OK)
-  public RegistrationDto getRegistrationWithCompositeIdActivity(@PathVariable UUID userId, @PathVariable UUID activityId) {
+  public RegistrationUserDto getRegistrationWithCompositeIdActivity(@PathVariable UUID userId, @PathVariable UUID activityId) {
     return registrationService.getRegistrationWithCompositeId(userId, activityId);
   }
 

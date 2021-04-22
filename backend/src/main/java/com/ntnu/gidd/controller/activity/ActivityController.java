@@ -1,13 +1,14 @@
 package com.ntnu.gidd.controller.activity;
 
-import com.ntnu.gidd.dto.ActivityDto;
-import com.ntnu.gidd.dto.ActivityListDto;
+
+
+import com.ntnu.gidd.dto.Activity.ActivityDto;
+import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.model.Activity;
-import com.ntnu.gidd.service.ActivityService;
+import com.ntnu.gidd.service.Activity.ActivityService;
 import com.ntnu.gidd.util.Constants;
 import com.ntnu.gidd.util.Response;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Slf4j

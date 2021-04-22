@@ -1,7 +1,7 @@
-package com.ntnu.gidd.service;
+package com.ntnu.gidd.service.Activity;
 
-import com.ntnu.gidd.dto.ActivityDto;
-import com.ntnu.gidd.dto.ActivityListDto;
+import com.ntnu.gidd.dto.Activity.ActivityDto;
+import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

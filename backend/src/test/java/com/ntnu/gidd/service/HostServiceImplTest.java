@@ -1,7 +1,7 @@
 package com.ntnu.gidd.service;
 
 
-import com.ntnu.gidd.dto.UserEmailDto;
+import com.ntnu.gidd.dto.User.UserEmailDto;
 import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.Activity;

@@ -1,7 +1,7 @@
-package com.ntnu.gidd.service;
+package com.ntnu.gidd.service.Activity;
 
-import com.ntnu.gidd.dto.ActivityDto;
-import com.ntnu.gidd.dto.ActivityListDto;
+import com.ntnu.gidd.dto.Activity.ActivityDto;
+import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.Activity;
@@ -10,6 +10,7 @@ import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
+import com.ntnu.gidd.service.Activity.ActivityService;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;

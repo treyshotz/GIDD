@@ -1,7 +1,7 @@
 package com.ntnu.gidd.controller.Host;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ntnu.gidd.dto.UserEmailDto;
+import com.ntnu.gidd.dto.User.UserEmailDto;
 import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.Activity;
@@ -19,8 +19,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

@@ -2,7 +2,7 @@ package com.ntnu.gidd.security.config;
 
 import com.ntnu.gidd.security.filter.JWTAuthenticationFilter;
 import com.ntnu.gidd.security.filter.JWTUsernamePasswordAuthenticationFilter;
-import com.ntnu.gidd.service.UserDetailsServiceImpl;
+import com.ntnu.gidd.service.User.UserDetailsServiceImpl;
 import com.ntnu.gidd.service.token.RefreshTokenService;
 import com.ntnu.gidd.util.JwtUtil;
 import lombok.AllArgsConstructor;

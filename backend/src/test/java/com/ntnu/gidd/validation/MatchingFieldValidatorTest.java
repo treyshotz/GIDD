@@ -1,6 +1,6 @@
 package com.ntnu.gidd.validation;
 
-import com.ntnu.gidd.dto.UserRegistrationDto;
+import com.ntnu.gidd.dto.User.UserRegistrationDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

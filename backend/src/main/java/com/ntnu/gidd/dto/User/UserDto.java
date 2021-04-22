@@ -1,4 +1,4 @@
-package com.ntnu.gidd.dto;
+package com.ntnu.gidd.dto.User;
 
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import lombok.*;

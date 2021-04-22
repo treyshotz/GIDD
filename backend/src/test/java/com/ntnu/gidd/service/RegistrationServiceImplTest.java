@@ -1,16 +1,16 @@
 package com.ntnu.gidd.service;
 
-import com.ntnu.gidd.dto.RegistrationDto;
+import com.ntnu.gidd.dto.Registration.RegistrationActivityDto;
+import com.ntnu.gidd.dto.Registration.RegistrationActivityListDto;
+import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
 import com.ntnu.gidd.factories.RegistrationFactory;
-import com.ntnu.gidd.model.QActivity;
-import com.ntnu.gidd.model.QRegistration;
 import com.ntnu.gidd.model.Registration;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.RegistrationRepository;
 import com.ntnu.gidd.repository.UserRepository;
-import com.ntnu.gidd.utils.JpaUtils;
+import com.ntnu.gidd.service.Registration.RegistrationServiceImpl;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.ntnu.gidd.utils.JpaUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -94,7 +93,7 @@ public class RegistrationServiceImplTest {
         registrationsExpected = List.of(registration);
 
         when(registrationRepository.findAll(any(Predicate.class), any(PageRequest.class))).thenReturn(new PageImpl<>(registrationsExpected, pageable, registrationsExpected.size()));
-        List<RegistrationDto> registrationsFound = registrationService.getRegistrationForActivity(predicate, pageable,
+        List<RegistrationUserDto> registrationsFound = registrationService.getRegistrationForActivity(predicate, pageable,
                                                                                                   registration.getActivity().getId())
                 .getContent();
 
@@ -109,12 +108,12 @@ public class RegistrationServiceImplTest {
         registrationsExpected = List.of(registration, registration2);
         when(registrationRepository.findAll(any(Predicate.class), any(PageRequest.class))).thenReturn(new PageImpl<>(registrationsExpected, pageable, registrationsExpected.size()));
         when(userRepository.findByEmail(registration.getUser().getEmail())).thenReturn(Optional.of(registration.getUser()));
-        List<RegistrationDto> registrationsFound = registrationService.getRegistrationWithUsername(predicate, pageable,
+        List<RegistrationActivityListDto> registrationsFound = registrationService.getRegistrationWithUsername(predicate, pageable,
                                                                                                    registration.getUser().getEmail())
                 .getContent();
 
         for (int i = 0; i < registrationsExpected.size(); i++) {
-            assertThat(registrationsFound.get(i).getUser().getEmail()).isEqualTo(registrationsExpected.get(i).getUser().getEmail());
+            assertThat(registrationsFound.get(i).getActivity().getTitle()).isEqualTo(registrationsExpected.get(i).getActivity().getTitle());
             assertThat(registrationsFound.get(i)).isNotNull();
         }
     }
@@ -124,11 +123,11 @@ public class RegistrationServiceImplTest {
         registrationsExpected = List.of(registration, registration2);
         when(registrationRepository.findAll(any(Predicate.class), any(PageRequest.class))).thenReturn(new PageImpl<>(registrationsExpected, pageable, registrationsExpected.size()));
         when(userRepository.findByEmail(registration.getUser().getEmail())).thenReturn(Optional.ofNullable(registration.getUser()));
-        List<RegistrationDto> registrationsFound = registrationService.getRegistrationWithUsername(predicate, pageable,
+        List<RegistrationActivityListDto> registrationsFound = registrationService.getRegistrationWithUsername(predicate, pageable,
                                                                                                    registration.getUser().getEmail()).getContent();
 
         for (int i = 0; i < registrationsExpected.size(); i++) {
-            assertThat(registrationsFound.get(i).getUser().getEmail()).isEqualTo(registrationsExpected.get(i).getUser().getEmail());
+            assertThat(registrationsFound.get(i).getActivity().getTitle()).isEqualTo(registrationsExpected.get(i).getActivity().getTitle());
             assertThat(registrationsFound.get(i)).isNotNull();
         }
     }
@@ -140,9 +139,9 @@ public class RegistrationServiceImplTest {
                 .thenReturn(Optional.ofNullable(registration));
         when(userRepository.findByEmail(registration.getUser().getEmail())).thenReturn(Optional.ofNullable(registration.getUser()));
 
-        RegistrationDto registrationFound = registrationService.getRegistrationWithUsernameAndActivityId(registration.getUser().getEmail(), registration.getActivity().getId());
+        RegistrationActivityDto registrationFound = registrationService.getRegistrationWithUsernameAndActivityId(registration.getUser().getEmail(), registration.getActivity().getId());
 
-        assertThat(registrationFound.getUser().getEmail()).isEqualTo(registration.getUser().getEmail());
+        assertThat(registrationFound.getActivity().getTitle()).isEqualTo(registration.getActivity().getTitle());
         assertThat(registrationFound).isNotNull();
 
     }
@@ -150,7 +149,7 @@ public class RegistrationServiceImplTest {
     @Test
     void testRegistrationServiceImplGetRegistrationWithRegistrationId(){
         when(registrationRepository.findById(registration.getRegistrationId())).thenReturn(Optional.ofNullable(registration));
-        RegistrationDto registrationFound = registrationService.getRegistrationWithRegistrationId(registration.getRegistrationId());
+        RegistrationUserDto registrationFound = registrationService.getRegistrationWithRegistrationId(registration.getRegistrationId());
 
         assertThat(registrationFound.getUser().getEmail()).isEqualTo(registration.getUser().getEmail());
         assertThat(registrationFound).isNotNull();

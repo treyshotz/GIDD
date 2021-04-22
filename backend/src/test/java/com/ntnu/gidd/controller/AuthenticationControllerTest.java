@@ -3,7 +3,7 @@ package com.ntnu.gidd.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ntnu.gidd.controller.request.LoginRequest;
-import com.ntnu.gidd.dto.UserPasswordUpdateDto;
+import com.ntnu.gidd.dto.User.UserPasswordUpdateDto;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.RefreshToken;
 import com.ntnu.gidd.model.User;

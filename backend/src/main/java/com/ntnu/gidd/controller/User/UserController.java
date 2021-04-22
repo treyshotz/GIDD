@@ -1,9 +1,9 @@
 package com.ntnu.gidd.controller.User;
 
-import com.ntnu.gidd.dto.UserDto;
-import com.ntnu.gidd.dto.UserRegistrationDto;
+import com.ntnu.gidd.dto.User.UserDto;
+import com.ntnu.gidd.dto.User.UserRegistrationDto;
 import com.ntnu.gidd.exception.EmailInUseException;
-import com.ntnu.gidd.service.UserService;
+import com.ntnu.gidd.service.User.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

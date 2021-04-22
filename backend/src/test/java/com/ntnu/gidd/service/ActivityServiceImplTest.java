@@ -1,12 +1,13 @@
 package com.ntnu.gidd.service;
 
-import com.ntnu.gidd.dto.ActivityDto;
-import com.ntnu.gidd.dto.ActivityListDto;
+import com.ntnu.gidd.dto.Activity.ActivityDto;
+import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
+import com.ntnu.gidd.service.Activity.ActivityServiceImpl;
 import com.ntnu.gidd.utils.JpaUtils;
 import com.ntnu.gidd.utils.StringRandomizer;
 import com.querydsl.core.types.Predicate;
@@ -19,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

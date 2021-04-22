@@ -1,9 +1,7 @@
 package com.ntnu.gidd.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ntnu.gidd.dto.UserPasswordUpdateDto;
-import com.ntnu.gidd.dto.UserRegistrationDto;
+import com.ntnu.gidd.dto.User.UserRegistrationDto;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.UserRepository;
@@ -24,7 +22,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.web.servlet.MvcResult;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;

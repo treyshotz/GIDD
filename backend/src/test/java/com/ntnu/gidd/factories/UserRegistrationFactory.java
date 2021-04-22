@@ -1,13 +1,10 @@
 package com.ntnu.gidd.factories;
 
-import com.ntnu.gidd.dto.UserRegistrationDto;
-import com.ntnu.gidd.model.User;
+import com.ntnu.gidd.dto.User.UserRegistrationDto;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.Random;
-import java.util.UUID;
 
 import static com.ntnu.gidd.utils.StringRandomizer.getRandomString;
 

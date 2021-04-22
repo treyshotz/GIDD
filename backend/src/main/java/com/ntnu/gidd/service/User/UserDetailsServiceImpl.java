@@ -1,4 +1,4 @@
-package com.ntnu.gidd.service;
+package com.ntnu.gidd.service.User;
 
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.UserRepository;

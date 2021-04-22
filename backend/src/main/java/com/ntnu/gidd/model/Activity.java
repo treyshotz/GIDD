@@ -27,6 +27,7 @@ public class Activity extends UUIDModel {
     @NotNull
     private String title;
     @NotNull
+    @Column(columnDefinition = "TEXT")
     private String description;
     @NotNull
     private ZonedDateTime  startDate;

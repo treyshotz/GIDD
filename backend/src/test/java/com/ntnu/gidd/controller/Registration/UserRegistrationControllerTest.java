@@ -95,7 +95,7 @@ public class UserRegistrationControllerTest {
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.content.[0].user.email").value(user.getEmail()));
+        .andExpect(jsonPath("$.content.[0].activity.title").value(activity.getTitle()));
   }
 
   @Test
@@ -105,7 +105,7 @@ public class UserRegistrationControllerTest {
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.user.email").value(user.getEmail()));
+        .andExpect(jsonPath("$.activity.title").value(activity.getTitle()));
   }
 
   @Transactional
@@ -122,7 +122,8 @@ public class UserRegistrationControllerTest {
         .with(user(testUserDetails))
         .with(csrf())
         .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk());
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.message").value("Registration has been deleted"));
 
   }
 

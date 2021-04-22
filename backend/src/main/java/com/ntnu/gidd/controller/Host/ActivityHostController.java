@@ -1,7 +1,7 @@
 package com.ntnu.gidd.controller.Host;
 
-import com.ntnu.gidd.dto.UserEmailDto;
-import com.ntnu.gidd.dto.UserListDto;
+import com.ntnu.gidd.dto.User.UserEmailDto;
+import com.ntnu.gidd.dto.User.UserListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.service.Host.HostService;

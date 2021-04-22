@@ -1,6 +1,7 @@
-package com.ntnu.gidd.dto;
+package com.ntnu.gidd.dto.Activity;
 
 
+import com.ntnu.gidd.dto.User.UserListDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,8 +1,8 @@
-package com.ntnu.gidd.service;
+package com.ntnu.gidd.service.User;
 
-import com.ntnu.gidd.dto.UserDto;
-import com.ntnu.gidd.dto.UserPasswordUpdateDto;
-import com.ntnu.gidd.dto.UserRegistrationDto;
+import com.ntnu.gidd.dto.User.UserDto;
+import com.ntnu.gidd.dto.User.UserPasswordUpdateDto;
+import com.ntnu.gidd.dto.User.UserRegistrationDto;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
