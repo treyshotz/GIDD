@@ -36,6 +36,8 @@ public class User extends UUIDModel {
     @OneToOne
     @JoinColumn(name = "traning_level_id", referencedColumnName = "id")
     private TrainingLevel trainingLevel;
+    @OneToOne
+    private PasswordResetToken resetToken;
 
     @PreRemove
     private void removeActivitiesFromUsers() {

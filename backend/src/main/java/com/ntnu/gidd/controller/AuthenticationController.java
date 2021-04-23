@@ -1,6 +1,7 @@
 package com.ntnu.gidd.controller;
 
 import com.ntnu.gidd.dto.JwtTokenResponse;
+import com.ntnu.gidd.dto.User.UserPasswordForgotDto;
 import com.ntnu.gidd.dto.User.UserPasswordUpdateDto;
 import com.ntnu.gidd.exception.PasswordIsIncorrectException;
 import com.ntnu.gidd.exception.RefreshTokenNotFound;
@@ -19,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -56,22 +58,21 @@ public class AuthenticationController {
 	}
 	
 	/**
-	 * Takes in a post request containing a email for which user should reset its password
-	 * If user is found and all suceeds an email will be sent to the user containing a link for resetting password
+	 * Takes in a post request containing a UserPasswordForgotDto for which user should reset its password
+	 * If user is found and all suceeds an UserPasswordForgotDto will be sent to the user containing a link for resetting password
 	 * If user is not found a response stating that the user could not be found will be returned
 	 *
-	 * @param email of the users which should have its password reset
+	 * @param UserPasswordForgotDto of the users which should have its password reset
 	 * @return
 	 */
 	@PostMapping("/forgot-password/")
 	@ResponseStatus(HttpStatus.OK)
-	public Response forgotPassword(@RequestBody String email) {
+	public Response forgotPassword(@RequestBody UserPasswordForgotDto UserPasswordForgotDto) {
 		try {
-			//TODO: log
-			userService.forgotPassword(email);
+			userService.forgotPassword(UserPasswordForgotDto.getEmail());
+			log.info("Email sent to {} for resetting password", UserPasswordForgotDto.getEmail());
 		} catch (UserNotFoundException ex) {
-			log.error("Could not find user {}", email);
-			//TODO: Does this send HTTPStatus.OK?
+			log.error("Could not find user {}", UserPasswordForgotDto);
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User not found");
 		}
 		return new Response("An email for resetting password has been sent!");
@@ -90,7 +91,6 @@ public class AuthenticationController {
 			log.info("Password was changed for user {}", userPasswordResetDto.getEmail());
 		} catch (UserNotFoundException e) {
 			log.error("Could not change password. User {} was not found!", userPasswordResetDto.getEmail());
-			//TODO: Check that this does not return 200
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User not found");
 		}
 		return new Response("Password was changed sucessfully");

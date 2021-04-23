@@ -6,7 +6,7 @@ public class ResetPasswordTokenNotFoundException extends RuntimeException {
 	}
 	
 	public ResetPasswordTokenNotFoundException() {
-		super("User was not found");
+		super("Reset-password token was not found");
 	}
 }
 

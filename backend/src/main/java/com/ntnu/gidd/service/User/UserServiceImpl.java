@@ -23,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.security.Principal;
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -107,6 +108,7 @@ public class UserServiceImpl implements UserService {
 	 * @return
 	 */
 	//TODO: Should not actually return UUID
+	@Transactional
 	public UUID forgotPassword(String email) {
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 		PasswordResetToken passwordResetToken = new PasswordResetToken();
@@ -126,9 +128,9 @@ public class UserServiceImpl implements UserService {
 	 */
 	public void validateResetPassword(UserPasswordResetDto userReset) {
 		User user = userRepository.findByEmail(userReset.getEmail()).orElseThrow(UserNotFoundException::new);
+		
 		PasswordResetToken passwordResetToken = passwordResetTokenRepository.findById(userReset.getToken().getId()).orElseThrow(ResetPasswordTokenNotFoundException::new);
 		
-		validateResetToken(passwordResetToken);
 		if(!user.equals(passwordResetToken.getUser()) && !validateResetToken(passwordResetToken)) {
 			//Exception or something
 		}

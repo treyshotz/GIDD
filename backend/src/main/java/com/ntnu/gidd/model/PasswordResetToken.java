@@ -14,10 +14,8 @@ public class PasswordResetToken extends UUIDModel {
 	//60 minutes
 	private static final int EXPIRATION = 60;
 	
-	private String token;
-	
 	@OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-	@JoinColumn(nullable = false, name = "id")
+	@JoinColumn(nullable = false, referencedColumnName = "id")
 	private User user;
 	
 	private ZonedDateTime expirationDate;
