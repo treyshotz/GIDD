@@ -6,6 +6,7 @@ import com.ntnu.gidd.exception.RegistrationNotFoundException;
 import com.ntnu.gidd.model.Activity;
 import java.util.UUID;
 
+import com.ntnu.gidd.model.Registration;
 import com.ntnu.gidd.util.Constants;
 import com.ntnu.gidd.util.Response;
 import com.querydsl.core.types.Predicate;
@@ -40,7 +41,7 @@ public class ActivityRegistrationController {
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  public Page<RegistrationUserDto> getRegistrationForActivity(@QuerydslPredicate(root = Activity.class) Predicate predicate,
+  public Page<RegistrationUserDto> getRegistrationForActivity(@QuerydslPredicate(root = Registration.class) Predicate predicate,
                                                               @PageableDefault(size = Constants.PAGINATION_SIZE, sort="activity.startDate", direction = Sort.Direction.ASC) Pageable pageable,
                                                               @PathVariable UUID activityId) {
     log.debug("[X] Request to look up user registered for activity with id={}", activityId);

@@ -1,9 +1,13 @@
 package com.ntnu.gidd.model;
 
+import com.querydsl.core.annotations.PropertyType;
+import com.querydsl.core.annotations.QueryType;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.ZonedDateTime;
 
 /**
  * Registration is a class for the registration of a user to a activity
@@ -16,11 +20,18 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-@AllArgsConstructor
+@AllArgsConstructor()
 @EqualsAndHashCode
 @Table(name="registration")
 public class Registration extends TimeStampedModel{
 
+
+    public Registration(RegistrationId id, User user, Activity activity){
+        this.registrationId = id;
+        this.user = user;
+        this.activity = activity;
+
+    }
     @EmbeddedId
     private RegistrationId registrationId;
 
@@ -33,4 +44,14 @@ public class Registration extends TimeStampedModel{
     @ManyToOne
     @JoinColumn(name="activity_id", referencedColumnName = "id")
     Activity activity;
+
+    @Transient
+    @QueryType(PropertyType.DATETIME)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private ZonedDateTime registrationStartDateBefore;
+
+    @Transient
+    @QueryType(PropertyType.DATETIME)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private ZonedDateTime  registrationStartDateAfter;
 }
