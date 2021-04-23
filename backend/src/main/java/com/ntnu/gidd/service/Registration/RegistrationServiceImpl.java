@@ -1,7 +1,7 @@
 package com.ntnu.gidd.service.Registration;
 
-import com.ntnu.gidd.dto.Registration.RegistrationActivityDto;
-import com.ntnu.gidd.dto.Registration.RegistrationActivityListDto;
+import com.ntnu.gidd.dto.Activity.ActivityDto;
+import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.exception.RegistrationNotFoundException;
@@ -13,11 +13,10 @@ import com.ntnu.gidd.repository.RegistrationRepository;
 import java.util.UUID;
 
 import com.ntnu.gidd.repository.UserRepository;
-import com.ntnu.gidd.service.Registration.RegistrationService;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,18 +27,16 @@ import javax.transaction.Transactional;
  * RegistrationServiceImpl class for services for the RegistrationRepository
  */
 @Service
+@AllArgsConstructor
 public class RegistrationServiceImpl implements RegistrationService {
 
-  @Autowired
   RegistrationRepository registrationRepository;
 
-  @Autowired
   UserRepository userRepository;
 
-  @Autowired
   ActivityRepository activityRepository;
 
-  ModelMapper modelMapper = new ModelMapper();
+  ModelMapper modelMapper;
 
   @Override
   public RegistrationUserDto saveRegistration(UUID user_id, UUID activity_id){
@@ -75,7 +72,7 @@ public class RegistrationServiceImpl implements RegistrationService {
    */
 
   @Override
-  public Page<RegistrationActivityListDto> getRegistrationWithUsername(Predicate predicate, Pageable pageable, String username) {
+  public Page<ActivityListDto> getRegistrationWithUsername(Predicate predicate, Pageable pageable, String username) {
     User user = userRepository.findByEmail(username)
             .orElseThrow(UserNotFoundException::new);
 
@@ -83,7 +80,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     predicate = ExpressionUtils.allOf(registration.user.id.eq(user.getId()).and(predicate));
 
     Page<Registration> registrations = registrationRepository.findAll(predicate, pageable);
-    return registrations.map(p -> modelMapper.map(p, RegistrationActivityListDto.class));
+    return registrations.map(p -> modelMapper.map(p, ActivityListDto.class));
   }
 
   /**
@@ -100,12 +97,12 @@ public class RegistrationServiceImpl implements RegistrationService {
   }
 
   @Override
-  public RegistrationActivityDto getRegistrationWithUsernameAndActivityId(String username, UUID activity_id) {
+  public ActivityDto getRegistrationWithUsernameAndActivityId(String username, UUID activity_id) {
     User user = userRepository.findByEmail(username)
             .orElseThrow(UserNotFoundException::new);
     Registration registration = registrationRepository.findRegistrationByUser_IdAndActivity_Id(user.getId(), activity_id)
             .orElseThrow(RegistrationNotFoundException::new);
-    return modelMapper.map(registration, RegistrationActivityDto.class);
+    return modelMapper.map(registration, ActivityDto.class);
   }
 
   /**

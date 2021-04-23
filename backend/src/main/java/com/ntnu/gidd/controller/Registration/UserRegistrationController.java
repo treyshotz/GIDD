@@ -1,7 +1,7 @@
 package com.ntnu.gidd.controller.Registration;
 
-import com.ntnu.gidd.dto.Registration.RegistrationActivityDto;
-import com.ntnu.gidd.dto.Registration.RegistrationActivityListDto;
+import com.ntnu.gidd.dto.Activity.ActivityDto;
+import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.exception.RegistrationNotFoundException;
 import com.ntnu.gidd.model.Activity;
 import java.util.UUID;
@@ -36,10 +36,10 @@ public class UserRegistrationController {
 
   @GetMapping("")
   @ResponseStatus(HttpStatus.OK)
-  public Page<RegistrationActivityListDto> getRegistrationsForUser(@QuerydslPredicate(root = Registration.class) Predicate predicate,
+  public Page<ActivityListDto> getRegistrationsForUser(@QuerydslPredicate(root = Registration.class) Predicate predicate,
                                                                    @PageableDefault(size = Constants.PAGINATION_SIZE,
                                                                sort="activity.startDate", direction = Sort.Direction.ASC) Pageable pageable,
-                                                                   Authentication authentication) {
+                                                       Authentication authentication) {
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     log.debug("[X] Request to look up acivites registered for user with username={}", userDetails.getUsername());
     return registrationService.getRegistrationWithUsername(predicate, pageable, userDetails.getUsername());
@@ -47,7 +47,7 @@ public class UserRegistrationController {
 
   @GetMapping("{activityId}/")
   @ResponseStatus(HttpStatus.OK)
-  public RegistrationActivityDto getRegistrationWithCompositeIdUser(Authentication authentication, @PathVariable UUID activityId) {
+  public ActivityDto getRegistrationWithCompositeIdUser(Authentication authentication, @PathVariable UUID activityId) {
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     return registrationService.getRegistrationWithUsernameAndActivityId(userDetails.getUsername(), activityId);
   }
