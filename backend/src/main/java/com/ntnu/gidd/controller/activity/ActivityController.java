@@ -6,7 +6,9 @@ import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.model.Activity;
-import com.ntnu.gidd.service.Activity.ActivityService;
+import com.ntnu.gidd.model.GeoLocation;
+import com.ntnu.gidd.model.GeoLocationId;
+import com.ntnu.gidd.service.activity.ActivityService;
 import com.ntnu.gidd.util.Constants;
 import com.ntnu.gidd.util.Response;
 import com.querydsl.core.types.Predicate;
@@ -36,10 +38,17 @@ public class ActivityController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<ActivityListDto> getAll(@QuerydslPredicate(root = Activity.class) Predicate predicate,
-                                        @PageableDefault(size = Constants.PAGINATION_SIZE, sort="startDate", direction = Sort.Direction.ASC) Pageable pageable){
+                                        @PageableDefault(size = Constants.PAGINATION_SIZE, sort="startDate", direction = Sort.Direction.ASC) Pageable pageable,
+                                        @RequestParam(required = false) Double range,
+                                        @RequestParam(required = false) Double lat,
+                                        @RequestParam(required = false) Double lng){
 
-        return activityService.getActivities(predicate, pageable);
-    }
+            if (range != null && lat != null && lng != null) {
+                GeoLocation position = new GeoLocation(lat, lng);
+                return activityService.getActivities(predicate, pageable, position, range);
+            }
+            return activityService.getActivities(predicate, pageable);
+        }
     
     @GetMapping("{activityId}/")
     @ResponseStatus(HttpStatus.OK)

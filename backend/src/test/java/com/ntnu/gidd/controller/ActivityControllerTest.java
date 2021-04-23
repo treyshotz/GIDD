@@ -4,35 +4,39 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.Activity;
+import com.ntnu.gidd.model.GeoLocation;
 import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
+import com.ntnu.gidd.repository.GeoLocationRepository;
 import com.ntnu.gidd.repository.UserRepository;
-import com.ntnu.gidd.service.traininglevel.TrainingLevelService;
 import com.ntnu.gidd.security.UserDetailsImpl;
+import com.ntnu.gidd.service.traininglevel.TrainingLevelService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
-import java.util.Objects;
-
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Stream;
 
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 
 
 @SpringBootTest(webEnvironment = MOCK)
@@ -51,7 +55,8 @@ public class ActivityControllerTest {
     @Autowired
     private ActivityRepository  activityRepository;
 
-
+    @Autowired
+    private GeoLocationRepository geoLocationRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -118,6 +123,45 @@ public class ActivityControllerTest {
             .andExpect(jsonPath("$.creator.firstName").value(user.getFirstName()))
             .andExpect(jsonPath("$.hosts").isArray());
 
+    }
+
+    @WithMockUser(value = "spring")
+    @Test
+    public void testCreateActivityWithUnsavedGeoLocationSavesActivityWithCreatedGeolocation() throws Exception {
+        Activity activity = activityFactory.getObject();
+        User user = userFactory.getObject();
+        userRepository.save(user);
+        UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
+
+        GeoLocation expectedGeoLocation = activity.getGeoLocation();
+
+        this.mvc.perform(post(URI).with(user(userDetails))
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .content(objectMapper.writeValueAsString(activity)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.geoLocation.lat").value(expectedGeoLocation.getLat()))
+                .andExpect(jsonPath("$.geoLocation.lng").value(expectedGeoLocation.getLng()));
+
+        assert geoLocationRepository.existsById(expectedGeoLocation.getId());
+    }
+
+    @WithMockUser(value = "spring")
+    @Test
+    public void testCreateActivityWithSavedGeoLocationSavesActivityWithExistingGeoLocation() throws Exception {
+        Activity activity = activityFactory.getObject();
+        User user = userFactory.getObject();
+        userRepository.save(user);
+        UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
+
+        GeoLocation expectedGeoLocation = activity.getGeoLocation();
+        geoLocationRepository.save(expectedGeoLocation);
+
+        this.mvc.perform(post(URI).with(user(userDetails))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(activity)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.geoLocation.lat").value(expectedGeoLocation.getLat()))
+            .andExpect(jsonPath("$.geoLocation.lng").value(expectedGeoLocation.getLng()));
     }
 
 
@@ -240,4 +284,42 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.content.length()").value(1))
                 .andExpect(jsonPath("$.content.[0].title").value(activity.getTitle()));
     }
+
+    @WithMockUser
+    @ParameterizedTest
+    @MethodSource("rangeProvider")
+    public void testGetClosestActivitiesReturnsAllActivitiesWithinGivenRange(String range, int expectedNumberOfElements) throws Exception {
+
+        Activity closestActivity = new ActivityFactory().getObject();
+        Activity furthesAwayActivity = new ActivityFactory().getObject();
+        GeoLocation origin = new GeoLocation(0.0, 0.0);
+        GeoLocation closest = new GeoLocation(1.0, 1.0);
+        GeoLocation furthestAway = new GeoLocation(100.0, 100.0);
+
+        geoLocationRepository.saveAll(List.of(origin, closest, furthestAway));
+
+        activity.setGeoLocation(origin);
+        closestActivity.setGeoLocation(closest);
+        furthesAwayActivity.setGeoLocation(furthestAway);
+
+        activityRepository.saveAll(List.of(activity, closestActivity, furthesAwayActivity));
+
+        this.mvc.perform(get(URI)
+                                 .param("lat", String.valueOf(origin.getLat()))
+                                 .param("lng", String.valueOf(origin.getLng()))
+                                 .param("range", range) 
+                                 .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.length()").value(expectedNumberOfElements));
+    }
+
+    private static Stream<Arguments> rangeProvider() {
+        return Stream.of(
+                Arguments.of("100.0", 1),
+                Arguments.of("200.0", 2),
+                Arguments.of("11000.0", 3)
+        );
+    }
+
 }
