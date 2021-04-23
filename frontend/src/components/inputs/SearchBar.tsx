@@ -7,7 +7,7 @@ import { traningLevelToText } from 'utils';
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Typography, Button, IconButton, InputBase, Collapse, Divider } from '@material-ui/core';
+import { Button, IconButton, InputBase, Collapse, Divider } from '@material-ui/core';
 
 // Icons
 import FilterIcon from '@material-ui/icons/TuneRounded';
@@ -22,7 +22,6 @@ import SubmitButton from 'components/inputs/SubmitButton';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    borderRadius: 20,
     padding: theme.spacing(0.25, 0.5),
     overflow: 'hidden',
   },
@@ -47,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
     gap: theme.spacing(1),
   },
 }));
@@ -113,11 +111,8 @@ const SearchBar = ({ updateFilters }: SearchBarProps) => {
         <Collapse in={open}>
           <Divider />
           <div className={classes.filterPaper}>
-            <Typography variant='h3'>Filtre</Typography>
-            <div className={classes.grid}>
-              <DatePicker control={control} formState={formState} label='Start' margin='dense' name='startDate' type='date-time' />
-              <DatePicker control={control} formState={formState} label='Slutt' margin='dense' name='endDate' type='date-time' />
-            </div>
+            <DatePicker control={control} formState={formState} fullWidth label='Start' margin='dense' name='startDate' type='date-time' />
+            <DatePicker control={control} formState={formState} fullWidth label='Slutt' margin='dense' name='endDate' type='date-time' />
             <Select control={control} formState={formState} label='Trenings-nivå' name='level'>
               {Object.values(TrainingLevel).map((value, index) => (
                 <MenuItem key={index} value={value}>
@@ -126,10 +121,10 @@ const SearchBar = ({ updateFilters }: SearchBarProps) => {
               ))}
             </Select>
             <div className={classes.grid}>
+              <SubmitButton formState={formState}>Aktiver filtre</SubmitButton>
               <Button onClick={resetFilters} variant='outlined'>
                 Nullstill filtre
               </Button>
-              <SubmitButton formState={formState}>Aktiver filtre</SubmitButton>
             </div>
           </div>
         </Collapse>

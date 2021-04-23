@@ -28,8 +28,7 @@ export default function MasonryGrid(props: MasonryGridProps) {
   const classes = useStyles();
   const theme = useTheme();
   const breakpointColumnsObj = {
-    default: 4,
-    [theme.breakpoints.values.xl]: 3,
+    default: 3,
     [theme.breakpoints.values.lg]: 2,
     [theme.breakpoints.values.md]: 1,
   };

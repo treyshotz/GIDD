@@ -15,6 +15,7 @@ import Collapse from '@material-ui/core/Collapse';
 // Icons
 import EditIcon from '@material-ui/icons/EditRounded';
 import AktivitiesIcon from '@material-ui/icons/DateRangeRounded';
+import HistoryIcon from '@material-ui/icons/HistoryRounded';
 
 // Project Components
 import Navigation from 'components/navigation/Navigation';
@@ -63,6 +64,9 @@ const useStyles = makeStyles((theme) => ({
   root: {
     gridTemplateColumns: '300px 1fr',
     gap: theme.spacing(2),
+    [theme.breakpoints.down('xl')]: {
+      gridTemplateColumns: '250px 1fr',
+    },
     [theme.breakpoints.down('lg')]: {
       gridTemplateColumns: '1fr',
     },
@@ -81,10 +85,11 @@ const Profile = () => {
   const classes = useStyles();
   const { data: user, isLoading, isError } = useUser();
   const logout = useLogout();
-  const activitiesTab = { value: 'activities', label: 'Påmeldte aktiviteter', icon: AktivitiesIcon };
+  const futureActivitiesTab = { value: 'futureActivities', label: 'Kommende aktiviteter', icon: AktivitiesIcon };
+  const pastActivitiesTab = { value: 'pastActivities', label: 'Tidligere aktiviteter', icon: HistoryIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
-  const tabs = [activitiesTab, editTab];
-  const [tab, setTab] = useState(activitiesTab.value);
+  const tabs = [futureActivitiesTab, pastActivitiesTab, editTab];
+  const [tab, setTab] = useState(futureActivitiesTab.value);
 
   if (isError) {
     return <Http404 />;
@@ -120,8 +125,11 @@ const Profile = () => {
         <div className={classes.grid}>
           <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
           <div>
-            <Collapse in={tab === activitiesTab.value}>
+            <Collapse in={tab === futureActivitiesTab.value}>
               <MyActivities />
+            </Collapse>
+            <Collapse in={tab === pastActivitiesTab.value} mountOnEnter>
+              <MyActivities past />
             </Collapse>
             <Collapse in={tab === editTab.value} mountOnEnter>
               <Paper>
