@@ -10,11 +10,13 @@ import com.ntnu.gidd.model.*;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.RegistrationRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.ntnu.gidd.repository.UserRepository;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -143,5 +145,12 @@ public class RegistrationServiceImpl implements RegistrationService {
     User user = userRepository.findByEmail(username).
             orElseThrow(UserNotFoundException::new);
     deleteRegistrationWithCompositeId(user.getId(), activity_id);
+  }
+
+  @Override
+  public List<RegistrationUserDto> getRegistrationForActivity(UUID activity_id){
+    List<Registration> registrations = (registrationRepository.findRegistrationsByActivity_Id(activity_id)
+        .orElseThrow(RegistrationNotFoundException::new));
+    return registrations.stream().map(p -> modelMapper.map(p, RegistrationUserDto.class)).collect(Collectors.toList());
   }
 }

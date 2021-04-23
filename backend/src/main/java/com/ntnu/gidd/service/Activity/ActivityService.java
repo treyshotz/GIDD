@@ -1,4 +1,4 @@
-package com.ntnu.gidd.service.activity;
+package com.ntnu.gidd.service.Activity;
 
 import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;

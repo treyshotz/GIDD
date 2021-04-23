@@ -1,16 +1,27 @@
-package com.ntnu.gidd.service.activity;
+package com.ntnu.gidd.service.Activity;
 
 import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.dto.geolocation.GeoLocationDto;
+import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.*;
+import com.ntnu.gidd.model.Activity;
+
+import com.ntnu.gidd.model.HtmlTemplate;
+import com.ntnu.gidd.model.Mail;
+import com.ntnu.gidd.model.TrainingLevel;
+import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
+import com.ntnu.gidd.repository.RegistrationRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.service.ActivityImage.ActivityImageService;
 import com.ntnu.gidd.service.activity.expression.ActivityExpression;
+import com.ntnu.gidd.service.Activity.ActivityService;
+import com.ntnu.gidd.service.Email.EmailService;
+import com.ntnu.gidd.service.Registration.RegistrationService;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
@@ -18,6 +29,9 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberPath;
+import java.util.HashMap;
+import java.util.Map;
+import javax.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 
@@ -52,6 +66,12 @@ public class ActivityServiceImpl implements ActivityService {
     UserRepository userRepository;
 
     @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private RegistrationService registrationService;
+
+    @Autowired
     ActivityImageService activityImageService;
 
     @Transactional
@@ -74,16 +94,46 @@ public class ActivityServiceImpl implements ActivityService {
 
 
         updateActivity = this.activityRepository.save(updateActivity);
-        if (activity.getImages() !=  null) updateActivity.setImages(activityImageService.updateActivityImage(
-                activity.getImages(), updateActivity
-        ));
-        return modelMapper.map(updateActivity,ActivityDto.class);
+        if(updateActivity.isClosed()){
+            closeActivity(activity);
+        }
+        if (activity.getImages() !=  null)
+            updateActivity.setImages(activityImageService.updateActivityImage(activity.getImages(), updateActivity));
+        return modelMapper.map(updateActivity, ActivityDto.class);
     }
 
     private TrainingLevel getTrainingLevel(TrainingLevelEnum level){
         return trainingLevelRepository.findTrainingLevelByLevel(level).
                 orElseThrow(() -> new EntityNotFoundException("Traning level does not exist"));
     }
+
+    public boolean closeActivity(ActivityDto activity ){
+        List<RegistrationUserDto> regListDtos = registrationService.getRegistrationForActivity(activity.getId());
+
+        try{
+            for(RegistrationUserDto registrationDto : regListDtos){
+                Map<String, Object> properties = new HashMap<>();
+                properties.put("name", registrationDto.getUser().getFirstName() + " " + registrationDto.getUser().getSurname());
+                properties.put("activity", activity.getTitle());
+                properties.put("url", "https://gidd-idatt2106.web.app/");
+
+                Mail mail = Mail.builder()
+                    .from("baregidd@gmail.com")
+                    .to(registrationDto.getUser().getEmail())
+                    .htmlTemplate(new HtmlTemplate("activity_closed", properties))
+                    .subject("Activity closed")
+                    .build();
+                emailService.sendEmail(mail);
+            }
+            return true;
+        }
+        catch (MessagingException e) {
+            log.error(e.getMessage());
+            return false;
+        }
+    }
+
+
 
     @Override
     public ActivityDto getActivityById(UUID id) {

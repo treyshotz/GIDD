@@ -8,7 +8,7 @@ import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.GeoLocation;
 import com.ntnu.gidd.model.GeoLocationId;
-import com.ntnu.gidd.service.activity.ActivityService;
+import com.ntnu.gidd.service.Activity.ActivityService;
 import com.ntnu.gidd.util.Constants;
 import com.ntnu.gidd.util.Response;
 import com.querydsl.core.types.Predicate;

@@ -4,6 +4,7 @@ import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.ntnu.gidd.model.RegistrationId;
@@ -30,4 +31,6 @@ public interface RegistrationService {
   void deleteRegistrationWithCompositeId(UUID user_id, UUID activity_id);
 
   void deleteRegistrationWithUsernameAndActivityId(String username, UUID activity_id);
+
+  List<RegistrationUserDto> getRegistrationForActivity(UUID activity_id);
 }
