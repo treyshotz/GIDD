@@ -14,7 +14,6 @@ import Container from 'components/layout/Container';
 const useStyles = makeStyles((theme) => ({
   main: {
     minHeight: '101vh',
-    backgroundColor: theme.palette.background.default,
   },
   normalMain: {
     paddingTop: 64,

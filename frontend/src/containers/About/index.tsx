@@ -40,7 +40,7 @@ const About = () => {
   const classes = useStyles();
 
   return (
-    <Navigation topbarVariant='filled'>
+    <Navigation topbarVariant='dynamic'>
       <Helmet>
         <title>Om GIDD</title>
       </Helmet>

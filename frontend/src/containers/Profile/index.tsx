@@ -101,7 +101,7 @@ const Profile = () => {
       <div className={classes.backgroundImg} />
       <Container className={classnames(classes.grid, classes.root)}>
         <div className={classes.grid}>
-          <Paper className={classnames(classes.grid, classes.avatarContainer)}>
+          <Paper blurred className={classnames(classes.grid, classes.avatarContainer)}>
             <Avatar className={classes.avatar}>{`${user.firstName.substr(0, 1)}${user.surname.substr(0, 1)}`}</Avatar>
             <div>
               <Typography align='center' variant='h2'>{`${user.firstName} ${user.surname}`}</Typography>
@@ -119,7 +119,7 @@ const Profile = () => {
         </div>
         <div className={classes.grid}>
           <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
-          <div className={classes.grid}>
+          <div>
             <Collapse in={tab === activitiesTab.value}>
               <MyActivities />
             </Collapse>

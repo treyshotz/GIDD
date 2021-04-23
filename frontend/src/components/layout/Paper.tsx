@@ -5,7 +5,10 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   main: {
-    border: theme.palette.borderWidth + ' solid ' + theme.palette.divider,
+    ...theme.palette.transparent,
+  },
+  blurred: {
+    ...theme.palette.blurred,
   },
   padding: {
     padding: theme.spacing(3),
@@ -18,14 +21,17 @@ const useStyles = makeStyles((theme) => ({
 export type PaperProps = {
   children: ReactNode;
   shadow?: boolean;
+  blurred?: boolean;
   noPadding?: boolean;
   className?: string;
 };
 
-const Paper = ({ shadow, noPadding, children, className }: PaperProps) => {
+const Paper = ({ shadow, noPadding, blurred = false, children, className }: PaperProps) => {
   const classes = useStyles();
   return (
-    <MaterialPaper className={classnames(classes.main, !noPadding && classes.padding, shadow && classes.noBorder, className)} elevation={shadow ? 2 : 0}>
+    <MaterialPaper
+      className={classnames(classes.main, !noPadding && classes.padding, shadow && classes.noBorder, blurred && classes.blurred, className)}
+      elevation={shadow ? 2 : 0}>
       {children}
     </MaterialPaper>
   );

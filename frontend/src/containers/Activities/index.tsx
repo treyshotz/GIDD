@@ -21,7 +21,6 @@ import { Activity } from 'types/Types';
 const useStyles = makeStyles((theme) => ({
   top: {
     width: '100%',
-    background: theme.palette.colors.topbar,
     padding: theme.spacing(4, 2),
   },
   suggestedActivities: {
@@ -64,7 +63,7 @@ const Activities = () => {
   const isEmpty = useMemo(() => !activities.length && !isFetching, [activities, isFetching]);
 
   return (
-    <Navigation maxWidth={false} topbarVariant='filled'>
+    <Navigation maxWidth={false} topbarVariant='dynamic'>
       <Helmet>
         <title>Aktiviteter</title>
       </Helmet>

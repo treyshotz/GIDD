@@ -40,7 +40,6 @@ const useStyles = makeStyles((theme) => ({
   },
   filterPaper: {
     padding: theme.spacing(1),
-    backgroundColor: theme.palette.background.paper,
   },
   level: {
     display: 'flex',

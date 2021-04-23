@@ -22,17 +22,27 @@ const useStyles = makeStyles((theme) => ({
   header: {
     marginTop: theme.spacing(1),
   },
-  img: {
+  cover: {
+    position: 'relative',
     color: theme.palette.common.white,
-    background: `${theme.palette.colors.gradient}, url(${image}) center center/cover no-repeat scroll`,
     height: '100vh',
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    boxShadow: 'inset 0 0 0 1000px rgba(0, 0, 0, 0.2)',
+  },
+  img: {
+    background: `${theme.palette.colors.gradient}, url(${image}) center center/cover no-repeat scroll`,
     objectFit: 'contain',
+    boxShadow: 'inset 0 0 0 1000px rgba(0, 0, 0, 0.2)',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    filter: 'blur(1px)',
+    zIndex: -1,
   },
   activityContainer: {
     textAlign: 'center',
@@ -41,6 +51,11 @@ const useStyles = makeStyles((theme) => ({
   btnGroup: {
     display: 'flex',
     gap: theme.spacing(1),
+    paddingTop: theme.spacing(1),
+  },
+  button: {
+    color: theme.palette.common.white,
+    borderColor: theme.palette.common.white,
   },
 }));
 
@@ -56,7 +71,8 @@ const Landing = () => {
       <Helmet>
         <title>Forsiden - GIDD</title>
       </Helmet>
-      <div className={classes.img}>
+      <div className={classes.cover}>
+        <div className={classes.img} />
         <Typography align='center' className={classes.header} color='inherit' gutterBottom variant='h1'>
           GIDD
         </Typography>
@@ -66,10 +82,10 @@ const Landing = () => {
         <div className={classes.btnGroup}>
           {!isAuthenticated && (
             <>
-              <Button component={Link} to={URLS.LOGIN} variant='outlined'>
+              <Button className={classes.button} component={Link} to={URLS.LOGIN} variant='outlined'>
                 Logg inn
               </Button>
-              <Button component={Link} to={URLS.SIGNUP} variant='outlined'>
+              <Button className={classes.button} component={Link} to={URLS.SIGNUP} variant='outlined'>
                 Registrer deg
               </Button>
             </>
@@ -77,7 +93,9 @@ const Landing = () => {
         </div>
       </div>
       <Container className={classes.activityContainer}>
-        <Typography variant='h1'>Nye aktiviteter</Typography>
+        <Typography gutterBottom variant='h1'>
+          Nye aktiviteter
+        </Typography>
         <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
           <MasonryGrid>
             {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen aktiviteter'} />}

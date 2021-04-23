@@ -13,12 +13,16 @@ import LOGO from 'assets/img/DefaultBackground.jpg';
 const useStyles = makeStyles((theme) => ({
   root: {
     marginBottom: theme.spacing(1),
+    ...theme.palette.transparent,
   },
   media: {
     height: 140,
   },
   link: {
     textDecoration: 'none',
+  },
+  title: {
+    fontSize: theme.typography.h3.fontSize,
   },
   description: {
     overflow: 'hidden',
@@ -40,9 +44,9 @@ const ActivityCard = ({ activity }: ActivityCardProps) => {
     <Link className={classes.link} to={`${URLS.ACTIVITIES}${activity.id}/`}>
       <Card className={classes.root}>
         <CardActionArea>
-          <CardMedia className={classes.media} image={LOGO} />
+          <CardMedia className={classes.media} image={activity.images[0]?.url || LOGO} />
           <CardContent>
-            <Typography component='h2' gutterBottom variant='h5'>
+            <Typography className={classes.title} gutterBottom variant='h2'>
               {activity.title}
             </Typography>
             <Typography className={classes.description} variant='body2'>

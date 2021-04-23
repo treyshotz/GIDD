@@ -28,10 +28,17 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     flexGrow: 1,
     zIndex: theme.zIndex.drawer + 1,
-    transition: '0.6s',
   },
   transparentAppBar: {
     backgroundColor: 'transparent',
+  },
+  backdrop: {
+    ...theme.palette.blurred,
+    ...theme.palette.transparent,
+    backgroundColor: `${theme.palette.colors.topbar}bf`,
+    borderTop: 'none',
+    borderRight: 'none',
+    borderLeft: 'none',
   },
   toolbar: {
     width: '100%',
@@ -54,11 +61,11 @@ const useStyles = makeStyles((theme) => ({
     gap: theme.spacing(1),
     alignItems: 'self-start',
     gridAutoFlow: 'column',
-    color: theme.palette.common.white,
+    color: theme.palette.get<string>({ light: theme.palette.common.black, dark: theme.palette.common.white }),
     width: 'fit-content',
   },
   right: {
-    color: theme.palette.common.white,
+    color: theme.palette.get<string>({ light: theme.palette.common.black, dark: theme.palette.common.white }),
     display: 'grid',
     gap: theme.spacing(1),
     gridTemplateColumns: '35px auto',
@@ -122,11 +129,11 @@ const Topbar = ({ variant }: TopbarProps) => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (variant !== 'filled') {
-      window.addEventListener('scroll', handleScroll, { passive: true });
-      return () => window.removeEventListener('scroll', handleScroll);
-    }
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const scrollAtTop = useMemo(() => scrollLength < 20, [scrollLength]);
 
   const items = useMemo(
     () =>
@@ -140,7 +147,11 @@ const Topbar = ({ variant }: TopbarProps) => {
 
   return (
     <AppBar
-      className={classnames(classes.appBar, variant !== 'filled' && scrollLength < 20 && !sidebarOpen && classes.transparentAppBar)}
+      className={classnames(
+        classes.appBar,
+        variant !== 'filled' && scrollAtTop && !sidebarOpen && classes.transparentAppBar,
+        (variant === 'filled' || !scrollAtTop) && !sidebarOpen && classes.backdrop,
+      )}
       color='primary'
       elevation={0}
       position='fixed'>
@@ -150,13 +161,13 @@ const Topbar = ({ variant }: TopbarProps) => {
             <Logo className={classes.logo} size='large' />
           </Link>
           <Hidden mdDown>
-            <div className={classnames(classes.items, variant === 'dynamic' && scrollLength < 20 && classes.reverseColor)}>
+            <div className={classnames(classes.items, variant === 'dynamic' && scrollAtTop && classes.reverseColor)}>
               {items.map((item, i) => (
                 <TopBarItem key={i} {...item} />
               ))}
             </div>
           </Hidden>
-          <div className={classnames(classes.right, variant === 'dynamic' && scrollLength < 20 && classes.reverseColor)}>
+          <div className={classnames(classes.right, variant === 'dynamic' && scrollAtTop && classes.reverseColor)}>
             <Hidden mdDown>
               <ThemeSettings className={classes.topbarItem} />
               {isAuthenticated ? (

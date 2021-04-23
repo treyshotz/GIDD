@@ -61,7 +61,7 @@ export type Activity = {
   creator: UserList;
 };
 
-export type ActivityList = Pick<Activity, 'id' | 'title' | 'closed' | 'startDate' | 'endDate' | 'level' | 'description'>;
+export type ActivityList = Pick<Activity, 'id' | 'title' | 'closed' | 'startDate' | 'endDate' | 'level' | 'description' | 'images'>;
 
 export type ActivityHost = Pick<User, 'firstName' | 'surname' | 'email' | 'id'>;
 
