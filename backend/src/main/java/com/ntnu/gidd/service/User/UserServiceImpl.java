@@ -1,13 +1,17 @@
 package com.ntnu.gidd.service.User;
 
 import com.ntnu.gidd.dto.User.UserDto;
+import com.ntnu.gidd.dto.User.UserPasswordResetDto;
 import com.ntnu.gidd.dto.User.UserPasswordUpdateDto;
 import com.ntnu.gidd.dto.User.UserRegistrationDto;
 import com.ntnu.gidd.exception.EmailInUseException;
 import com.ntnu.gidd.exception.PasswordIsIncorrectException;
+import com.ntnu.gidd.exception.ResetPasswordTokenNotFoundException;
 import com.ntnu.gidd.exception.UserNotFoundException;
+import com.ntnu.gidd.model.PasswordResetToken;
 import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.model.User;
+import com.ntnu.gidd.repository.PasswordResetTokenRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.util.TrainingLevelEnum;
@@ -20,6 +24,8 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
+import java.time.ZonedDateTime;
+import java.time.chrono.ChronoZonedDateTime;
 import java.util.UUID;
 
 @Slf4j
@@ -34,6 +40,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private PasswordResetTokenRepository passwordResetTokenRepository;
 	
 	@Override
 	public UserDto getUserById(String email) {
@@ -89,5 +98,43 @@ public class UserServiceImpl implements UserService {
 	private TrainingLevel getTrainingLevel(TrainingLevelEnum level){
 		return trainingLevelRepository.findTrainingLevelByLevel(level).
 				orElseThrow(() -> new EntityNotFoundException("Traning level does not exist"));
+	}
+	
+	/**
+	 * Finds a user, creates a token with the user and saves this.
+	 * Sends a email to the user's email containing a link for resetting password
+	 *
+	 * @param email
+	 */
+	public void forgotPassword(String email) {
+		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+		PasswordResetToken passwordResetToken = new PasswordResetToken();
+		passwordResetToken.setUser(user);
+		passwordResetTokenRepository.save(passwordResetToken);
+		//TODO: Construct email
+	}
+	
+	/**
+	 * Finds a user and finds the token
+	 * Checks if the token is valid and that the token is connected to the user
+	 * If the checks pass, it sets a new password for the user
+	 * Returns error if it doesn't pass the checks
+	 *
+	 * @param userReset
+	 */
+	public void validateResetPassword(UserPasswordResetDto userReset) {
+		User user = userRepository.findByEmail(userReset.getEmail()).orElseThrow(UserNotFoundException::new);
+		PasswordResetToken passwordResetToken = passwordResetTokenRepository.findById(userReset.getToken().getId()).orElseThrow(ResetPasswordTokenNotFoundException::new);
+		
+		validateResetToken(passwordResetToken);
+		if(!user.equals(passwordResetToken.getUser()) && !validateResetToken(passwordResetToken)) {
+			//Exception or something
+		}
+		user.setPassword(passwordEncoder.encode(userReset.getNewPassword()));
+		userRepository.save(user);
+	}
+	
+	private boolean validateResetToken(PasswordResetToken token) {
+		return token.getExpirationDate().isBefore(ZonedDateTime.now());
 	}
 }
