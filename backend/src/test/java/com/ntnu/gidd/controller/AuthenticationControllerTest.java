@@ -5,6 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.ntnu.gidd.controller.request.LoginRequest;
 import com.ntnu.gidd.dto.User.UserPasswordUpdateDto;
 import com.ntnu.gidd.factories.UserFactory;
+import com.ntnu.gidd.model.PasswordResetToken;
 import com.ntnu.gidd.model.RefreshToken;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.RefreshTokenRepository;
@@ -260,4 +261,14 @@ class AuthenticationControllerTest {
 				.content(loginJson))
 				.andExpect(status().isUnauthorized());
 	}
+	
+	@Test
+	public void testResetPassword() throws Exception {
+		
+		mvc.perform(post("/auth/reset-password/")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(user.getEmail()))
+				).andDo(print());
+	}
+	
 }

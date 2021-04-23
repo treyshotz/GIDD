@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.security.Principal;
 import java.time.ZonedDateTime;
-import java.time.chrono.ChronoZonedDateTime;
 import java.util.UUID;
 
 @Slf4j
@@ -105,13 +104,16 @@ public class UserServiceImpl implements UserService {
 	 * Sends a email to the user's email containing a link for resetting password
 	 *
 	 * @param email
+	 * @return
 	 */
-	public void forgotPassword(String email) {
+	//TODO: Should not actually return UUID
+	public UUID forgotPassword(String email) {
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 		PasswordResetToken passwordResetToken = new PasswordResetToken();
 		passwordResetToken.setUser(user);
 		passwordResetTokenRepository.save(passwordResetToken);
-		//TODO: Construct email
+		//TODO: Construct email with the id of the token
+		return passwordResetToken.getId();
 	}
 	
 	/**

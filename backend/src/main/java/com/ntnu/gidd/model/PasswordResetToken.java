@@ -22,5 +22,7 @@ public class PasswordResetToken extends UUIDModel {
 	
 	private ZonedDateTime expirationDate;
 	
-	
+	public PasswordResetToken() {
+		expirationDate = ZonedDateTime.now().plusMinutes(EXPIRATION);
+	}
 }

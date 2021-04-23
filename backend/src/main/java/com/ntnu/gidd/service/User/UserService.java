@@ -16,6 +16,6 @@ public interface UserService {
       UserDto saveUser(UserRegistrationDto user);
       UserDto deleteUser(UUID id);
       void changePassword(Principal principal, UserPasswordUpdateDto user);
-      void forgotPassword(String email);
+      UUID forgotPassword(String email);
       void validateResetPassword(UserPasswordResetDto user);
 }

@@ -70,9 +70,9 @@ public class AuthenticationController {
 			//TODO: log
 			userService.forgotPassword(email);
 		} catch (UserNotFoundException ex) {
-			//log
+			log.error("Could not find user {}", email);
 			//TODO: Does this send HTTPStatus.OK?
-			return new Response("Could not find user");
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User not found");
 		}
 		return new Response("An email for resetting password has been sent!");
 	}
@@ -91,6 +91,7 @@ public class AuthenticationController {
 		} catch (UserNotFoundException e) {
 			log.error("Could not change password. User {} was not found!", userPasswordResetDto.getEmail());
 			//TODO: Check that this does not return 200
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User not found");
 		}
 		return new Response("Password was changed sucessfully");
 	}
