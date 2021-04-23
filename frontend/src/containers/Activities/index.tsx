@@ -62,6 +62,9 @@ const useStyles = makeStyles((theme) => ({
 export type ActivityFilters = Partial<Pick<Activity, 'title' | 'level'>> & {
   startDateAfter?: string;
   startDateBefore?: string;
+  radius?: number;
+  lat?: number;
+  lng?: number;
 };
 
 const Activities = () => {

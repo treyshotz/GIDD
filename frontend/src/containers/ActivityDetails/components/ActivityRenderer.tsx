@@ -25,6 +25,10 @@ import Paper from 'components/layout/Paper';
 import VerifyDialog from 'components/layout/VerifyDialog';
 import MasonryGrid from 'components/layout/MasonryGrid';
 
+// Google Maps Components
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GOOGLE_MAPS_API_KEY } from 'constant';
+
 const useStyles = makeStyles((theme) => ({
   image: {
     borderRadius: theme.shape.borderRadius,
@@ -94,6 +98,14 @@ const useStyles = makeStyles((theme) => ({
   img: {
     width: '100%',
     borderRadius: theme.shape.borderRadius,
+  },
+  containerStyle: {
+    width: '100%',
+    height: 400,
+    borderRadius: theme.shape.borderRadius,
+    [theme.breakpoints.down('md')]: {
+      height: 300,
+    },
   },
 }));
 
@@ -197,8 +209,8 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
             </Typography>
             <Typography>{`Fra: ${formatDate(startDate)}`}</Typography>
             <Typography>{`Til: ${formatDate(endDate)}`}</Typography>
-            <Typography>{`Start: ${formatDate(signupStart)}`}</Typography>
-            <Typography>{`Slutt: ${formatDate(signupEnd)}`}</Typography>
+            <Typography>{`Start påmelding: ${formatDate(signupStart)}`}</Typography>
+            <Typography>{`Slutt påmelding: ${formatDate(signupEnd)}`}</Typography>
             <Typography>{`Påmeldte: 0/${data.capacity}`}</Typography>
           </Paper>
           <ApplyButton />
@@ -217,6 +229,13 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
               Endre aktivitet
             </Button>
           )}
+        </div>
+        <div className={classes.grid}>
+          <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
+            <GoogleMap center={data.geoLocation} mapContainerClassName={classes.containerStyle} zoom={14}>
+              <Marker position={data.geoLocation} />
+            </GoogleMap>
+          </LoadScript>
         </div>
       </div>
       <div className={classnames(classes.grid, classes.images)}>

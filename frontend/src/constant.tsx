@@ -11,3 +11,5 @@ export const EMAIL_REGEX = RegExp(
 export const ACCESS_TOKEN_DURATION = 1000 * 60 * 15;
 // 24 hours
 export const REFRESH_TOKEN_DURATION = 1000 * 60 * 60 * 24;
+
+export const GOOGLE_MAPS_API_KEY = 'AIzaSyCh5f2QSjGylEdYiv54oGi3FuHEGJ-TSYs';

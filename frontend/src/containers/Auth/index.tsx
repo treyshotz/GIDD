@@ -4,8 +4,9 @@ import Helmet from 'react-helmet';
 import URLS from 'URLS';
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 // Project Components
 import Logo from 'components/miscellaneous/Logo';
@@ -54,6 +55,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 const Auth = () => {
   const classes = useStyles();
+  const lgDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
   return (
     <div className={classes.wrapper}>
       <Helmet>
@@ -62,7 +64,7 @@ const Auth = () => {
       <div className={classes.image} />
       <div className={classes.root}>
         <div className={classes.logoContainer}>
-          <Logo className={classes.logo} size='large' />
+          <Logo className={classes.logo} darkColor='white' lightColor={lgDown ? 'white' : 'black'} />
         </div>
         <Routes>
           <Route element={<ResetPassword />} path={`${AUTH_RELATIVE_ROUTES.RESET_PASSWORD}:token/`} />
