@@ -40,6 +40,10 @@ export const useForgotPassword = (): UseMutationResult<RequestResponse, RequestR
   return useMutation((email) => API.forgotPassword(email));
 };
 
+export const useResetPassword = (): UseMutationResult<RequestResponse, RequestResponse, { email: string; token: string; newPassword: string }, unknown> => {
+  return useMutation(({ email, token, newPassword }) => API.resetPassword(email, newPassword, token));
+};
+
 export const useLogout = () => {
   const queryClient = useQueryClient();
   return () => {

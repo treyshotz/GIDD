@@ -35,9 +35,11 @@ export default {
       data: { email, password },
       withAuth: false,
     }),
-  forgotPassword: (email: string) => IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/password/reset/`, data: { email: email }, withAuth: false }),
+  forgotPassword: (email: string) => IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/forgot-password/`, data: { email }, withAuth: false }),
+  resetPassword: (email: string, newPassword: string, token: string) =>
+    IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/reset-password/`, data: { email, newPassword, token }, withAuth: false }),
   refreshAccessToken: () =>
-    IFetch<RefreshTokenResponse>({ method: 'GET', url: `${AUTH}/refresh-token/`, refreshAccess: true, withAuth: false, tryAgain: false })
+    IFetch<RefreshTokenResponse>({ method: 'GET', url: `${AUTH}/refresh-token/`, refreshAccess: true, withAuth: false, tryAgain: true })
       .then((tokens) => {
         setCookie(ACCESS_TOKEN, tokens.token, ACCESS_TOKEN_DURATION);
         return tokens;

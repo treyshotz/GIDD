@@ -11,7 +11,8 @@ import Button from '@material-ui/core/Button';
 import Logo from 'components/miscellaneous/Logo';
 import Login from 'containers/Auth/components/Login';
 import SignUp from 'containers/Auth/components/SignUp';
-// import ForgotPassword from 'containers/Auth/components/ForgotPassword';
+import ForgotPassword from 'containers/Auth/components/ForgotPassword';
+import ResetPassword from 'containers/Auth/components/ResetPassword';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -33,13 +34,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundSize: 'cover',
     },
     [theme.breakpoints.down('lg')]: {
-      background: theme.palette.colors.topbar,
       position: 'absolute',
-      height: 115,
-      top: 0,
-      left: 0,
-      right: 0,
-      zIndex: -1,
     },
   },
   root: {
@@ -70,7 +65,8 @@ const Auth = () => {
           <Logo className={classes.logo} size='large' />
         </div>
         <Routes>
-          {/* <Route element={<ForgotPassword />} path={AUTH_RELATIVE_ROUTES.FORGOT_PASSWORD} /> */}
+          <Route element={<ResetPassword />} path={`${AUTH_RELATIVE_ROUTES.RESET_PASSWORD}:token/`} />
+          <Route element={<ForgotPassword />} path={AUTH_RELATIVE_ROUTES.FORGOT_PASSWORD} />
           <Route element={<SignUp />} path={AUTH_RELATIVE_ROUTES.SIGNUP} />
           <Route element={<Login />} path='*' />
         </Routes>
