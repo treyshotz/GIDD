@@ -5,9 +5,9 @@ package com.ntnu.gidd.controller.activity;
 import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
+import com.ntnu.gidd.exception.NotInvitedExecption;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.GeoLocation;
-import com.ntnu.gidd.model.GeoLocationId;
 import com.ntnu.gidd.service.Activity.ActivityService;
 import com.ntnu.gidd.util.Constants;
 import com.ntnu.gidd.util.Response;
@@ -41,24 +41,32 @@ public class ActivityController {
                                         @PageableDefault(size = Constants.PAGINATION_SIZE, sort="startDate", direction = Sort.Direction.ASC) Pageable pageable,
                                         @RequestParam(required = false) Double range,
                                         @RequestParam(required = false) Double lat,
-                                        @RequestParam(required = false) Double lng){
-
+                                        @RequestParam(required = false) Double lng,
+                                        Authentication authentication){
+        UserDetails userDetails = (authentication!=null)? (UserDetails) authentication.getPrincipal() : null;
+        String email = (userDetails != null) ? userDetails.getUsername() : "";
             if (range != null && lat != null && lng != null) {
                 GeoLocation position = new GeoLocation(lat, lng);
-                return activityService.getActivities(predicate, pageable, position, range);
+                return activityService.getActivities(predicate, pageable, position, range, email);
             }
-            return activityService.getActivities(predicate, pageable);
+            return activityService.getActivities(predicate, pageable, email);
         }
     
     @GetMapping("{activityId}/")
     @ResponseStatus(HttpStatus.OK)
-    public ActivityDto get(@PathVariable UUID activityId){
+    public ActivityDto get(@PathVariable UUID activityId,  Authentication authentication){
+        UserDetails userDetails = (authentication!=null)? (UserDetails) authentication.getPrincipal() : null;
+        String email = (userDetails != null) ? userDetails.getUsername() : "";
         try {
-            return activityService.getActivityById(activityId);
-        }catch (ActivityNotFoundExecption ex){
+            return activityService.getActivityById(activityId, email);
+        }catch (ActivityNotFoundExecption  ex){
             log.debug("[X] Request to update Activity with id={}", activityId);
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage(), ex);
+        } catch (NotInvitedExecption ex){
+            log.debug("[X] Request to update Activity with id={}", activityId);
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, ex.getMessage(), ex);
         }
     }
 

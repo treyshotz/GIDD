@@ -12,6 +12,7 @@ import com.ntnu.gidd.repository.RegistrationRepository;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.ntnu.gidd.repository.UserRepository;
 import com.querydsl.core.types.ExpressionUtils;
@@ -63,6 +64,19 @@ public class RegistrationServiceImpl implements RegistrationService {
       Page<Registration> registrations = registrationRepository.findAll(predicate, pageable);
       return registrations.map(p -> modelMapper.map(p, RegistrationUserDto.class));
   }
+
+  /**
+   * Finds all user registered for a given activity
+   * @param activity_id
+   * @return List of users
+   */
+
+  @Override
+  public List<User> getRegistratedUsersInActivity(UUID activity_id) {
+    return (registrationRepository.findRegistrationsByActivity_Id(activity_id).orElseThrow(RegistrationNotFoundException::new))
+            .stream().map(s->s.getUser()).collect(Collectors.toList());
+  }
+
 
   /**
    * Finds all registration for a given user by its email

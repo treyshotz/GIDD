@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { ActivityHost } from 'types/Types';
+import { UserList } from 'types/Types';
 import { useActivityHostsById, useActivityById, useAddActivityHost, useRemoveActivityHost } from 'hooks/Activities';
 import { useUser } from 'hooks/User';
 import { useSnackbar } from 'hooks/Snackbar';
@@ -23,9 +23,6 @@ const useStyles = makeStyles((theme) => ({
   list: {
     display: 'grid',
     gridGap: theme.spacing(1),
-  },
-  paper: {
-    background: theme.palette.background.default,
   },
   secondaryText: {
     whiteSpace: 'break-spaces',
@@ -75,10 +72,10 @@ const ActivityHosts = ({ activityId }: ActivityHostsProps) => {
   };
 
   type HostProps = {
-    host: ActivityHost;
+    host: UserList;
   };
   const Host = ({ host }: HostProps) => (
-    <Paper className={classes.paper} noPadding>
+    <Paper noPadding>
       <ListItem>
         <ListItemText
           classes={{ secondary: classes.secondaryText }}
@@ -114,7 +111,7 @@ const ActivityHosts = ({ activityId }: ActivityHostsProps) => {
           <Divider />
         </>
       )}
-      <Paper className={classes.paper}>
+      <Paper>
         <Typography variant='h3'>Legg til arrangør</Typography>
         <form className={classes.list} onSubmit={handleSubmit(submit)}>
           <TextField

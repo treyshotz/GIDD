@@ -23,6 +23,7 @@ import Paper from 'components/layout/Paper';
 import SubmitButton from 'components/inputs/SubmitButton';
 import TextField from 'components/inputs/TextField';
 import Select from 'components/inputs/Select';
+import Bool from 'components/inputs/Bool';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -65,7 +66,7 @@ export type ActivityEditorProps = {
   goToActivity: (newActivity: string | null) => void;
 };
 
-type FormValues = Pick<Activity, 'title' | 'description' | 'capacity' | 'level' | 'images'> & {
+type FormValues = Pick<Activity, 'title' | 'description' | 'capacity' | 'level' | 'images' | 'inviteOnly'> & {
   startDate: Date;
   endDate: Date;
   signupStart: Date;
@@ -98,6 +99,7 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
         level: newValues?.level || TrainingLevel.MEDIUM,
         geoLocation: newValues?.geoLocation || null,
         images: newValues?.images || [],
+        inviteOnly: newValues?.inviteOnly || false,
         startDate: newValues?.startDate ? parseISO(newValues.startDate) : new Date(),
         signupEnd: newValues?.signupEnd ? parseISO(newValues.signupEnd) : new Date(),
         signupStart: newValues?.signupStart ? parseISO(newValues.signupStart) : new Date(),
@@ -252,7 +254,10 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
                 </MenuItem>
               ))}
             </Select>
-            <Button className={classes.margin} onClick={() => setOpenImages(true)} variant='outlined'>
+            <Bool className={classes.margin} control={control} formState={formState} label='Åpen kun for inviterte' name='inviteOnly' type='checkbox' />
+          </div>
+          <div className={classes.grid}>
+            <Button onClick={() => setOpenImages(true)} variant='outlined'>
               Endre bilder
             </Button>
             <Dialog onClose={() => setOpenImages(false)} open={openImages} titleText='Endre bilder'>

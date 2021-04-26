@@ -1,4 +1,4 @@
-package com.ntnu.gidd.service.activity.expression;
+package com.ntnu.gidd.service.Activity.expression;
 
 import com.ntnu.gidd.model.GeoLocation;
 import com.ntnu.gidd.model.QActivity;

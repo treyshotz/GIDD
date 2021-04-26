@@ -52,12 +52,17 @@ export const ImageUpload = forwardRef(({ register, watch, setValue, name, formSt
   const [isLoading, setIsLoading] = useState(false);
 
   const upload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
+    const files = e.target.files;
+    if (files) {
       setIsLoading(true);
       try {
-        const data = await API.uploadFile(file);
-        setValue(name, [...(images || []), { url: data.data.display_url }]);
+        const data = await Promise.all(Array.from(files).map((file) => API.uploadFile(file)));
+        setValue(name, [
+          ...(images || []),
+          ...data.map((file) => ({
+            url: file.data.display_url,
+          })),
+        ]);
         showSnackbar('Bildet ble lagt til', 'info');
       } catch (e) {
         showSnackbar(e.detail, 'error');
@@ -91,7 +96,7 @@ export const ImageUpload = forwardRef(({ register, watch, setValue, name, formSt
       </List>
       <div>
         <input hidden {...register} />
-        <input accept='image/*' hidden id='file-upload-button' onChange={upload} type='file' />
+        <input accept='image/*' hidden id='file-upload-button' multiple onChange={upload} type='file' />
         <label htmlFor='file-upload-button'>
           <Button className={classes.button} color='primary' component='span' disabled={isLoading} fullWidth variant='contained' {...props}>
             {label}

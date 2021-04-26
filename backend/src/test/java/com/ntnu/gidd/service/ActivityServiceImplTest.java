@@ -118,7 +118,7 @@ public class ActivityServiceImplTest {
     void testActivityServiceImplGetActivityByIdReturnsActivity() {
         when(activityRepository.findById(activity.getId())).thenReturn(Optional.ofNullable(activity));
 
-        ActivityDto activityFound = activityService.getActivityById(activity.getId());
+        ActivityDto activityFound = activityService.getActivityById(activity.getId(), "");
 
         assertThat(activityFound.getId()).isEqualTo(activity.getId());
     }
@@ -133,7 +133,7 @@ public class ActivityServiceImplTest {
 
         lenient().when(activityRepository.findAll(any(Predicate.class),any(Pageable.class))).thenReturn(activities);
 
-        Page<ActivityListDto> getActivities = activityService.getActivities(predicate, pageable);
+        Page<ActivityListDto> getActivities = activityService.getActivities(predicate, pageable, "");
 
         for (int i = 0; i < activities.getContent().size(); i++){
             assertThat(activities.getContent().get(i).getTitle()).isEqualTo(getActivities.getContent().get(i).getTitle());
@@ -152,7 +152,7 @@ public class ActivityServiceImplTest {
 
         GeoLocation position = new GeoLocation(0.0, 0.0);
         Page<ActivityListDto> getActivities = activityService.getActivities(predicate, pageable, position,
-                                                                            1.0);
+                                                                            1.0,"");
 
         for (int i = 0; i < activities.getContent().size(); i++){
             assertThat(activities.getContent().get(i).getTitle()).isEqualTo(getActivities.getContent().get(i).getTitle());

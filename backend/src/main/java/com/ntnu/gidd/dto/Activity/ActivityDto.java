@@ -42,6 +42,7 @@ public class ActivityDto {
     private TrainingLevelEnum level;
     private int capacity;
     private List<ActivityImageDto> images;
+    private boolean inviteOnly;
     private GeoLocationDto geoLocation;
 
 }

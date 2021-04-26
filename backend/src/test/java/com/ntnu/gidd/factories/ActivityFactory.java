@@ -28,6 +28,9 @@ public class ActivityFactory implements FactoryBean<Activity> {
                 .capacity(random.nextInt(1000))
                 .trainingLevel(trainingLevelFactory.getObject())
                 .geoLocation(geoLocationFactory.getObject())
+                .inviteOnly(false)
+                .invites(List.of())
+                .hosts(List.of())
                 .build();
     }
 

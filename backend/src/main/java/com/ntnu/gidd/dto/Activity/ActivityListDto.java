@@ -25,6 +25,7 @@ public class ActivityListDto {
     private UserListDto creator;
     private boolean closed;
     private TrainingLevelEnum level;
+    private boolean inviteOnly;
     private List<ActivityImageDto> images;
     private GeoLocationDto geoLocation;
 }

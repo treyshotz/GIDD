@@ -11,11 +11,11 @@ import java.util.UUID;
 
 public interface ActivityService {
     ActivityDto updateActivity(UUID id, ActivityDto activity);
-    ActivityDto getActivityById(UUID id);
+    ActivityDto getActivityById(UUID id, String email);
     ActivityDto saveActivity(ActivityDto activity, String creatorEmail);
     void deleteActivity(UUID id);
-    Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable);
-    Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable, GeoLocation position, Double range);
+    Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable, GeoLocation position, Double range, String username);
+    Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable,  String username);
 
 }
 

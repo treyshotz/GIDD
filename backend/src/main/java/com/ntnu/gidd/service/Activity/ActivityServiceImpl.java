@@ -5,6 +5,7 @@ import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.dto.geolocation.GeoLocationDto;
 import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
 import com.ntnu.gidd.exception.ActivityNotFoundExecption;
+import com.ntnu.gidd.exception.NotInvitedExecption;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.*;
 import com.ntnu.gidd.model.Activity;
@@ -14,24 +15,27 @@ import com.ntnu.gidd.model.Mail;
 import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
-import com.ntnu.gidd.repository.RegistrationRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
+import com.ntnu.gidd.service.Activity.expression.ActivityExpression;
 import com.ntnu.gidd.service.ActivityImage.ActivityImageService;
-import com.ntnu.gidd.service.activity.expression.ActivityExpression;
 import com.ntnu.gidd.service.Activity.ActivityService;
 import com.ntnu.gidd.service.Email.EmailService;
 import com.ntnu.gidd.service.Registration.RegistrationService;
+import com.ntnu.gidd.service.User.UserService;
+import com.ntnu.gidd.service.User.UserServiceImpl;
+import com.ntnu.gidd.service.Registration.RegistrationService;
+import com.ntnu.gidd.service.invite.InviteService;
 import com.ntnu.gidd.util.TrainingLevelEnum;
-import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.core.types.dsl.NumberPath;
+
 import java.util.HashMap;
 import java.util.Map;
 import javax.mail.MessagingException;
+
+import com.querydsl.jpa.JPAExpressions;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 
@@ -44,11 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
-
-import static com.querydsl.core.types.dsl.MathExpressions.cos;
-import static com.querydsl.core.types.dsl.MathExpressions.acos;
-import static com.querydsl.core.types.dsl.MathExpressions.sin;
-import static com.querydsl.core.types.dsl.MathExpressions.radians;
 
 
 @Slf4j
@@ -69,10 +68,17 @@ public class ActivityServiceImpl implements ActivityService {
     private EmailService emailService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private RegistrationService registrationService;
 
     @Autowired
     ActivityImageService activityImageService;
+
+    @Autowired
+    InviteService inviteService;
+
 
     @Transactional
     @Override
@@ -93,13 +99,32 @@ public class ActivityServiceImpl implements ActivityService {
             setGeoLocation(activity, updateActivity);
 
 
-        updateActivity = this.activityRepository.save(updateActivity);
         if(updateActivity.isClosed()){
-            closeActivity(activity);
+          closeActivity(activity);
         }
-        if (activity.getImages() !=  null)
+        if (activity.getImages() !=  null) {
+          updateActivity.setImages(activityImageService.updateActivityImage(activity.getImages(), updateActivity));
+        }
+        if (activity.getImages() !=  null) updateActivity.setImages(activityImageService.updateActivityImage(
+                activity.getImages(), updateActivity
+        ));
+
+        if(!updateActivity.isInviteOnly() && activity.isInviteOnly()){
+            inviteService.inviteBatch(activityId,
+                    registrationService.getRegistratedUsersInActivity(activityId));
+        }
+        updateActivity.setInviteOnly(activity.isInviteOnly());
+        if (activity.getImages() !=  null){
             updateActivity.setImages(activityImageService.updateActivityImage(activity.getImages(), updateActivity));
-        return modelMapper.map(updateActivity, ActivityDto.class);
+
+        }
+
+        if(updateActivity.isClosed()){
+        closeActivity(activity);
+
+        }
+        return modelMapper.map(this.activityRepository.save(updateActivity) ,ActivityDto.class);
+
     }
 
     private TrainingLevel getTrainingLevel(TrainingLevelEnum level){
@@ -136,25 +161,48 @@ public class ActivityServiceImpl implements ActivityService {
 
 
     @Override
-    public ActivityDto getActivityById(UUID id) {
-       return modelMapper.map(this.activityRepository.findById(id).
-               orElseThrow(ActivityNotFoundExecption::new), ActivityDto.class);
-}
+    public ActivityDto getActivityById(UUID id, String email) {
+        Activity activity = this.activityRepository.findById(id).
+                orElseThrow(ActivityNotFoundExecption::new);
+        if(activity.isInviteOnly() && !checkReadAccess(activity, email)){
+            throw new NotInvitedExecption();
+        }
+        return modelMapper.map(activity, ActivityDto.class);
+
+    }
+
+    private boolean checkReadAccess(Activity activity, String email){
+        User user = userRepository.findByEmail(email).orElse(null);
+        return (activity.getInvites().contains(user) | activity.getCreator().equals(user) | activity.getHosts().contains(user));
+    }
     @Override
-    public Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable) {
+    public Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable, String username) {
+        QActivity activity = QActivity.activity;
+        if(username.equals("")){
+             predicate = ExpressionUtils.and(predicate,activity.inviteOnly.isFalse());
+        }else {
+            predicate = ExpressionUtils.and(predicate,
+                    activity.inviteOnly.isFalse().or(
+                    activity.invites.any().email.eq(username)
+                    .or(activity.creator.email.eq(username))
+                    .or(activity.hosts.any().email.eq(username)))
+
+            );
+        }
+
+        assert predicate != null;
         return this.activityRepository.findAll(predicate, pageable)
                 .map(s -> modelMapper.map(s, ActivityListDto.class));
     }
 
     @Override
-    public Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable, GeoLocation position, Double range) {
+    public Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable, GeoLocation position, Double range,  String username) {
         
         predicate = ActivityExpression.of(predicate)
                 .closestTo(position)
                 .range(range)
                 .toPredicate();
-
-        return getActivities(predicate, pageable);
+        return getActivities(predicate, pageable, username);
     }
 
 

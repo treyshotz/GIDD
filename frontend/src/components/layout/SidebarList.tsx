@@ -49,6 +49,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'grid',
     gridTemplateRows: 'auto 1fr',
     overflow: 'hidden',
+    [theme.breakpoints.up('lg')]: {
+      ...theme.palette.transparent,
+    },
   },
   scroll: {
     overflow: 'auto',
@@ -94,7 +97,7 @@ const SidebarList = <Type,>({
   // = useHook({ expired: true });
   // const expiredItems = useMemo(() => (expiredData ? expiredData.pages.map((page) => page.content).flat() : []), [expiredData]);
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('lg'));
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const transitionDuration = {

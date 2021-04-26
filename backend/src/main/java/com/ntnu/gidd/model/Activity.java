@@ -63,7 +63,13 @@ public class Activity extends UUIDModel {
             @JoinColumn(name="lng", referencedColumnName="lng")
     } )
     private GeoLocation geoLocation;
-
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST) // TODO: this persist transient instances
+    @JoinTable(name = "invites", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id" ),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
+    private List<User> invites;
+    @Column()
+    private boolean inviteOnly = false;
 
     @PreRemove
     private void removeHostsFromActivity() {

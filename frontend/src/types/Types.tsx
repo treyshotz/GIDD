@@ -60,11 +60,10 @@ export type Activity = {
   }>;
   creator: UserList;
   geoLocation: LatLng;
+  inviteOnly: boolean;
 };
 
 export type ActivityList = Pick<Activity, 'id' | 'title' | 'closed' | 'startDate' | 'endDate' | 'level' | 'description' | 'images' | 'geoLocation'>;
-
-export type ActivityHost = Pick<User, 'firstName' | 'surname' | 'email' | 'id'>;
 
 export type Registration = {
   user: User;

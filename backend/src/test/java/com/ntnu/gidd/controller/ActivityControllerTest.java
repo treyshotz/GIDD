@@ -5,6 +5,9 @@ import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.GeoLocation;
+
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
@@ -82,13 +85,12 @@ public class ActivityControllerTest {
         activityRepository.deleteAll();
     }
 
-    @WithMockUser(value = "spring")
     @Test
     public void testActivityControllerGetAllReturnsOKAndAListOfActivities() throws Exception {
-        this.mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON))
+        this.mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.content.[0].title").value(activity.getTitle()));
+                .andExpect(jsonPath("$.content.[*].title",hasItem(activity.getTitle())));
     }
 
     @WithMockUser(value = "spring")
@@ -130,6 +132,7 @@ public class ActivityControllerTest {
     public void testCreateActivityWithUnsavedGeoLocationSavesActivityWithCreatedGeolocation() throws Exception {
         Activity activity = activityFactory.getObject();
         User user = userFactory.getObject();
+        assert user != null;
         userRepository.save(user);
         UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
 
@@ -150,6 +153,7 @@ public class ActivityControllerTest {
     public void testCreateActivityWithSavedGeoLocationSavesActivityWithExistingGeoLocation() throws Exception {
         Activity activity = activityFactory.getObject();
         User user = userFactory.getObject();
+        assert user != null;
         userRepository.save(user);
         UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
 
@@ -182,10 +186,10 @@ public class ActivityControllerTest {
 
     }
 
-    @WithMockUser(value = "spring")
     @Test
     public void testActivityControllerFiltersOnWantedFieldsForTitle() throws Exception {
         Activity dummy = activityFactory.getObject();
+        assert dummy != null;
         dummy.setTitle("Dummy title");
         activityRepository.save(dummy);
 
@@ -198,9 +202,9 @@ public class ActivityControllerTest {
     }
 
     @Test
-    @WithMockUser
     public void testFilterActivitiesPartialTitleReturnsCorrectResults() throws Exception {
         Activity dummy = activityFactory.getObject();
+        assert dummy != null;
         dummy.setTitle("Dummy title");
         activityRepository.save(dummy);
         mvc.perform(get(URI)
@@ -212,7 +216,6 @@ public class ActivityControllerTest {
     }
 
     @Test
-    @WithMockUser
     public void testFilterActivitiesByStartDateAfterReturnActivitiesStartingAfterGivenDateTime() throws Exception {
         Activity dummy = activityFactory.getObject();
         dummy.setStartDate(ZonedDateTime.now().minusDays(100));
@@ -227,7 +230,6 @@ public class ActivityControllerTest {
     }
 
     @Test
-    @WithMockUser
     public void testFilterActivitiesByStartDateBeforeReturnActivitiesStartingBeforeGivenDateTime() throws Exception {
         Activity expectedActivity = activityFactory.getObject();
         expectedActivity.setStartDate(ZonedDateTime.now().minusDays(100));
@@ -242,7 +244,6 @@ public class ActivityControllerTest {
 
 
     @Test
-    @WithMockUser
     public void testFilterActivitiesByStartDateBetweenReturnActivitiesStartingInRange() throws Exception {
         Activity dummy = activityFactory.getObject();
         dummy.setStartDate(ZonedDateTime.now().minusDays(100));
@@ -265,7 +266,6 @@ public class ActivityControllerTest {
 
     // TODO: test with multiple levels
     @Test
-    @WithMockUser
     public void testFilterByActivityTrainingLevelReturnsActivitiesWithGivenTrainingLevel() throws Exception {
 
         TrainingLevel mediumTrainingLevel = trainingLevelService.getTrainingLevelMedium();
@@ -285,7 +285,6 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.content.[0].title").value(activity.getTitle()));
     }
 
-    @WithMockUser
     @ParameterizedTest
     @MethodSource("rangeProvider")
     public void testGetClosestActivitiesReturnsAllActivitiesWithinGivenRange(String range, int expectedNumberOfElements) throws Exception {
@@ -320,6 +319,19 @@ public class ActivityControllerTest {
                 Arguments.of("200.0", 2),
                 Arguments.of("11000.0", 3)
         );
+    }
+
+    @Test
+    public void testActivityControllerGetAllReturnsOKAndAListOfActivitiesWithoutInviteOnly() throws Exception {
+        Activity testActivity = activityFactory.getObject();
+        assert testActivity != null;
+        testActivity.setInviteOnly(true);
+        activityRepository.save(testActivity);
+        this.mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].inviteOnly").value(false))
+                .andExpect(jsonPath("$.content.length()").value(activityRepository.findAll().size()-1));
     }
 
 }

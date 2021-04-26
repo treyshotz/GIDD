@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.ntnu.gidd.model.RegistrationId;
+import com.ntnu.gidd.model.User;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,8 @@ public interface RegistrationService {
   void deleteRegistrationWithUsernameAndActivityId(String username, UUID activity_id);
 
   List<RegistrationUserDto> getRegistrationForActivity(UUID activity_id);
+
+  List<User> getRegistratedUsersInActivity(UUID activity_id);
 
   Page<ActivityListDto> getRegistrationsForUser(Predicate predicate, Pageable pageable, UUID userId);
 }

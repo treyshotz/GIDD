@@ -18,7 +18,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(of={"email"}, callSuper = true)
 public class User extends UUIDModel {
     
     private String firstName;
@@ -36,6 +36,11 @@ public class User extends UUIDModel {
     @OneToOne
     @JoinColumn(name = "traning_level_id", referencedColumnName = "id")
     private TrainingLevel trainingLevel;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinTable(name = "invites", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id" ),
+            inverseJoinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "activity_id"}))
+    private List<Activity> invites;
     @OneToOne
     private PasswordResetToken resetToken;
 

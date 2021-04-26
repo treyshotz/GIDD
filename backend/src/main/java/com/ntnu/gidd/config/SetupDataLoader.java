@@ -39,13 +39,13 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         account.setPassword(encoder.encode("admin"));
 
         if (trainingLevelRepository.findTrainingLevelByLevel(TrainingLevelEnum.High).isEmpty()){
-            trainingLevelRepository.save(TrainingLevel.builder().id(1l).level(TrainingLevelEnum.High).build());
+            trainingLevelRepository.save(TrainingLevel.builder().id(1L).level(TrainingLevelEnum.High).build());
         }
         if (trainingLevelRepository.findTrainingLevelByLevel(TrainingLevelEnum.Medium).isEmpty()){
-            trainingLevelRepository.save(TrainingLevel.builder().id(2l).level(TrainingLevelEnum.Medium).build());
+            trainingLevelRepository.save(TrainingLevel.builder().id(2L).level(TrainingLevelEnum.Medium).build());
         }
         if (trainingLevelRepository.findTrainingLevelByLevel(TrainingLevelEnum.Low).isEmpty()){
-            trainingLevelRepository.save(TrainingLevel.builder().id(3l).level(TrainingLevelEnum.Low).build());
+            trainingLevelRepository.save(TrainingLevel.builder().id(3L).level(TrainingLevelEnum.Low).build());
         }
         if(userRepository.findByEmail(account.getEmail()).isEmpty()){
             log.info("[x] Preloading {}", userRepository.save(account));

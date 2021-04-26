@@ -7,7 +7,6 @@ import {
   Activity,
   ActivityList,
   ActivityRequired,
-  ActivityHost,
   FileUploadResponse,
   LoginRequestResponse,
   PaginationResponse,
@@ -16,6 +15,7 @@ import {
   RefreshTokenResponse,
   User,
   UserCreate,
+  UserList,
 } from 'types/Types';
 
 const USERS = 'users';
@@ -23,6 +23,7 @@ const ME = 'me';
 const AUTH = 'auth';
 const ACTIVITIES = 'activities';
 const REGISTRATIONS = 'registrations';
+const INVITES = 'invites';
 const HOSTS = 'hosts';
 
 export default {
@@ -62,9 +63,17 @@ export default {
   deleteActivity: (id: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${ACTIVITIES}/${id}/` }),
 
   // Activity hosts
-  getActivityHosts: (id: string) => IFetch<Array<ActivityHost>>({ method: 'GET', url: `${ACTIVITIES}/${id}/${HOSTS}/` }),
-  addActivityHost: (id: string, email: string) => IFetch<Array<ActivityHost>>({ method: 'POST', url: `${ACTIVITIES}/${id}/${HOSTS}/`, data: { email } }),
-  removeActivityHost: (id: string, hostId: string) => IFetch<Array<ActivityHost>>({ method: 'DELETE', url: `${ACTIVITIES}/${id}/${HOSTS}/${hostId}/` }),
+  getActivityHosts: (id: string) => IFetch<Array<UserList>>({ method: 'GET', url: `${ACTIVITIES}/${id}/${HOSTS}/` }),
+  addActivityHost: (id: string, email: string) => IFetch<Array<UserList>>({ method: 'POST', url: `${ACTIVITIES}/${id}/${HOSTS}/`, data: { email } }),
+  removeActivityHost: (id: string, hostId: string) => IFetch<Array<UserList>>({ method: 'DELETE', url: `${ACTIVITIES}/${id}/${HOSTS}/${hostId}/` }),
+
+  // Activity invites
+  getActivityInvitedUsers: (activityId: string, filters?: any) =>
+    IFetch<PaginationResponse<UserList>>({ method: 'GET', url: `${ACTIVITIES}/${activityId}/${INVITES}/`, data: filters || {} }),
+  addActivityInvitedUser: (activityId: string, email: string) =>
+    IFetch<PaginationResponse<UserList>>({ method: 'POST', url: `${ACTIVITIES}/${activityId}/${INVITES}/`, data: { email } }),
+  removeActivityInvitedUser: (activityId: string, userId: string) =>
+    IFetch<PaginationResponse<UserList>>({ method: 'DELETE', url: `${ACTIVITIES}/${activityId}/${INVITES}/${userId}/` }),
 
   // Activity registrations
   getRegistrations: (activityId: string, filters?: any) =>
