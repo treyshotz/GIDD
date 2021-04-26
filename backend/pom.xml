@@ -16,6 +16,7 @@
     <properties>
         <java.version>11</java.version>
         <querydsl.version>4.4.0</querydsl.version>
+        <springfox.version>2.9.2</springfox.version>
     </properties>
     <dependencies>
 
@@ -147,6 +148,11 @@
             <version>${querydsl.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>3.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -212,4 +218,5 @@
             </properties>
         </profile>
     </profiles>
+
 </project>

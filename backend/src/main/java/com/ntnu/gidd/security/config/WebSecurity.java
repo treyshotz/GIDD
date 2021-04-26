@@ -32,6 +32,16 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     private JwtUtil jwtUtil;
     private JWTConfig jwtConfig;
 
+    private static final String[] DOCS_WHITELIST = {
+            "/v2/api-docs",
+            "/configuration/ui",
+            "/swagger-resources/**",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/webjars/**"
+    };
+
     /**
      * Sets up the web security configuration
      * @param httpSecurity
@@ -52,6 +62,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
+                .antMatchers(DOCS_WHITELIST).permitAll()
                 .antMatchers(HttpMethod.POST, jwtConfig.getUri() + "/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/users/").permitAll()
                 .antMatchers(HttpMethod.GET, "/activities/").permitAll()
@@ -80,6 +91,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService())
                 .passwordEncoder(bCryptPasswordEncoder);
     }
+
 
     /**
      * This sets up the configuration for Cross-Origin Resource Sharing (CORS)
