@@ -153,4 +153,12 @@ public class RegistrationServiceImpl implements RegistrationService {
         .orElseThrow(RegistrationNotFoundException::new));
     return registrations.stream().map(p -> modelMapper.map(p, RegistrationUserDto.class)).collect(Collectors.toList());
   }
+
+  @Override
+  public Page<ActivityListDto> getRegistrationsForUser(Predicate predicate, Pageable pageable, UUID userId){
+    QRegistration registration = QRegistration.registration;
+    predicate = ExpressionUtils.allOf(predicate, registration.user.id.eq(userId));
+    Page<Registration> registrations = registrationRepository.findAll(predicate, pageable);
+    return registrations.map(s -> modelMapper.map(s, ActivityListDto.class));
+  }
 }

@@ -39,6 +39,7 @@ public class User extends UUIDModel {
     @OneToOne
     private PasswordResetToken resetToken;
 
+    String image;
     @PreRemove
     private void removeActivitiesFromUsers() {
 

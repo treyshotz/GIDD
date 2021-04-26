@@ -1,6 +1,7 @@
 package com.ntnu.gidd.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import com.ntnu.gidd.dto.User.UserRegistrationDto;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.User;
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -132,7 +134,25 @@ public class UserControllerTest {
 				.content(objectMapper.writeValueAsString(validUser)))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.firstName").value(validUser.getFirstName()));
-		;
+	}
+
+	@Test
+	public void testGetUserByUserId() throws Exception {
+
+		User testUser = userRepository.save(userFactory.getObject());
+		mockMvc.perform(get(URI + testUser.getId().toString()+ "/")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.firstName").value(testUser.getFirstName()));
+	}
+
+	@Test
+	public void testGetAllUsers() throws Exception {
+
+		mockMvc.perform(get(URI)
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.content.[*].firstName", hasItem(user.getFirstName())));
 	}
 	
 	

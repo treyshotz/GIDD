@@ -12,10 +12,13 @@ import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.service.Email.EmailService;
 import com.ntnu.gidd.util.TrainingLevelEnum;
+import com.querydsl.core.types.Predicate;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -83,7 +86,19 @@ public class UserServiceImpl implements UserService {
 			throw new PasswordIsIncorrectException();
 		}
 	}
-	
+
+	@Override
+	public Page<UserDto> getAll(Predicate predicate, Pageable pageable) {
+		return userRepository.findAll(predicate, pageable).map(s -> modelMapper.map(s, UserDto.class));
+	}
+
+	@Override
+	public UserDto getUserByUUID(UUID userId) {
+		return modelMapper.map(userRepository.findById(userId)
+				.orElseThrow(UserNotFoundException::new),
+				UserDto.class);
+	}
+
 	@Override
 	public UserDto deleteUser(UUID id) {
 		return null;
@@ -98,6 +113,7 @@ public class UserServiceImpl implements UserService {
 		updatedUser.setSurname(user.getSurname());
 		updatedUser.setEmail(user.getEmail());
 		updatedUser.setBirthDate(user.getBirthDate());
+		updatedUser.setImage(user.getImage());
 		if (user.getLevel() != null) updatedUser.setTrainingLevel(getTrainingLevel(user.getLevel()));
 		return modelMapper.map(userRepository.save(updatedUser), UserDto.class);
 	}

@@ -23,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -93,12 +94,6 @@ public class RegistrationServiceImplTest {
 
         predicate = JpaUtils.getEmptyPredicate();
         pageable = JpaUtils.getDefaultPageable();
-    }
-
-    @AfterEach
-    public void cleanUp(){
-        registrationRepository.delete(registration);
-        registrationRepository.delete(registration2);
     }
 
     @Test
@@ -199,6 +194,21 @@ public class RegistrationServiceImplTest {
 
         for (int i = 0; i < registrationsExpected.size(); i++){
             assertThat(registrationsFound.get(i).getUser().getEmail()).isEqualTo(registrationsExpected.get(i).getUser().getEmail());
+        }
+    }
+
+    @Test
+    void testRegistrationServiceImplgetRegistrationsForUser(){
+        registrationsExpected = List.of(registration2);
+
+        lenient().when(registrationRepository.findAll(any(Predicate.class), any(Pageable.class))).thenReturn(new PageImpl<>(registrationsExpected, pageable,
+                registrationsExpected.size()));
+
+        Page<ActivityListDto> registrationsFound = registrationService.getRegistrationsForUser(predicate, pageable, registration.getUser().getId());
+
+
+        for (int i = 0; i < registrationsExpected.size(); i++){
+            assertThat(registrationsFound.getContent().get(i).getTitle()).isEqualTo(registrationsExpected.get(i).getActivity().getTitle());
         }
     }
 

@@ -16,4 +16,5 @@ public class UserListDto {
     private String firstName;
     private String surname;
     private String email;
+    private String image;
 }

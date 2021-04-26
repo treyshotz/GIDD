@@ -33,4 +33,6 @@ public interface RegistrationService {
   void deleteRegistrationWithUsernameAndActivityId(String username, UUID activity_id);
 
   List<RegistrationUserDto> getRegistrationForActivity(UUID activity_id);
+
+  Page<ActivityListDto> getRegistrationsForUser(Predicate predicate, Pageable pageable, UUID userId);
 }

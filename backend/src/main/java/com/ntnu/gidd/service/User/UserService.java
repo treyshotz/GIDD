@@ -4,6 +4,9 @@ import com.ntnu.gidd.dto.User.UserDto;
 import com.ntnu.gidd.dto.User.UserPasswordResetDto;
 import com.ntnu.gidd.dto.User.UserPasswordUpdateDto;
 import com.ntnu.gidd.dto.User.UserRegistrationDto;
+import com.querydsl.core.types.Predicate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import com.ntnu.gidd.model.PasswordResetToken;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,8 @@ public interface UserService {
       UserDto saveUser(UserRegistrationDto user);
       UserDto deleteUser(UUID id);
       void changePassword(Principal principal, UserPasswordUpdateDto user);
+      Page<UserDto> getAll(Predicate predicate, Pageable pageable);
+      UserDto getUserByUUID(UUID userId);
       void forgotPassword(String email) throws MessagingException;
       void validateResetPassword(UserPasswordResetDto user, UUID passwordResetTokenId);
 }
