@@ -5,10 +5,7 @@ import com.ntnu.gidd.dto.User.UserDto;
 import com.ntnu.gidd.dto.User.UserPasswordResetDto;
 import com.ntnu.gidd.dto.User.UserPasswordUpdateDto;
 import com.ntnu.gidd.dto.User.UserRegistrationDto;
-import com.ntnu.gidd.exception.EmailInUseException;
-import com.ntnu.gidd.exception.PasswordIsIncorrectException;
-import com.ntnu.gidd.exception.ResetPasswordTokenNotFoundException;
-import com.ntnu.gidd.exception.UserNotFoundException;
+import com.ntnu.gidd.exception.*;
 import com.ntnu.gidd.model.*;
 import com.ntnu.gidd.repository.PasswordResetTokenRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
@@ -51,9 +48,13 @@ public class UserServiceImpl implements UserService {
 	private PasswordResetTokenRepository passwordResetTokenRepository;
 	
 	@Override
-	public UserDto getUserByEmail(String email) {
+	public UserDto getUserDtoByEmail(String email) {
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 		return modelMapper.map(user, UserDto.class);
+	}
+	
+	private User getUserByEmail(String email) {
+		return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 	}
 	
 	private boolean emailExist(String email) {
@@ -73,7 +74,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public void changePassword(Principal principal, UserPasswordUpdateDto user) {
-		User userObj = userRepository.findByEmail(principal.getName()).orElseThrow(UserNotFoundException::new);
+		User userObj = getUserByEmail(principal.getName());
 		userRepository.flush();
 		if (passwordEncoder.matches(user.getOldPassword(), userObj.getPassword())) {
 			userObj.setPassword(passwordEncoder.encode(user.getNewPassword()));
@@ -115,7 +116,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Transactional
 	public void forgotPassword(String email) throws MessagingException {
-		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+		User user = getUserByEmail(email);
 		PasswordResetToken passwordResetToken = new PasswordResetToken();
 		passwordResetToken.setUser(user);
 		UUID id = passwordResetTokenRepository.save(passwordResetToken).getId();
@@ -141,12 +142,12 @@ public class UserServiceImpl implements UserService {
 	 * @param userReset
 	 */
 	public void validateResetPassword(UserPasswordResetDto userReset, UUID passwordResetTokenId) {
-		User user = userRepository.findByEmail(userReset.getEmail()).orElseThrow(UserNotFoundException::new);
+		User user = getUserByEmail(userReset.getEmail());
 		
 		PasswordResetToken passwordResetToken = passwordResetTokenRepository.findById(passwordResetTokenId).orElseThrow(ResetPasswordTokenNotFoundException::new);
 		
 		if (!user.equals(passwordResetToken.getUser()) && !validateResetToken(passwordResetToken)) {
-			//Exception or something
+			throw new InvalidResetPasswordToken();
 		}
 		user.setPassword(passwordEncoder.encode(userReset.getNewPassword()));
 		userRepository.save(user);

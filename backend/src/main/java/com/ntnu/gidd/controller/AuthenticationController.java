@@ -3,10 +3,7 @@ package com.ntnu.gidd.controller;
 import com.ntnu.gidd.dto.JwtTokenResponse;
 import com.ntnu.gidd.dto.User.UserPasswordForgotDto;
 import com.ntnu.gidd.dto.User.UserPasswordUpdateDto;
-import com.ntnu.gidd.exception.PasswordIsIncorrectException;
-import com.ntnu.gidd.exception.RefreshTokenNotFound;
-import com.ntnu.gidd.exception.ResetPasswordTokenNotFoundException;
-import com.ntnu.gidd.exception.UserNotFoundException;
+import com.ntnu.gidd.exception.*;
 import com.ntnu.gidd.model.PasswordResetToken;
 import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.service.JwtService;
@@ -74,9 +71,12 @@ public class AuthenticationController {
 		try {
 			userService.forgotPassword(UserPasswordForgotDto.getEmail());
 			log.info("Email sent to {} for resetting password", UserPasswordForgotDto.getEmail());
-		} catch (UserNotFoundException | MessagingException ex) {
+		} catch (UserNotFoundException ex) {
 			log.error("Could not find user {}", UserPasswordForgotDto);
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+		} catch (MessagingException ex) {
+			log.error("Something went wrong during sending email", ex);
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong during sending email");
 		}
 		return new Response("An email for resetting password has been sent!");
 	}
@@ -94,9 +94,13 @@ public class AuthenticationController {
 			log.info("Password was changed for user {}", userPasswordResetDto.getEmail());
 		} catch (UserNotFoundException e) {
 			log.error("Could not change password. User {} was not found!", userPasswordResetDto.getEmail());
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
 		} catch (ResetPasswordTokenNotFoundException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
+			log.error("Could not find reset password token for {}!", userPasswordResetDto.getEmail());
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		} catch (InvalidResetPasswordToken e) {
+			log.error("Reset token is invalid!");
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Reset token is invalid!");
 		}
 		return new Response("Password was changed sucessfully");
 	}
