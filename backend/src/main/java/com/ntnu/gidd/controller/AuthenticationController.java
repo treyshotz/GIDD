@@ -84,7 +84,12 @@ public class AuthenticationController {
 	/**
 	 * Takes in a post request containing the new passord the user want to change, the email of the user and the PasswordResetToken
 	 * If the passwordResetToken is found and validated with the linked userEmail the new password will be set
-	 * If the token is not valid or the linked userEmail is not valid it will return an error with the error
+/**
+* Reset the given users password, if a valid token is provided. 
+*
+* @param UserPasswordResetDto userPasswordResetDto DTO the new passord the user want to change, the email of the user and the PasswordResetToken.
+* @throws ResponseStatusException if the token or linked email is invalid.
+**/
 	 */
 	@PostMapping("/reset-password/{passwordResetTokenId}/")
 	@ResponseStatus(HttpStatus.OK)
