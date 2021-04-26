@@ -372,4 +372,55 @@ class AuthenticationControllerTest {
 				.andExpect(status().isUnauthorized());
 		
 	}
+	
+	@Test
+	public void testValidatePasswordWithValidTokenMultipleTimes() throws Exception {
+		PasswordResetToken token = new PasswordResetToken();
+		token.setUser(user);
+		UUID uuid = passwordResetTokenRepository.save(token).getId();
+		
+		PasswordResetToken token2 = new PasswordResetToken();
+		token2.setUser(user);
+		UUID uuid2 = passwordResetTokenRepository.save(token2).getId();
+		
+		PasswordResetToken token3 = new PasswordResetToken();
+		token3.setUser(user);
+		UUID uuid3 = passwordResetTokenRepository.save(token3).getId();
+		
+		String newPassword = "newPassword123";
+		String newPassword2 = "newPassword1234";
+		String newPassword3 = "newPassword12345";
+		
+		UserPasswordResetDto dto = new UserPasswordResetDto();
+		dto.setNewPassword(newPassword);
+		dto.setEmail(user.getEmail());
+		
+		mvc.perform(post(URI + "reset-password/" + uuid.toString() + "/")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto)))
+				.andExpect(status().isOk());
+		
+		dto.setNewPassword(newPassword2);
+		
+		mvc.perform(post(URI + "reset-password/" + uuid2.toString() + "/")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto)))
+				.andExpect(status().isOk());
+		
+		dto.setNewPassword(newPassword3);
+		
+		mvc.perform(post(URI + "reset-password/" + uuid3.toString() + "/")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto)))
+				.andExpect(status().isOk());
+		
+		LoginRequest loginRequest = new LoginRequest();
+		loginRequest.setEmail(user.getEmail());
+		loginRequest.setPassword(newPassword3);
+		
+		mvc.perform(post(URI + "login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(loginRequest)))
+				.andExpect(status().isOk());
+	}
 }
