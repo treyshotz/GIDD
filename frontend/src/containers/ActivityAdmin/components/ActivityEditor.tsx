@@ -1,22 +1,25 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { TrainingLevel } from 'types/Enums';
-import { Activity } from 'types/Types';
+import { Activity, LatLng } from 'types/Types';
 import { useActivityById, useCreateActivity, useUpdateActivity, useDeleteActivity } from 'hooks/Activities';
 import { useSnackbar } from 'hooks/Snackbar';
 import { parseISO } from 'date-fns';
+import { GoogleMap, Marker, Autocomplete, Data } from '@react-google-maps/api';
+import { useMaps } from 'hooks/Utils';
 import { traningLevelToText } from 'utils';
 
 // Material-UI
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid, LinearProgress, MenuItem, Button } from '@material-ui/core';
+import { Grid, LinearProgress, MenuItem, Button, TextField as MuiTextField, Typography } from '@material-ui/core';
 
 // Project components
 import DatePicker from 'components/inputs/DatePicker';
 import { ImageUpload } from 'components/inputs/Upload';
 import VerifyDialog from 'components/layout/VerifyDialog';
 import Dialog from 'components/layout/Dialog';
+import Paper from 'components/layout/Paper';
 import SubmitButton from 'components/inputs/SubmitButton';
 import TextField from 'components/inputs/TextField';
 import Select from 'components/inputs/Select';
@@ -43,6 +46,18 @@ const useStyles = makeStyles((theme) => ({
       borderColor: theme.palette.error.light,
     },
   },
+  mapContainerStyle: {
+    width: '100%',
+    height: 300,
+    borderRadius: theme.shape.borderRadius,
+  },
+  mapFilter: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
+  mapSearch: {
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 export type ActivityEditorProps = {
@@ -55,17 +70,24 @@ type FormValues = Pick<Activity, 'title' | 'description' | 'capacity' | 'level' 
   endDate: Date;
   signupStart: Date;
   signupEnd: Date;
+  geoLocation: LatLng | null;
 };
 
 const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
   const classes = useStyles();
   const [openImages, setOpenImages] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [autocomplete, setAutocomplete] = useState<any>(null);
+  const [geoLocation, setLocation] = useState<LatLng | null>(null);
+  const [center, setCenter] = useState<LatLng>({ lat: 60, lng: 10 });
+  const mapRef = useRef<GoogleMap>(null);
   const { data, isLoading } = useActivityById(activityId || '');
   const createActivity = useCreateActivity();
   const updateActivity = useUpdateActivity(activityId || '');
   const deleteActivity = useDeleteActivity(activityId || '');
   const showSnackbar = useSnackbar();
   const { control, handleSubmit, register, formState, setError, reset, setValue, watch } = useForm<FormValues>();
+  const { isLoaded: isMapLoaded } = useMaps();
 
   const setValues = useCallback(
     (newValues: Activity | null) => {
@@ -74,6 +96,7 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
         description: newValues?.description || '',
         endDate: newValues?.endDate ? parseISO(newValues.endDate) : new Date(),
         level: newValues?.level || TrainingLevel.MEDIUM,
+        geoLocation: newValues?.geoLocation || null,
         images: newValues?.images || [],
         startDate: newValues?.startDate ? parseISO(newValues.startDate) : new Date(),
         signupEnd: newValues?.signupEnd ? parseISO(newValues.signupEnd) : new Date(),
@@ -128,12 +151,18 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
       setError('endDate', { message: 'Slutt på aktivitet må være etter start på aktivitet' });
       return;
     }
+    if (geoLocation === null) {
+      showSnackbar('Du må velge en plassering for aktiviteten', 'warning');
+      return;
+    }
     const activity = {
       ...data,
+      geoLocation: geoLocation,
       startDate: data.startDate.toJSON(),
       endDate: data.endDate.toJSON(),
       signupEnd: data.signupEnd.toJSON(),
       signupStart: data.signupStart.toJSON(),
+      inviteOnly: false,
     };
     if (activityId) {
       await updateActivity.mutate(activity, {
@@ -156,6 +185,19 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
       });
     }
   };
+
+  const onPlaceChanged = () => {
+    if (autocomplete && autocomplete.getPlace().geometry) {
+      const latLng = autocomplete.getPlace().geometry.location.toJSON() as LatLng;
+      mapRef?.current?.state?.map?.panTo(latLng);
+      setCenter(latLng);
+      setLocation(latLng);
+    }
+  };
+
+  const onKeyPressed = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    e.key === 'Enter' && e.preventDefault();
+  }, []);
 
   if (isLoading) {
     return <LinearProgress />;
@@ -226,6 +268,26 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
             {...register('description', { required: 'Gi arrengementet en beskrivelse' })}
             required
           />
+          <Paper className={classes.mapFilter}>
+            <Typography variant='subtitle2'>Plassering - søk eller klikk på kartet</Typography>
+            {isMapLoaded && (
+              <>
+                <Autocomplete onLoad={(data) => setAutocomplete(data)} onPlaceChanged={onPlaceChanged}>
+                  <MuiTextField className={classes.mapSearch} fullWidth onKeyPress={onKeyPressed} placeholder='Søk etter sted...' />
+                </Autocomplete>
+                <GoogleMap center={center} mapContainerClassName={classes.mapContainerStyle} ref={mapRef} zoom={5}>
+                  {geoLocation && <Marker position={geoLocation} />}
+                  <Data
+                    options={{
+                      drawingMode: 'Point',
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      featureFactory: (geo: any) => !geo?.g || setLocation(geo.g?.toJSON()),
+                    }}
+                  />
+                </GoogleMap>
+              </>
+            )}
+          </Paper>
           <SubmitButton className={classes.margin} disabled={isLoading} formState={formState}>
             {activityId ? 'Oppdater aktivitet' : 'Opprett aktivitet'}
           </SubmitButton>

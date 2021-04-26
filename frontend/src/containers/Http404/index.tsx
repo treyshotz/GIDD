@@ -49,7 +49,6 @@ const Http404 = () => {
         <title>404</title>
       </Helmet>
       <Logo className={classes.logo} darkColor={'white'} lightColor={'black'} />
-      {/* <img alt='404' className={classes.img} src='https://via.placeholder.com/360x360.png' /> */}
       <Typography align='center' variant='h2'>
         {isAuthenticated ? 'Du er innlogget, men vi kunne fremdeles ikke finne siden :(' : 'Kunne ikke finne siden'}
       </Typography>

@@ -18,6 +18,7 @@ import Calendar from 'components/miscellaneous/Calendar';
 import ActivityCard from 'components/layout/ActivityCard';
 import MasonryGrid from 'components/layout/MasonryGrid';
 import SearchBar from 'components/inputs/SearchBar';
+import ActivitiesMap from 'components/miscellaneous/ActivitiesMap';
 
 const useStyles = makeStyles((theme) => ({
   top: {
@@ -73,7 +74,7 @@ const Activities = () => {
   const classes = useStyles();
   const isAuthenticated = useIsAuthenticated();
   const [filters, setFilters] = useState<ActivityFilters>({});
-  const [showCalendar, setShowCalendar] = useState(false);
+  const [view, setView] = useState<'list' | 'calendar' | 'map'>('list');
   const { data, error, hasNextPage, fetchNextPage, isFetching } = useActivities(filters);
   const activities = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !activities.length && !isFetching, [activities, isFetching]);
@@ -105,11 +106,14 @@ const Activities = () => {
             </Hidden>
           </div>
           <ButtonGroup aria-label='Set calendar or list' fullWidth>
-            <Button onClick={() => setShowCalendar(false)} variant={showCalendar ? 'outlined' : 'contained'}>
+            <Button onClick={() => setView('list')} variant={view === 'list' ? 'contained' : 'outlined'}>
               Liste
             </Button>
-            <Button onClick={() => setShowCalendar(true)} variant={showCalendar ? 'contained' : 'outlined'}>
+            <Button onClick={() => setView('calendar')} variant={view === 'calendar' ? 'contained' : 'outlined'}>
               Kalender
+            </Button>
+            <Button onClick={() => setView('map')} variant={view === 'map' ? 'contained' : 'outlined'}>
+              Kart
             </Button>
           </ButtonGroup>
           <SearchBar updateFilters={setFilters} />
@@ -124,7 +128,7 @@ const Activities = () => {
               )}
             </div>
           </Hidden>
-          <Collapse in={!showCalendar}>
+          <Collapse in={view === 'list'}>
             <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
               <MasonryGrid>
                 {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen aktiviteter'} />}
@@ -134,8 +138,11 @@ const Activities = () => {
               </MasonryGrid>
             </Pagination>
           </Collapse>
-          <Collapse in={showCalendar}>
+          <Collapse in={view === 'calendar'} mountOnEnter>
             <Calendar activities={activities} />
+          </Collapse>
+          <Collapse in={view === 'map'} mountOnEnter>
+            <ActivitiesMap hookArgs={filters} useHook={useActivities} />
           </Collapse>
         </div>
       </div>

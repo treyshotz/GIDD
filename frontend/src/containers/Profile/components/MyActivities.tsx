@@ -10,6 +10,7 @@ import Pagination from 'components/layout/Pagination';
 import NotFoundIndicator from 'components/miscellaneous/NotFoundIndicator';
 import ActivityCard from 'components/layout/ActivityCard';
 import Calendar from 'components/miscellaneous/Calendar';
+import ActivitiesMap from 'components/miscellaneous/ActivitiesMap';
 
 const useStyles = makeStyles((theme) => ({
   buttons: {
@@ -32,7 +33,7 @@ export type MyActivitiesProps = {
 
 const MyActivities = ({ past = false, userId }: MyActivitiesProps) => {
   const classes = useStyles();
-  const [showCalendar, setShowCalendar] = useState(false);
+  const [view, setView] = useState<'list' | 'calendar' | 'map'>('list');
   const filters = useMemo(
     () => ({
       [past ? 'registrationStartDateBefore' : 'registrationStartDateAfter']: new Date().toISOString(),
@@ -46,14 +47,17 @@ const MyActivities = ({ past = false, userId }: MyActivitiesProps) => {
   return (
     <>
       <ButtonGroup aria-label='Set calendar or list' className={classes.buttons}>
-        <Button onClick={() => setShowCalendar(false)} variant={showCalendar ? 'outlined' : 'contained'}>
+        <Button onClick={() => setView('list')} variant={view === 'list' ? 'contained' : 'outlined'}>
           Liste
         </Button>
-        <Button onClick={() => setShowCalendar(true)} variant={showCalendar ? 'contained' : 'outlined'}>
+        <Button onClick={() => setView('calendar')} variant={view === 'calendar' ? 'contained' : 'outlined'}>
           Kalender
         </Button>
+        <Button onClick={() => setView('map')} variant={view === 'map' ? 'contained' : 'outlined'}>
+          Kart
+        </Button>
       </ButtonGroup>
-      <Collapse in={!showCalendar}>
+      <Collapse in={view === 'list'}>
         <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
           {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen aktiviteter'} />}
           <div className={classes.list}>
@@ -63,8 +67,11 @@ const MyActivities = ({ past = false, userId }: MyActivitiesProps) => {
           </div>
         </Pagination>
       </Collapse>
-      <Collapse in={showCalendar}>
+      <Collapse in={view === 'calendar'} mountOnEnter>
         <Calendar activities={activities} />
+      </Collapse>
+      <Collapse in={view === 'map'} mountOnEnter>
+        <ActivitiesMap hookArgs={filters} useHook={useMyParticipatingActivities} userId={userId} />
       </Collapse>
     </>
   );

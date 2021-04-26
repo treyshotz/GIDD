@@ -62,7 +62,7 @@ export type Activity = {
   geoLocation: LatLng;
 };
 
-export type ActivityList = Pick<Activity, 'id' | 'title' | 'closed' | 'startDate' | 'endDate' | 'level' | 'description' | 'images'>;
+export type ActivityList = Pick<Activity, 'id' | 'title' | 'closed' | 'startDate' | 'endDate' | 'level' | 'description' | 'images' | 'geoLocation'>;
 
 export type ActivityHost = Pick<User, 'firstName' | 'surname' | 'email' | 'id'>;
 
