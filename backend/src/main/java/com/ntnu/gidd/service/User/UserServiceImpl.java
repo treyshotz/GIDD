@@ -121,13 +121,13 @@ public class UserServiceImpl implements UserService {
 		UUID id = passwordResetTokenRepository.save(passwordResetToken).getId();
 		Map<String, Object> properties = new HashMap<>();
 		properties.put("name", user.getFirstName() + " " + user.getSurname());
-		properties.put("url", "https://gidd-idatt2106.web.app/auth/reset-password/" +id.toString());
+		properties.put("url", "https://gidd-idatt2106.web.app/auth/reset-password/" +id.toString() + "/");
 		
 		Mail mail = Mail.builder()
 				.from("baregidd@gmail.com")
 				.to(user.getEmail())
 				.htmlTemplate(new HtmlTemplate("reset_password", properties))
-				.subject("Activity closed")
+				.subject("Reset password")
 				.build();
 		emailService.sendEmail(mail);
 	}
