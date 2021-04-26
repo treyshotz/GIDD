@@ -1,14 +1,16 @@
-import { useCallback, useState } from 'react';
+import { forwardRef, useCallback, useState } from 'react';
+import classnames from 'classnames';
 import { useForm } from 'react-hook-form';
 import { Activity, LatLng } from 'types/Types';
 import { TrainingLevel } from 'types/Enums';
 import { traningLevelToText } from 'utils';
-import { GOOGLE_MAPS_API_KEY } from 'constant';
+import { useMaps } from 'hooks/Utils';
+import { GoogleMap, Circle, Autocomplete } from '@react-google-maps/api';
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
-import { Button, IconButton, InputBase, Collapse, Divider, TextField } from '@material-ui/core';
+import { makeStyles, Theme } from '@material-ui/core/styles';
+import { InputBaseProps } from '@material-ui/core/InputBase';
+import { Button, MenuItem, IconButton, InputBase, Collapse, Divider, TextField, Hidden, Typography, useMediaQuery } from '@material-ui/core';
 
 // Icons
 import FilterIcon from '@material-ui/icons/TuneRounded';
@@ -21,9 +23,7 @@ import Select from 'components/inputs/Select';
 import Paper from 'components/layout/Paper';
 import SubmitButton from 'components/inputs/SubmitButton';
 import Slider from 'components/inputs/Slider';
-
-// Google Maps Components
-import { GoogleMap, LoadScript, Circle, Autocomplete } from '@react-google-maps/api';
+import Bool from './Bool';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -53,13 +53,16 @@ const useStyles = makeStyles((theme) => ({
     display: 'grid',
     gap: theme.spacing(1),
   },
+  row: {
+    gridTemplateColumns: 'auto 1fr',
+  },
+  margin: {
+    margin: 'auto 0',
+  },
   mapContainerStyle: {
     width: '100%',
-    height: 400,
+    height: 300,
     borderRadius: theme.shape.borderRadius,
-    [theme.breakpoints.down('md')]: {
-      height: 300,
-    },
   },
   mapFilter: {
     marginTop: theme.spacing(1),
@@ -70,20 +73,34 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type FormValues = Partial<Pick<Activity, 'title'>> & {
+type FormValues = {
+  title?: string;
   endDate?: Date;
   startDate?: Date;
   level?: Activity['level'] | '';
   radius?: number;
   latLng?: LatLng;
+  enableStartDate: boolean;
+  enableEndDate: boolean;
+  enableTrainingLevel: boolean;
+  enableGeoLocation: boolean;
+  sort: string;
 };
 
 export type SearchBarProps = {
   updateFilters: (newFilters: ActivityFilters) => void;
 };
 
+const SORT_OPTIONS = [
+  { name: 'Tid - stigende', key: 'startDate,ASC' },
+  { name: 'Tid - synkende', key: 'startDate,DESC' },
+  { name: 'Tittel - A-Å', key: 'title,ASC' },
+  { name: 'Tittel - Å-A', key: 'title,DESC' },
+];
+
 const SearchBar = ({ updateFilters }: SearchBarProps) => {
   const classes = useStyles();
+  const xlUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('xl'));
   const [open, setOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [autocomplete, setAutocomplete] = useState<any>(null);
@@ -93,26 +110,28 @@ const SearchBar = ({ updateFilters }: SearchBarProps) => {
   });
   const { watch, reset, register, handleSubmit, control, formState } = useForm<FormValues>();
   const radius = watch('radius');
+  const { isLoaded: isMapLoaded } = useMaps();
 
   const submit = async (data: FormValues) => {
     setOpen(false);
     const filters: ActivityFilters = {};
-    if (data.endDate) {
+    filters.sort = data.sort;
+    if (data.endDate && data.enableEndDate) {
       filters.startDateBefore = data.endDate.toJSON();
     }
-    if (data.startDate) {
+    if (data.startDate && data.enableStartDate) {
       filters.startDateAfter = data.startDate.toJSON();
     }
     if (data.title) {
       filters.title = data.title;
     }
-    if (data.level) {
-      filters.level = data.level;
+    if (data.level && data.enableTrainingLevel) {
+      filters['trainingLevel.level'] = data.level;
     }
-    if (data.radius) {
+    if (data.radius && data.enableGeoLocation) {
       filters.radius = data.radius * 1000;
     }
-    if (data.latLng) {
+    if (data.latLng && data.enableGeoLocation) {
       filters.lat = data.latLng.lat;
       filters.lng = data.latLng.lng;
     }
@@ -126,11 +145,14 @@ const SearchBar = ({ updateFilters }: SearchBarProps) => {
       level: '',
       endDate: undefined,
       startDate: undefined,
+      enableStartDate: false,
+      enableEndDate: false,
+      enableTrainingLevel: false,
+      enableGeoLocation: false,
+      sort: SORT_OPTIONS[0].key,
     });
     updateFilters({});
   };
-
-  const { ref: titleRef, name: titleName } = register('title');
 
   const onPlaceChanged = () => {
     if (autocomplete && autocomplete.getPlace().geometry) {
@@ -143,40 +165,71 @@ const SearchBar = ({ updateFilters }: SearchBarProps) => {
     e.key === 'Enter' && e.preventDefault();
   }, []);
 
+  const Input = forwardRef(({ ...props }: InputBaseProps, ref) => (
+    <InputBase {...props} className={classes.input} inputRef={ref} name={props.name} placeholder='Søk etter aktivitet' />
+  ));
+  Input.displayName = 'Input';
+
   return (
     <Paper className={classes.paper} noPadding>
       <form onSubmit={handleSubmit(submit)}>
         <div className={classes.root}>
-          <IconButton aria-label='menu' className={classes.iconButton} onClick={() => setOpen((prev) => !prev)}>
-            <FilterIcon />
-          </IconButton>
-          <InputBase className={classes.input} inputRef={titleRef} name={titleName} placeholder='Søk etter aktivitet' />
+          <Hidden xlUp>
+            <IconButton aria-label='menu' className={classes.iconButton} onClick={() => setOpen((prev) => !prev)}>
+              <FilterIcon />
+            </IconButton>
+          </Hidden>
+          <Input {...register('title')} />
           <IconButton className={classes.iconButton} type='submit'>
             <SearchIcon />
           </IconButton>
         </div>
-        <Collapse in={open}>
+        <Collapse in={open || xlUp}>
           <Divider />
           <div className={classes.filterPaper}>
-            <DatePicker control={control} formState={formState} fullWidth label='Start' margin='dense' name='startDate' type='date-time' />
-            <DatePicker control={control} formState={formState} fullWidth label='Slutt' margin='dense' name='endDate' type='date-time' />
-            <Select control={control} formState={formState} label='Trenings-nivå' name='level'>
-              {Object.values(TrainingLevel).map((value, index) => (
-                <MenuItem key={index} value={value}>
-                  {traningLevelToText(value as TrainingLevel)}
+            <Select control={control} defaultValue={SORT_OPTIONS[0].key} formState={formState} label='Sortering' margin='dense' name='sort'>
+              {SORT_OPTIONS.map((value) => (
+                <MenuItem key={value.key} value={value.key}>
+                  {value.name}
                 </MenuItem>
               ))}
             </Select>
+            <Typography variant='caption'>Tid</Typography>
+            <div className={classnames(classes.grid, classes.row)}>
+              <Bool className={classes.margin} control={control} formState={formState} name='enableStartDate' type='checkbox' />
+              <DatePicker control={control} formState={formState} fullWidth label='Fra' margin='dense' name='startDate' type='date-time' />
+            </div>
+            <div className={classnames(classes.grid, classes.row)}>
+              <Bool className={classes.margin} control={control} formState={formState} name='enableEndDate' type='checkbox' />
+              <DatePicker control={control} formState={formState} fullWidth label='Til' margin='dense' name='endDate' type='date-time' />
+            </div>
+            <Typography variant='caption'>Treningsnivå</Typography>
+            <div className={classnames(classes.grid, classes.row)}>
+              <Bool className={classes.margin} control={control} formState={formState} name='enableTrainingLevel' type='checkbox' />
+              <Select control={control} formState={formState} label='Trenings-nivå' margin='dense' name='level'>
+                {Object.values(TrainingLevel).map((value, index) => (
+                  <MenuItem key={index} value={value}>
+                    {traningLevelToText(value as TrainingLevel)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
+            <Typography variant='caption'>Område i kart</Typography>
             <div className={classes.mapFilter}>
-              <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={['places']}>
-                <Autocomplete onLoad={(data) => setAutocomplete(data)} onPlaceChanged={onPlaceChanged}>
-                  <TextField className={classes.mapSearch} fullWidth onKeyPress={onKeyPressed} placeholder='Søk etter sted...' />
-                </Autocomplete>
-                <Slider control={control} name='radius' />
-                <GoogleMap center={location} mapContainerClassName={classes.mapContainerStyle} zoom={11}>
-                  {radius && <Circle center={location} radius={radius * 1000} />}
-                </GoogleMap>
-              </LoadScript>
+              {isMapLoaded && (
+                <>
+                  <div className={classnames(classes.grid, classes.row)}>
+                    <Bool className={classes.margin} control={control} formState={formState} name='enableGeoLocation' type='checkbox' />
+                    <Autocomplete onLoad={(data) => setAutocomplete(data)} onPlaceChanged={onPlaceChanged}>
+                      <TextField className={classes.mapSearch} fullWidth onKeyPress={onKeyPressed} placeholder='Søk etter sted...' />
+                    </Autocomplete>
+                  </div>
+                  <Slider control={control} name='radius' />
+                  <GoogleMap center={location} mapContainerClassName={classes.mapContainerStyle} zoom={11}>
+                    {radius && <Circle center={location} radius={radius * 1000} />}
+                  </GoogleMap>
+                </>
+              )}
             </div>
             <div className={classes.grid}>
               <SubmitButton formState={formState}>Aktiver filtre</SubmitButton>

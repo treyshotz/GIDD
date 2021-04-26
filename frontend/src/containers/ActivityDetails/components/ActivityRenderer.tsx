@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import { Activity } from 'types/Types';
 import URLS from 'URLS';
 import { parseISO, isPast, isFuture } from 'date-fns';
 import { formatDate } from 'utils';
+import { useMaps } from 'hooks/Utils';
+import { GoogleMap, Marker } from '@react-google-maps/api';
 
 // Services
 import { useActivityRegistration, useDeleteActivityRegistration } from 'hooks/Activities';
@@ -24,10 +25,6 @@ import ActivityRegistration from 'containers/ActivityDetails/components/Activity
 import Paper from 'components/layout/Paper';
 import VerifyDialog from 'components/layout/VerifyDialog';
 import MasonryGrid from 'components/layout/MasonryGrid';
-
-// Google Maps Components
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import { GOOGLE_MAPS_API_KEY } from 'constant';
 
 const useStyles = makeStyles((theme) => ({
   image: {
@@ -53,15 +50,6 @@ const useStyles = makeStyles((theme) => ({
       gridGap: theme.spacing(1),
     },
   },
-  content: {
-    minHeight: 'calc(100vh - 100px)',
-    gridTemplateRows: '1fr auto',
-    [theme.breakpoints.down('md')]: {
-      minHeight: 'unset',
-      gridTemplateRows: 'auto',
-    },
-  },
-  images: {},
   details: {
     padding: theme.spacing(1, 2),
     width: '100%',
@@ -101,11 +89,8 @@ const useStyles = makeStyles((theme) => ({
   },
   containerStyle: {
     width: '100%',
-    height: 400,
+    height: 300,
     borderRadius: theme.shape.borderRadius,
-    [theme.breakpoints.down('md')]: {
-      height: 300,
-    },
   },
 }));
 
@@ -125,6 +110,7 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
   const endDate = parseISO(data.endDate);
   const signupStart = parseISO(data.signupStart);
   const signupEnd = parseISO(data.signupEnd);
+  const { isLoaded: isMapLoaded } = useMaps();
 
   const signOff = async () => {
     if (user) {
@@ -195,7 +181,7 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
 
   return (
     <div className={classes.rootGrid}>
-      <div className={classnames(classes.grid, classes.content)}>
+      <div className={classes.grid}>
         <div>
           <Typography className={classes.title} gutterBottom variant='h1'>
             {data.title}
@@ -231,14 +217,14 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
           )}
         </div>
         <div className={classes.grid}>
-          <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
+          {isMapLoaded && (
             <GoogleMap center={data.geoLocation} mapContainerClassName={classes.containerStyle} zoom={14}>
               <Marker position={data.geoLocation} />
             </GoogleMap>
-          </LoadScript>
+          )}
         </div>
       </div>
-      <div className={classnames(classes.grid, classes.images)}>
+      <div className={classes.grid}>
         <MasonryGrid
           breakpoints={{
             default: 2,
@@ -260,7 +246,7 @@ export const ActivityRendererLoading = () => {
 
   return (
     <div className={classes.rootGrid}>
-      <div className={classnames(classes.grid, classes.content)}>
+      <div className={classes.grid}>
         <div>
           <Skeleton className={classes.skeleton} height={80} width='60%' />
           <Skeleton className={classes.skeleton} height={40} width={250} />
@@ -278,7 +264,7 @@ export const ActivityRendererLoading = () => {
           </Paper>
         </div>
       </div>
-      <div className={classnames(classes.grid, classes.images)}>
+      <div className={classes.grid}>
         <MasonryGrid
           breakpoints={{
             default: 2,

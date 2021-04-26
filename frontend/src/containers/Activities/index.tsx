@@ -18,7 +18,6 @@ import Calendar from 'components/miscellaneous/Calendar';
 import ActivityCard from 'components/layout/ActivityCard';
 import MasonryGrid from 'components/layout/MasonryGrid';
 import SearchBar from 'components/inputs/SearchBar';
-import { Activity } from 'types/Types';
 
 const useStyles = makeStyles((theme) => ({
   top: {
@@ -59,12 +58,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export type ActivityFilters = Partial<Pick<Activity, 'title' | 'level'>> & {
+export type ActivityFilters = {
+  title?: string;
+  ['trainingLevel.level']?: string;
   startDateAfter?: string;
   startDateBefore?: string;
   radius?: number;
   lat?: number;
   lng?: number;
+  sort?: string;
 };
 
 const Activities = () => {

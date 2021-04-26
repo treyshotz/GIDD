@@ -1,7 +1,5 @@
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-import Slider from '@material-ui/core/Slider';
-import Input from '@material-ui/core/Input';
-import { useState } from 'react';
+import { Input, InputAdornment, Slider } from '@material-ui/core';
 import { Control, Controller, RegisterOptions } from 'react-hook-form';
 
 const useStyles = makeStyles((theme) => ({
@@ -12,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(3),
   },
   input: {
-    width: 42,
+    width: 56,
   },
   sliderGrid: {
     display: 'grid',
@@ -24,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
 
 const PrettoSlider = withStyles({
   root: {
-    color: '#52af77',
     height: 8,
   },
   thumb: {
@@ -62,16 +59,6 @@ export type IProps = {
 
 export default function CustomizedSlider({ name, control, rules = {}, defaultValue = 3 }: IProps) {
   const classes = useStyles();
-  const [value, setValue] = useState<number | string | Array<number | string>>(3);
-
-  const handleBlur = () => {
-    if (value < 0) {
-      setValue(0);
-    } else if (value > 15) {
-      setValue(15);
-    }
-  };
-
   return (
     <div className={classes.root}>
       <div className={classes.sliderGrid}>
@@ -81,10 +68,11 @@ export default function CustomizedSlider({ name, control, rules = {}, defaultVal
           name={name}
           render={({ field }) => (
             <>
-              <PrettoSlider {...field} aria-labelledby='input-slider' max={15} valueLabelDisplay='auto' />
+              <PrettoSlider {...field} aria-labelledby='input-slider' max={15} min={0} valueLabelDisplay='auto' />
               <Input
                 {...field}
                 className={classes.input}
+                endAdornment={<InputAdornment>km</InputAdornment>}
                 inputProps={{
                   step: 1,
                   min: 0,
@@ -93,7 +81,10 @@ export default function CustomizedSlider({ name, control, rules = {}, defaultVal
                   'aria-labelledby': 'input-slider',
                 }}
                 margin='dense'
-                onBlur={handleBlur}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  field.onChange(val < 0 ? 0 : val > 15 ? 15 : val);
+                }}
               />
             </>
           )}
