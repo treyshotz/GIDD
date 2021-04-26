@@ -302,7 +302,7 @@ class AuthenticationControllerTest {
 		mvc.perform(post(URI + "forgot-password/")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(email)))
-				.andExpect(status().isNotAcceptable());
+				.andExpect(status().isNotFound());
 		assertEquals(passwordResetTokenRepository.findAll().size(), 0);
 	}
 	
@@ -343,7 +343,7 @@ class AuthenticationControllerTest {
 		mvc.perform(post(URI + "reset-password/" + randomId.toString() + "/")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(dto)))
-				.andExpect(status().isNotAcceptable());
+				.andExpect(status().isNotFound());
 	}
 	
 	@Test
