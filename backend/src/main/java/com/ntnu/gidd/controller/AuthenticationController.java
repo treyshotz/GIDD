@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.UUID;
@@ -73,7 +74,7 @@ public class AuthenticationController {
 		try {
 			userService.forgotPassword(UserPasswordForgotDto.getEmail());
 			log.info("Email sent to {} for resetting password", UserPasswordForgotDto.getEmail());
-		} catch (UserNotFoundException ex) {
+		} catch (UserNotFoundException | MessagingException ex) {
 			log.error("Could not find user {}", UserPasswordForgotDto);
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User not found");
 		}
