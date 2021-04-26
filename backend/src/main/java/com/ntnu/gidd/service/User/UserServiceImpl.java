@@ -109,13 +109,12 @@ public class UserServiceImpl implements UserService {
 	 */
 	//TODO: Should not actually return UUID
 	@Transactional
-	public UUID forgotPassword(String email) {
+	public void forgotPassword(String email) {
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 		PasswordResetToken passwordResetToken = new PasswordResetToken();
 		passwordResetToken.setUser(user);
 		passwordResetTokenRepository.save(passwordResetToken);
 		//TODO: Construct email with the id of the token
-		return passwordResetToken.getId();
 	}
 	
 	/**
