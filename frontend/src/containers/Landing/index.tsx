@@ -67,7 +67,7 @@ const Landing = () => {
   const isEmpty = useMemo(() => !activities.length && !isFetching, [activities, isFetching]);
 
   return (
-    <Navigation maxWidth={false}>
+    <Navigation maxWidth={false} topbarVariant={'transparent'}>
       <Helmet>
         <title>Forsiden - GIDD</title>
       </Helmet>

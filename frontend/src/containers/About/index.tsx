@@ -58,7 +58,7 @@ const About = () => {
              også spranget til elektronisk setting, og forblir i hovedsak uendret. Den ble popularisert på 1960-tallet med utgivelsen av Letraset-ark
              som inneholder GIDD-passasjer, og nylig med desktop publishing-programvare som Aldus PageMaker inkludert versjoner av GIDD.`}
           </Typography>
-          <Logo size='large' />
+          <Logo darkColor={'white'} lightColor={'black'} />
         </Paper>
         <Paper>
           <Typography gutterBottom variant='h3'>

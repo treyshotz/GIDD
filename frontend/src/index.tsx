@@ -94,10 +94,10 @@ const AppRoutes = () => {
   useInterval(() => {
     const access_token = getCookie(ACCESS_TOKEN);
     const refresh_token = getCookie(REFRESH_TOKEN);
-    if (!access_token && Boolean(refresh_token)) {
+    if (!access_token && refresh_token) {
       refreshToken.mutate(null);
     }
-  }, 2000);
+  }, 5000);
   return (
     <Routes>
       <Route element={<Landing />} path={URLS.LANDING} />

@@ -12,6 +12,7 @@ public class ActivityFactory implements FactoryBean<Activity> {
 
     Random random = new Random();
     TrainingLevelFactory trainingLevelFactory = new TrainingLevelFactory();
+    GeoLocationFactory geoLocationFactory = new GeoLocationFactory();
 
     @Override
     public Activity getObject() throws Exception {
@@ -26,6 +27,7 @@ public class ActivityFactory implements FactoryBean<Activity> {
                 .closed(false)
                 .capacity(random.nextInt(1000))
                 .trainingLevel(trainingLevelFactory.getObject())
+                .geoLocation(geoLocationFactory.getObject())
                 .build();
     }
 

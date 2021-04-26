@@ -43,7 +43,7 @@ const Footer = () => {
       <Container maxWidth='lg'>
         <Divider variant='middle' />
         <div className={classes.content}>
-          <Logo className={classes.logo} size='large' />
+          <Logo className={classes.logo} darkColor={'white'} lightColor={'black'} />
         </div>
       </Container>
     </footer>

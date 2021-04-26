@@ -7,6 +7,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.ntnu.gidd.Application;
+import com.ntnu.gidd.config.ModelMapperConfig;
 import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.factories.RegistrationFactory;
 import com.ntnu.gidd.factories.UserFactory;
@@ -28,12 +31,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 
 
 @SpringBootTest(webEnvironment = MOCK)
 @AutoConfigureMockMvc
+@ContextConfiguration(classes = {Application.class})
 public class UserRegistrationControllerTest {
 
   private String URI = "/users/me";
@@ -49,6 +54,7 @@ public class UserRegistrationControllerTest {
 
   @Autowired
   UserRepository userRepository;
+
 
   private ActivityFactory activityFactory = new ActivityFactory();
   private UserFactory userFactory = new UserFactory();
@@ -95,7 +101,7 @@ public class UserRegistrationControllerTest {
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.content.[0].activity.title").value(activity.getTitle()));
+        .andExpect(jsonPath("$.content.[0].title").value(activity.getTitle()));
   }
 
   @Test
@@ -105,7 +111,7 @@ public class UserRegistrationControllerTest {
         .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.activity.title").value(activity.getTitle()));
+        .andExpect(jsonPath("$.title").value(activity.getTitle()));
   }
 
   @Transactional

@@ -7,5 +7,9 @@ export const EMAIL_REGEX = RegExp(
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
 );
 
+// 15 minutes
 export const ACCESS_TOKEN_DURATION = 1000 * 60 * 15;
+// 24 hours
 export const REFRESH_TOKEN_DURATION = 1000 * 60 * 60 * 24;
+
+export const GOOGLE_MAPS_API_KEY = 'AIzaSyCh5f2QSjGylEdYiv54oGi3FuHEGJ-TSYs';

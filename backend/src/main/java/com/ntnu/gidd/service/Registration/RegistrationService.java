@@ -1,9 +1,10 @@
 package com.ntnu.gidd.service.Registration;
 
-import com.ntnu.gidd.dto.Registration.RegistrationActivityDto;
-import com.ntnu.gidd.dto.Registration.RegistrationActivityListDto;
+import com.ntnu.gidd.dto.Activity.ActivityDto;
+import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.ntnu.gidd.model.RegistrationId;
@@ -19,15 +20,17 @@ public interface RegistrationService {
 
   Page<RegistrationUserDto> getRegistrationForActivity(Predicate predicate, Pageable pageable, UUID activity_id);
 
-  Page<RegistrationActivityListDto> getRegistrationWithUsername(Predicate predicate, Pageable pageable, String username);
+  Page<ActivityListDto> getRegistrationWithUsername(Predicate predicate, Pageable pageable, String username);
 
   RegistrationUserDto getRegistrationWithRegistrationId(RegistrationId id);
 
   RegistrationUserDto getRegistrationWithCompositeId(UUID user_id, UUID activity_id);
 
-  RegistrationActivityDto getRegistrationWithUsernameAndActivityId(String username, UUID activity_id);
+  ActivityDto getRegistrationWithUsernameAndActivityId(String username, UUID activity_id);
 
   void deleteRegistrationWithCompositeId(UUID user_id, UUID activity_id);
 
   void deleteRegistrationWithUsernameAndActivityId(String username, UUID activity_id);
+
+  List<RegistrationUserDto> getRegistrationForActivity(UUID activity_id);
 }

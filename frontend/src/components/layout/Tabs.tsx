@@ -69,6 +69,7 @@ const Tabs = ({ tabs, selected, setSelected }: IProps) => {
       {tabs.map((tab, index) => (
         <Tab
           classes={{ root: classes.tabRoot, selected: classes.selected }}
+          disableRipple
           key={index}
           label={
             <div>

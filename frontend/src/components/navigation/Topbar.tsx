@@ -51,11 +51,7 @@ const useStyles = makeStyles((theme) => ({
       gridTemplateColumns: '80px 1fr',
     },
   },
-  logo: {
-    height: 45,
-    width: 'auto',
-    marginLeft: 0,
-  },
+
   items: {
     display: 'grid',
     gap: theme.spacing(1),
@@ -158,7 +154,7 @@ const Topbar = ({ variant }: TopbarProps) => {
       <Toolbar disableGutters>
         <div className={classes.toolbar}>
           <Link to={URLS.LANDING}>
-            <Logo className={classes.logo} size='large' />
+            <Logo darkColor={'white'} lightColor={'black'} />
           </Link>
           <Hidden mdDown>
             <div className={classnames(classes.items, variant === 'dynamic' && scrollAtTop && classes.reverseColor)}>

@@ -59,6 +59,7 @@ export type Activity = {
     url: string;
   }>;
   creator: UserList;
+  geoLocation: LatLng;
 };
 
 export type ActivityList = Pick<Activity, 'id' | 'title' | 'closed' | 'startDate' | 'endDate' | 'level' | 'description' | 'images'>;
@@ -69,8 +70,13 @@ export type Registration = {
   user: User;
 };
 
-export interface FileUploadResponse {
+export type FileUploadResponse = {
   data: {
     display_url: string;
   };
-}
+};
+
+export type LatLng = {
+  lat: number;
+  lng: number;
+};

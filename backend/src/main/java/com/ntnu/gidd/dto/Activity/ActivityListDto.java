@@ -3,10 +3,8 @@ package com.ntnu.gidd.dto.Activity;
 
 import com.ntnu.gidd.dto.ActivityImageDto;
 import com.ntnu.gidd.dto.User.UserListDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.ntnu.gidd.util.TrainingLevelEnum;
+import lombok.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -16,6 +14,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ActivityListDto {
     private UUID id;
     private String title;
@@ -24,5 +23,6 @@ public class ActivityListDto {
     private ZonedDateTime endDate;
     private UserListDto creator;
     private boolean closed;
+    private TrainingLevelEnum level;
     private List<ActivityImageDto> images;
 }

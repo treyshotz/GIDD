@@ -1,3 +1,5 @@
+import classnames from 'classnames';
+
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, CardActionArea, CardContent, CardMedia, Typography } from '@material-ui/core/';
@@ -12,8 +14,10 @@ import LOGO from 'assets/img/DefaultBackground.jpg';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    marginBottom: theme.spacing(1),
     ...theme.palette.transparent,
+  },
+  fullHeight: {
+    height: '100%',
   },
   media: {
     height: 140,
@@ -35,14 +39,15 @@ const useStyles = makeStyles((theme) => ({
 
 export type ActivityCardProps = {
   activity: ActivityList;
+  fullHeight?: boolean;
 };
 
-const ActivityCard = ({ activity }: ActivityCardProps) => {
+const ActivityCard = ({ activity, fullHeight }: ActivityCardProps) => {
   const classes = useStyles();
 
   return (
     <Link className={classes.link} to={`${URLS.ACTIVITIES}${activity.id}/`}>
-      <Card className={classes.root}>
+      <Card className={classnames(classes.root, fullHeight && classes.fullHeight)}>
         <CardActionArea>
           <CardMedia className={classes.media} image={activity.images[0]?.url || LOGO} />
           <CardContent>
