@@ -33,7 +33,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public UserDto getUser(Authentication authentication){
         UserDetails user = (UserDetails) authentication.getPrincipal();
-        return this.userService.getUserById(user.getUsername());
+        return this.userService.getUserDtoByEmail(user.getUsername());
     }
 
     @PostMapping
