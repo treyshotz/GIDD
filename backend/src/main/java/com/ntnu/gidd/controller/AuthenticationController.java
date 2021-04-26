@@ -81,16 +81,12 @@ public class AuthenticationController {
 		return new Response("An email for resetting password has been sent!");
 	}
 	
-	/**
-	 * Takes in a post request containing the new passord the user want to change, the email of the user and the PasswordResetToken
-	 * If the passwordResetToken is found and validated with the linked userEmail the new password will be set
 /**
 * Reset the given users password, if a valid token is provided. 
 *
-* @param UserPasswordResetDto userPasswordResetDto DTO the new passord the user want to change, the email of the user and the PasswordResetToken.
+* @param userPasswordResetDto userPasswordResetDto DTO the new passord the user want to change, the email of the user and the PasswordResetToken.
 * @throws ResponseStatusException if the token or linked email is invalid.
 **/
-	 */
 	@PostMapping("/reset-password/{passwordResetTokenId}/")
 	@ResponseStatus(HttpStatus.OK)
 	public Response resetPassword(@RequestBody UserPasswordResetDto userPasswordResetDto, @PathVariable UUID passwordResetTokenId) {
