@@ -17,8 +17,8 @@ export const AUTH_ROUTES = {
 export default {
   LANDING: '/',
   ABOUT: '/about/',
-  ACTIVITIES: '/aktiviteter/',
-  ADMIN_ACTIVITIES: '/admin/aktiviteter/',
-  PROFILE: '/profil/',
+  ACTIVITIES: '/activities/',
+  ADMIN_ACTIVITIES: '/admin/activities/',
+  PROFILE: '/profile/',
   ...AUTH_ROUTES,
 };

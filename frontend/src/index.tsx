@@ -107,7 +107,10 @@ const AppRoutes = () => {
         <Route element={<Activities />} path='' />
       </Route>
       <Route element={<Auth />} path={`${URLS.LOGIN}*`} />
-      <AuthRoute element={<Profile />} path={`${URLS.PROFILE}*`} />
+      <Route path={URLS.PROFILE}>
+        <Route element={<Profile />} path=':userId/' />
+        <AuthRoute element={<Profile />} path='' />
+      </Route>
       <AuthRoute path={URLS.ADMIN_ACTIVITIES}>
         <Route element={<ActivityAdmin />} path=':activityId/' />
         <Route element={<ActivityAdmin />} path='' />

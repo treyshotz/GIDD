@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Helmet from 'react-helmet';
 import classnames from 'classnames';
 import { useUser, useLogout } from 'hooks/User';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import URLS from 'URLS';
 
 // Material UI Components
@@ -83,12 +83,13 @@ const useStyles = makeStyles((theme) => ({
 
 const Profile = () => {
   const classes = useStyles();
-  const { data: user, isLoading, isError } = useUser();
+  const { userId }: { userId?: string } = useParams();
+  const { data: user, isLoading, isError } = useUser(userId);
   const logout = useLogout();
   const futureActivitiesTab = { value: 'futureActivities', label: 'Kommende aktiviteter', icon: AktivitiesIcon };
   const pastActivitiesTab = { value: 'pastActivities', label: 'Tidligere aktiviteter', icon: HistoryIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
-  const tabs = [futureActivitiesTab, pastActivitiesTab, editTab];
+  const tabs = [futureActivitiesTab, pastActivitiesTab, ...(userId ? [] : [editTab])];
   const [tab, setTab] = useState(futureActivitiesTab.value);
 
   if (isError) {
@@ -115,21 +116,25 @@ const Profile = () => {
               </Typography>
             </div>
           </Paper>
-          <Button component={Link} fullWidth to={URLS.ADMIN_ACTIVITIES}>
-            Administrer aktiviteter
-          </Button>
-          <Button className={classes.logout} fullWidth onClick={logout} variant='outlined'>
-            Logg ut
-          </Button>
+          {!userId && (
+            <>
+              <Button component={Link} fullWidth to={URLS.ADMIN_ACTIVITIES}>
+                Administrer aktiviteter
+              </Button>
+              <Button className={classes.logout} fullWidth onClick={logout} variant='outlined'>
+                Logg ut
+              </Button>
+            </>
+          )}
         </div>
         <div className={classes.grid}>
           <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
           <div>
             <Collapse in={tab === futureActivitiesTab.value}>
-              <MyActivities />
+              <MyActivities userId={userId} />
             </Collapse>
             <Collapse in={tab === pastActivitiesTab.value} mountOnEnter>
-              <MyActivities past />
+              <MyActivities past userId={userId} />
             </Collapse>
             <Collapse in={tab === editTab.value} mountOnEnter>
               <Paper>

@@ -54,8 +54,8 @@ export default {
   // Activity
   getActivity: (id: string) => IFetch<Activity>({ method: 'GET', url: `${ACTIVITIES}/${id}/` }),
   getActivities: (filters?: any) => IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `${ACTIVITIES}/`, data: filters || {} }),
-  getMyParticipatingActivities: (filters?: any) =>
-    IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `${USERS}/${ME}/${REGISTRATIONS}/`, data: filters || {} }),
+  getMyParticipatingActivities: (userId?: string, filters?: any) =>
+    IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `${USERS}/${userId || ME}/${REGISTRATIONS}/`, data: filters || {} }),
   getMyHostActivities: (filters?: any) => IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `${USERS}/${ME}/${HOSTS}/`, data: filters || {} }),
   createActivity: (item: ActivityRequired) => IFetch<Activity>({ method: 'POST', url: `${ACTIVITIES}/`, data: item }),
   updateActivity: (id: string, item: ActivityRequired) => IFetch<Activity>({ method: 'PUT', url: `${ACTIVITIES}/${id}/`, data: item }),
@@ -77,7 +77,7 @@ export default {
     IFetch<RequestResponse>({ method: 'DELETE', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/${userId}/` }),
 
   // User
-  getUser: () => IFetch<User>({ method: 'GET', url: `${USERS}/${ME}/` }),
+  getUser: (userId?: string) => IFetch<User>({ method: 'GET', url: `${USERS}/${userId || ME}/` }),
   updateUser: (userId: string, item: Partial<User>) => IFetch<User>({ method: 'PUT', url: `${USERS}/${userId}/`, data: item }),
 
   // Upload file

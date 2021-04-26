@@ -128,7 +128,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
             Oppdater bruker
           </SubmitButton>
           <Button color='secondary' onClick={() => setOpen(true)} variant='outlined'>
-            Endre password
+            Endre passord
           </Button>
         </div>
       </form>

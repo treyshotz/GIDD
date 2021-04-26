@@ -8,9 +8,8 @@ import { ACCESS_TOKEN, REFRESH_TOKEN, ACCESS_TOKEN_DURATION, REFRESH_TOKEN_DURAT
 export const USER_QUERY_KEY = 'user';
 export const USERS_QUERY_KEY = 'users';
 
-export const useUser = () => {
-  const isAuthenticated = useIsAuthenticated();
-  return useQuery<User | undefined, RequestResponse>(USER_QUERY_KEY, () => (isAuthenticated ? API.getUser() : undefined));
+export const useUser = (userId?: string) => {
+  return useQuery<User | undefined, RequestResponse>([USER_QUERY_KEY, userId], () => API.getUser(userId));
 };
 
 export const useRefreshUser = () => {

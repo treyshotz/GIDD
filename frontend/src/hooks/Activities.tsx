@@ -22,10 +22,10 @@ export const useActivities = (filters?: any) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const useMyParticipatingActivities = (filters?: any) => {
+export const useMyParticipatingActivities = (userId?: string, filters?: any) => {
   return useInfiniteQuery<PaginationResponse<ActivityList>, RequestResponse>(
     [ACTIVITIES_QUERY_KEY, 'me_participating', filters],
-    ({ pageParam = 0 }) => API.getMyParticipatingActivities({ ...filters, page: pageParam }),
+    ({ pageParam = 0 }) => API.getMyParticipatingActivities(userId, { ...filters, page: pageParam }),
     {
       getNextPageParam: (lastPage) => lastPage.next,
     },

@@ -27,9 +27,10 @@ const useStyles = makeStyles((theme) => ({
 
 export type MyActivitiesProps = {
   past?: boolean;
+  userId?: string;
 };
 
-const MyActivities = ({ past = false }: MyActivitiesProps) => {
+const MyActivities = ({ past = false, userId }: MyActivitiesProps) => {
   const classes = useStyles();
   const [showCalendar, setShowCalendar] = useState(false);
   const filters = useMemo(
@@ -38,7 +39,7 @@ const MyActivities = ({ past = false }: MyActivitiesProps) => {
     }),
     [past],
   );
-  const { data, error, hasNextPage, fetchNextPage, isFetching } = useMyParticipatingActivities(filters);
+  const { data, error, hasNextPage, fetchNextPage, isFetching } = useMyParticipatingActivities(userId, filters);
   const activities = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !activities.length && !isFetching, [activities, isFetching]);
 
