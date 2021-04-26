@@ -55,7 +55,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, jwtConfig.getUri() + "/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/users/").permitAll()
                 .antMatchers(HttpMethod.POST, "/auth/forgot-password/").permitAll()
-                .antMatchers(HttpMethod.POST, "/auth/reset-password/").permitAll()
+                .antMatchers(HttpMethod.POST, "/auth/reset-password/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

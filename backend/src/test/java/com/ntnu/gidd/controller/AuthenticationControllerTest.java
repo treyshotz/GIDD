@@ -1,9 +1,11 @@
 package com.ntnu.gidd.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ntnu.gidd.controller.request.LoginRequest;
 import com.ntnu.gidd.dto.User.UserPasswordForgotDto;
+import com.ntnu.gidd.dto.User.UserPasswordResetDto;
 import com.ntnu.gidd.dto.User.UserPasswordUpdateDto;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.PasswordResetToken;
@@ -302,5 +304,74 @@ class AuthenticationControllerTest {
 				.content(objectMapper.writeValueAsString(email)))
 				.andExpect(status().isNotAcceptable());
 		assertEquals(passwordResetTokenRepository.findAll().size(), 0);
+	}
+	
+	@Test
+	public void testValidatePasswordWithValidToken() throws Exception {
+		PasswordResetToken token = new PasswordResetToken();
+		token.setUser(user);
+		UUID uuid = passwordResetTokenRepository.save(token).getId();
+		
+		UserPasswordResetDto dto = new UserPasswordResetDto();
+		String newPassword = "newPassword123";
+		dto.setNewPassword(newPassword);
+		dto.setEmail(user.getEmail());
+		
+		mvc.perform(post(URI + "reset-password/" + uuid.toString() + "/")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto)))
+				.andExpect(status().isOk());
+		
+		LoginRequest loginRequest = new LoginRequest();
+		loginRequest.setEmail(user.getEmail());
+		loginRequest.setPassword(newPassword);
+		
+		mvc.perform(post(URI + "login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(loginRequest)))
+				.andExpect(status().isOk())
+				.andDo(print());
+	}
+	
+	@Test
+	public void testValidatePasswordWithInvalidToken() throws Exception {
+		UUID randomId = UUID.randomUUID();
+		
+		UserPasswordResetDto dto = new UserPasswordResetDto();
+		dto.setNewPassword(user.getPassword());
+		dto.setEmail(user.getEmail());
+		
+		mvc.perform(post(URI + "reset-password/" + randomId.toString() + "/")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto)))
+				.andExpect(status().is4xxClientError());
+	}
+	
+	@Test
+	public void testVaildatePasswordCannotLoginWithOldPassword() throws Exception {
+		PasswordResetToken token = new PasswordResetToken();
+		token.setUser(user);
+		UUID uuid = passwordResetTokenRepository.save(token).getId();
+		
+		UserPasswordResetDto dto = new UserPasswordResetDto();
+		String newPassword = "newPassword123";
+		dto.setNewPassword(newPassword);
+		dto.setEmail(user.getEmail());
+		
+		mvc.perform(post(URI + "reset-password/" + uuid.toString() + "/")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto)))
+				.andExpect(status().isOk());
+		
+		LoginRequest loginRequest = new LoginRequest();
+		loginRequest.setEmail(user.getEmail());
+		loginRequest.setPassword(user.getPassword());
+		
+		mvc.perform(post(URI + "login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(loginRequest)))
+				.andExpect(status().isUnauthorized())
+				.andDo(print());
+		
 	}
 }

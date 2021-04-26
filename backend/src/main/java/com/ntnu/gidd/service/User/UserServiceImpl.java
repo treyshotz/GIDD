@@ -126,10 +126,10 @@ public class UserServiceImpl implements UserService {
 	 *
 	 * @param userReset
 	 */
-	public void validateResetPassword(UserPasswordResetDto userReset) {
+	public void validateResetPassword(UserPasswordResetDto userReset, UUID passwordResetTokenId) {
 		User user = userRepository.findByEmail(userReset.getEmail()).orElseThrow(UserNotFoundException::new);
 		
-		PasswordResetToken passwordResetToken = passwordResetTokenRepository.findById(userReset.getToken().getId()).orElseThrow(ResetPasswordTokenNotFoundException::new);
+		PasswordResetToken passwordResetToken = passwordResetTokenRepository.findById(passwordResetTokenId).orElseThrow(ResetPasswordTokenNotFoundException::new);
 		
 		if(!user.equals(passwordResetToken.getUser()) && !validateResetToken(passwordResetToken)) {
 			//Exception or something

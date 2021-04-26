@@ -14,6 +14,5 @@ public class UserPasswordResetDto {
 	
 	String email;
 	String newPassword;
-	PasswordResetToken token;
 	
 }

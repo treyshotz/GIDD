@@ -5,7 +5,9 @@ import com.ntnu.gidd.dto.User.UserPasswordForgotDto;
 import com.ntnu.gidd.dto.User.UserPasswordUpdateDto;
 import com.ntnu.gidd.exception.PasswordIsIncorrectException;
 import com.ntnu.gidd.exception.RefreshTokenNotFound;
+import com.ntnu.gidd.exception.ResetPasswordTokenNotFoundException;
 import com.ntnu.gidd.exception.UserNotFoundException;
+import com.ntnu.gidd.model.PasswordResetToken;
 import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.service.JwtService;
 import com.ntnu.gidd.service.User.UserService;
@@ -83,15 +85,17 @@ public class AuthenticationController {
 	 * If the passwordResetToken is found and validated with the linked userEmail the new password will be set
 	 * If the token is not valid or the linked userEmail is not valid it will return an error with the error
 	 */
-	@PostMapping("/reset-password/")
+	@PostMapping("/reset-password/{passwordResetTokenId}/")
 	@ResponseStatus(HttpStatus.OK)
-	public Response resetPassword(@RequestBody UserPasswordResetDto userPasswordResetDto) {
+	public Response resetPassword(@RequestBody UserPasswordResetDto userPasswordResetDto, @PathVariable UUID passwordResetTokenId) {
 		try {
-			userService.validateResetPassword(userPasswordResetDto);
+			userService.validateResetPassword(userPasswordResetDto, passwordResetTokenId);
 			log.info("Password was changed for user {}", userPasswordResetDto.getEmail());
 		} catch (UserNotFoundException e) {
 			log.error("Could not change password. User {} was not found!", userPasswordResetDto.getEmail());
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User not found");
+		} catch (ResetPasswordTokenNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
 		}
 		return new Response("Password was changed sucessfully");
 	}
