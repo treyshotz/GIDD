@@ -58,9 +58,7 @@ public class AuthenticationController {
 	}
 	
 	/**
-	 * Takes in a post request containing a UserPasswordForgotDto for which user should reset its password
-	 * If user is found and all suceeds an UserPasswordForgotDto will be sent to the user containing a link for resetting password
-	 * If user is not found a response stating that the user could not be found will be returned
+	 * Creates a reset password token and sends email if correct email i provided
 	 *
 	 * @param UserPasswordForgotDto of the users which should have its password reset
 	 * @return
@@ -101,7 +99,7 @@ public class AuthenticationController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		} catch (InvalidResetPasswordToken e) {
 			log.error("Reset token is invalid!");
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Reset token is invalid!");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reset token is invalid!");
 		}
 		return new Response("Password was changed sucessfully");
 	}
