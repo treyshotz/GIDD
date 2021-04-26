@@ -344,7 +344,7 @@ class AuthenticationControllerTest {
 		mvc.perform(post(URI + "reset-password/" + randomId.toString() + "/")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(dto)))
-				.andExpect(status().is4xxClientError());
+				.andExpect(status().isNotAcceptable());
 	}
 	
 	@Test
