@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
 	private PasswordResetTokenRepository passwordResetTokenRepository;
 	
 	@Override
-	public UserDto getUserById(String email) {
+	public UserDto getUserByEmail(String email) {
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 		return modelMapper.map(user, UserDto.class);
 	}
@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
 	
 	private TrainingLevel getTrainingLevel(TrainingLevelEnum level) {
 		return trainingLevelRepository.findTrainingLevelByLevel(level).
-				orElseThrow(() -> new EntityNotFoundException("Traning level does not exist"));
+				orElseThrow(() -> new EntityNotFoundException("Training level does not exist"));
 	}
 	
 	/**

@@ -14,7 +14,7 @@ import java.util.UUID;
 @Service
 public interface UserService {
       UserDto updateUser(UUID id, UserDto user);
-      UserDto getUserById(String email);
+      UserDto getUserByEmail(String email);
       UserDto saveUser(UserRegistrationDto user);
       UserDto deleteUser(UUID id);
       void changePassword(Principal principal, UserPasswordUpdateDto user);

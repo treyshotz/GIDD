@@ -329,8 +329,7 @@ class AuthenticationControllerTest {
 		mvc.perform(post(URI + "login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(loginRequest)))
-				.andExpect(status().isOk())
-				.andDo(print());
+				.andExpect(status().isOk());
 	}
 	
 	@Test
@@ -370,8 +369,7 @@ class AuthenticationControllerTest {
 		mvc.perform(post(URI + "login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(loginRequest)))
-				.andExpect(status().isUnauthorized())
-				.andDo(print());
+				.andExpect(status().isUnauthorized());
 		
 	}
 }
