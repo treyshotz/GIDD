@@ -17,10 +17,10 @@ backend-test-mr:
   extends: .backend-test
   variables:
     MYSQL_DATABASE: test
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_USER: local
-      MYSQL_PASSWORD: local
-      MYSQL_HOST: mysql
+    MYSQL_ROOT_PASSWORD: password
+    MYSQL_USER: local
+    MYSQL_PASSWORD: local
+    MYSQL_HOST: mysql
   services:
     - mysql:latest
   connect:
