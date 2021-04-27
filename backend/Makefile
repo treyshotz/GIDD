@@ -22,7 +22,10 @@ deploy:
 	docker push ${registry}.azurecr.io/gidd:latest
 
 test:
+	docker compose down -v
+	docker compose up -d
 	mvn test --activate-profiles test -e
+	docker compose down -v
 
 PR:
 	mvn package --activate-profiles test -e
