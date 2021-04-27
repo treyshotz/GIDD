@@ -58,31 +58,16 @@ public class ActivityController {
     public ActivityDto get(@PathVariable UUID activityId,  Authentication authentication){
         UserDetails userDetails = (authentication!=null)? (UserDetails) authentication.getPrincipal() : null;
         String email = (userDetails != null) ? userDetails.getUsername() : "";
-        try {
-            return activityService.getActivityById(activityId, email);
-        }catch (ActivityNotFoundExecption  ex){
-            log.debug("[X] Request to update Activity with id={}", activityId);
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, ex.getMessage(), ex);
-        } catch (NotInvitedExecption ex){
-            log.debug("[X] Request to update Activity with id={}", activityId);
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN, ex.getMessage(), ex);
-        }
+        log.debug("[X] Request to get Activity with id={}", activityId);
+        return activityService.getActivityById(activityId, email);
     }
 
     @PutMapping("{activityId}/")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("@securityService.userHasActivityAccess(#activityId)")
     public ActivityDto updateActivity(@PathVariable UUID activityId, @RequestBody ActivityDto activity){
-        try {
         log.debug("[X] Request to update Activity with id={}", activityId);
-        return this.activityService.updateActivity(activityId, activity);
-    } catch (ActivityNotFoundExecption ex){
-        log.debug("[X] Request to update Activity with id={}", activityId);
-        throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, ex.getMessage(), ex);
-    }
+        return activityService.updateActivity(activityId, activity);
     }
 
     @PostMapping

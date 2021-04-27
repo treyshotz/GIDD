@@ -39,13 +39,8 @@ public class InviteController {
     public Page<UserListDto> getAll(@QuerydslPredicate(root = User.class) Predicate predicate,
                                  @PageableDefault(size = Constants.PAGINATION_SIZE, sort="firstName", direction = Sort.Direction.DESC) Pageable pageable,
                                  @PathVariable UUID activityId){
-        try {
-            return inviteService.getAllInvites(predicate, pageable, activityId);
-        }catch (ActivityNotFoundExecption ex){
-            log.debug("[X] Request to get Activities invites with id={} resulted in activity not found", activityId);
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, ex.getMessage(), ex);
-        }
+        log.debug("[X] Request to get Activities invites with id={}", activityId);
+        return inviteService.getAllInvites(predicate, pageable, activityId);
     }
 
     @PostMapping
@@ -53,14 +48,8 @@ public class InviteController {
     public Page<UserListDto> update(@QuerydslPredicate(root = User.class) Predicate predicate,
                                     @PageableDefault(size = Constants.PAGINATION_SIZE, sort="firstName", direction = Sort.Direction.DESC) Pageable pageable,
                                     @PathVariable UUID activityId, @RequestBody UserEmailDto user){
-        try {
-            log.debug("[X] Request to create host on activity with id={}", activityId);
-            return inviteService.inviteUser(predicate, pageable,activityId, user);
-
-        }catch (ActivityNotFoundExecption | UserNotFoundException ex ){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, ex.getMessage(), ex);
-        }
+        log.debug("[X] Request to create host on activity with id={}", activityId);
+        return inviteService.inviteUser(predicate, pageable,activityId, user);
     }
 
     @DeleteMapping("{userId}/")
@@ -68,16 +57,7 @@ public class InviteController {
     public Page<UserListDto>  delete(@QuerydslPredicate(root = User.class) Predicate predicate,
                                      @PageableDefault(size = Constants.PAGINATION_SIZE, sort="firstName", direction = Sort.Direction.DESC) Pageable pageable,
                                      @PathVariable UUID activityId, @PathVariable UUID userId){
-        try {
-            log.debug("[X] Request to deleted host on activity with id={}", activityId);
-            return inviteService.unInviteUser(predicate, pageable, activityId, userId);
-        }catch (UserNotFoundException | ActivityNotFoundExecption ex){
-            log.debug("[X] Request to activities/activityId={}/hosts/ resultet in User or Activity not found", activityId);
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, ex.getMessage(), ex);
-        }catch (InvalidUnInviteExecption ex){
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, ex.getMessage(), ex);
-        }
+        log.debug("[X] Request to deleted host on activity with id={}", activityId);
+        return inviteService.unInviteUser(predicate, pageable, activityId, userId);
     }
 }

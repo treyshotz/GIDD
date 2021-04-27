@@ -72,16 +72,9 @@ public class ActivityRegistrationController {
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("@securityService.registrationPermissions(#activityId, #userId)")
   public Response deleteRegistration(@PathVariable UUID activityId, @PathVariable UUID userId){
-    try {
-      log.debug("[X] Request to delete Registration with userId={} ", userId);
-      registrationService.deleteRegistrationWithCompositeId(userId, activityId);
-      return new Response("Registration has been deleted");
-    } catch (RegistrationNotFoundException ex) {
-      log.debug("[X] Request to delete Registration with userId={} resulted in RegistrationNotFound", userId);
-      throw new ResponseStatusException(
-              HttpStatus.NOT_FOUND, ex.getMessage(), ex
-      );
-    }
+    log.debug("[X] Request to delete Registration with userId={} ", userId);
+    registrationService.deleteRegistrationWithCompositeId(userId, activityId);
+    return new Response("Registration has been deleted");
   }
 
 }

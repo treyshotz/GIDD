@@ -27,41 +27,24 @@ public class ActivityHostController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<UserListDto> get(@PathVariable UUID activityId){
-        try {
-            return hostService.getByActivityId(activityId);
-        }catch (ActivityNotFoundExecption ex){
-            log.debug("[X] Request to get Activities with id={}", activityId);
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, ex.getMessage(), ex);
-        }
+        log.debug("[X] Request to get Activities with id={}", activityId);
+        return hostService.getByActivityId(activityId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("@securityService.isCreator(#activityId)")
     public List<UserListDto> update(@PathVariable UUID activityId, @RequestBody UserEmailDto user){
-        try {
-            log.debug("[X] Request to create host on activity with id={}", activityId);
-            return hostService.addHosts(activityId, user);
-
-        }catch (ActivityNotFoundExecption ex){
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, ex.getMessage(), ex);
-        }
+        log.debug("[X] Request to create host on activity with id={}", activityId);
+        return hostService.addHosts(activityId, user);
     }
 
     @DeleteMapping("{userId}/")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("@securityService.isCreator(#activityId)")
     public List<UserListDto>  delete(@PathVariable UUID activityId, @PathVariable UUID userId){
-        try {
-            log.debug("[X] Request to deleted host on activity with id={}", activityId);
-            return hostService.deleteHost(activityId, userId);
-        }catch (UserNotFoundException | ActivityNotFoundExecption ex){
-            log.debug("[X] Request to activities/activityId={}/hosts/ resultet in User or Activity not found", activityId);
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, ex.getMessage(), ex);
-        }
+        log.debug("[X] Request to deleted host on activity with id={}", activityId);
+        return hostService.deleteHost(activityId, userId);
     }
 
 
