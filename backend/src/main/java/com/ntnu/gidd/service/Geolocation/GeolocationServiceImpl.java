@@ -21,7 +21,7 @@ public class GeolocationServiceImpl implements GeolocationService {
 	public GeoLocationDto findOrCreate(Double lat, Double lng) {
 		Optional<GeoLocation> loc = geoLocationRepository.findById(new GeoLocationId(lat, lng));
 		if (loc.isEmpty()) {
-			return modelMapper.map(geoLocationRepository.save(new GeoLocation(lat, lng)), GeoLocationDto.class);
+			return modelMapper.map(geoLocationRepository.saveAndFlush(new GeoLocation(lat, lng)), GeoLocationDto.class);
 		}
 		return modelMapper.map(loc.get(), GeoLocationDto.class);
 	}

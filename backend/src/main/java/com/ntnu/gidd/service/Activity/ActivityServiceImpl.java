@@ -89,6 +89,7 @@ public class ActivityServiceImpl implements ActivityService {
     public ActivityDto updateActivity(UUID activityId, ActivityDto activity) {
         Activity updateActivity = this.activityRepository.findById(activityId)
                 .orElseThrow(ActivityNotFoundExecption::new);
+        activityRepository.flush();
         updateActivity.setTitle(activity.getTitle());
         updateActivity.setDescription(activity.getDescription());
         updateActivity.setStartDate(activity.getStartDate());
