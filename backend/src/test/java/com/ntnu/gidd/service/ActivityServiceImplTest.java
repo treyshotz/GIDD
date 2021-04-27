@@ -2,26 +2,23 @@ package com.ntnu.gidd.service;
 
 import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
+import com.ntnu.gidd.dto.EquipmentDto;
 import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
 import com.ntnu.gidd.factories.ActivityFactory;
+import com.ntnu.gidd.factories.EquipmentListFactory;
 import com.ntnu.gidd.factories.RegistrationFactory;
-import com.ntnu.gidd.model.Activity;
-import com.ntnu.gidd.model.Mail;
-import com.ntnu.gidd.model.Registration;
-import com.ntnu.gidd.model.GeoLocation;
-import com.ntnu.gidd.model.TrainingLevel;
-import com.ntnu.gidd.repository.ActivityRepository;
-import com.ntnu.gidd.repository.RegistrationRepository;
-import com.ntnu.gidd.repository.TrainingLevelRepository;
-import com.ntnu.gidd.repository.UserRepository;
+import com.ntnu.gidd.model.*;
+import com.ntnu.gidd.repository.*;
 import com.ntnu.gidd.service.Email.EmailService;
 import com.ntnu.gidd.service.Registration.RegistrationService;
 import com.ntnu.gidd.service.Activity.ActivityServiceImpl;
+import com.ntnu.gidd.service.equipment.EquipmentService;
 import com.ntnu.gidd.utils.JpaUtils;
 import com.ntnu.gidd.utils.StringRandomizer;
 import com.querydsl.core.types.Predicate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,6 +60,12 @@ public class ActivityServiceImplTest {
     @Mock
     private RegistrationRepository registrationRepository;
 
+    @Mock
+    private EquipmentRepository equipmentRepository;
+
+    @Mock
+    private EquipmentService equipmentService;
+
     ModelMapper modelMapper = new ModelMapper();
 
     private Activity activity;
@@ -97,11 +100,19 @@ public class ActivityServiceImplTest {
     }
 
     @Test
-    void testActivityServiceImplUpdateActivityAndReturnsUpdatedActivity() {
+    void testActivityServiceImplUpdateActivityAndReturnsUpdatedActivity() throws Exception {
         TrainingLevel level = activity.getTrainingLevel();
         when(activityRepository.findById(activity.getId())).thenReturn(Optional.ofNullable(activity));
         when(trainingLevelRepository.findTrainingLevelByLevel(level.getLevel())).thenReturn(Optional.of(level));
+        List<Equipment> equipments = new EquipmentListFactory().getObject();
         activity.setTitle(StringRandomizer.getRandomString(10));
+        activity.setEquipment(equipments);
+
+        List<EquipmentDto> equipmentDtos = equipments.stream()
+                .map(s -> modelMapper.map(s, EquipmentDto.class))
+                .collect(Collectors.toList());
+
+        when(equipmentService.saveAndReturnEquipments(equipmentDtos)).thenReturn(equipments);
 
         ActivityDto updateActivity = activityService.updateActivity(activity.getId(),modelMapper.map(activity,ActivityDto.class));
 
@@ -110,8 +121,8 @@ public class ActivityServiceImplTest {
         assertThat(activity.getTitle()).isEqualTo(updateActivity.getTitle());
         assertThat(activity.getDescription()).isEqualTo(updateActivity.getDescription());
         assertThat(activity.getCapacity()).isEqualTo(updateActivity.getCapacity());
-
-
+        assertThat(activity.getEquipment()).isEqualTo(equipments);
+        assertThat(activity.getEquipment()).isNotNull();
     }
 
     @Test

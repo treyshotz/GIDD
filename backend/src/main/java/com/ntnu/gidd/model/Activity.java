@@ -54,9 +54,13 @@ public class Activity extends UUIDModel {
     private List<User> hosts;
 
     private int capacity;
+
     @OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
     @JoinColumn(name = "activity_id", nullable = false, insertable = false)
     private List<ActivityImage> images;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Equipment> equipment;
 
     @ManyToOne(cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
     @JoinColumns( {

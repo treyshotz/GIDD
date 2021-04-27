@@ -16,5 +16,4 @@ public class ActivityImage  extends UUIDModel{
     @Column(name = "activity_id", columnDefinition = "CHAR(32)")
     private UUID activityId;
     private String url;
-
 }

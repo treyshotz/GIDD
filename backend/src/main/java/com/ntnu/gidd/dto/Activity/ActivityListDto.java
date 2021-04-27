@@ -3,6 +3,7 @@ package com.ntnu.gidd.dto.Activity;
 
 import com.ntnu.gidd.dto.ActivityImageDto;
 import com.ntnu.gidd.dto.User.UserListDto;
+import com.ntnu.gidd.model.Equipment;
 import com.ntnu.gidd.dto.geolocation.GeoLocationDto;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import lombok.*;
