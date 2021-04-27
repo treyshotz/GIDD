@@ -16,4 +16,7 @@
 backend-test-mr:
   extends: .backend-test
   stage: test
-  script: make test
+  script: docker compose down -v
+  docker compose up -d
+  mvn test --activate-profiles test -e
+  docker compose down -v
