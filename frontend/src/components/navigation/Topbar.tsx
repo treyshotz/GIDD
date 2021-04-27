@@ -135,6 +135,7 @@ const Topbar = ({ variant }: TopbarProps) => {
     () =>
       [
         { text: 'Aktiviteter', to: URLS.ACTIVITIES },
+        { text: 'Brukere', to: URLS.USERS },
         { text: 'Om GIDD', to: URLS.ABOUT },
         ...(isAuthenticated ? [{ text: 'Min profil', to: URLS.PROFILE }] : []),
       ] as Array<TopBarItemProps>,

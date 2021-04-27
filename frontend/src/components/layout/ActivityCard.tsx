@@ -19,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
   fullHeight: {
     height: '100%',
   },
+  gutterBottom: {
+    marginBottom: theme.spacing(1),
+  },
   media: {
     height: 140,
   },
@@ -40,14 +43,15 @@ const useStyles = makeStyles((theme) => ({
 export type ActivityCardProps = {
   activity: ActivityList;
   fullHeight?: boolean;
+  gutterBottom?: boolean;
 };
 
-const ActivityCard = ({ activity, fullHeight }: ActivityCardProps) => {
+const ActivityCard = ({ activity, fullHeight, gutterBottom }: ActivityCardProps) => {
   const classes = useStyles();
 
   return (
     <Link className={classes.link} to={`${URLS.ACTIVITIES}${activity.id}/`}>
-      <Card className={classnames(classes.root, fullHeight && classes.fullHeight)}>
+      <Card className={classnames(classes.root, fullHeight && classes.fullHeight, gutterBottom && classes.gutterBottom)}>
         <CardActionArea>
           <CardMedia className={classes.media} image={activity.images[0]?.url || LOGO} />
           <CardContent>

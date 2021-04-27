@@ -6,7 +6,7 @@ import { Activity, LatLng } from 'types/Types';
 import { useActivityById, useCreateActivity, useUpdateActivity, useDeleteActivity } from 'hooks/Activities';
 import { useSnackbar } from 'hooks/Snackbar';
 import { parseISO } from 'date-fns';
-import { GoogleMap, Marker, Autocomplete, Data } from '@react-google-maps/api';
+import { GoogleMap as GoogleMapRef, Marker, Autocomplete, Data } from '@react-google-maps/api';
 import { useMaps } from 'hooks/Utils';
 import { traningLevelToText } from 'utils';
 
@@ -24,6 +24,7 @@ import SubmitButton from 'components/inputs/SubmitButton';
 import TextField from 'components/inputs/TextField';
 import Select from 'components/inputs/Select';
 import Bool from 'components/inputs/Bool';
+import GoogleMap from 'components/miscellaneous/GoogleMap';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -48,9 +49,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   mapContainerStyle: {
-    width: '100%',
     height: 300,
-    borderRadius: theme.shape.borderRadius,
   },
   mapFilter: {
     marginTop: theme.spacing(1),
@@ -81,7 +80,7 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
   const [autocomplete, setAutocomplete] = useState<any>(null);
   const [geoLocation, setLocation] = useState<LatLng | null>(null);
   const [center, setCenter] = useState<LatLng>({ lat: 60, lng: 10 });
-  const mapRef = useRef<GoogleMap>(null);
+  const mapRef = useRef<GoogleMapRef>(null);
   const { data, isLoading } = useActivityById(activityId || '');
   const createActivity = useCreateActivity();
   const updateActivity = useUpdateActivity(activityId || '');

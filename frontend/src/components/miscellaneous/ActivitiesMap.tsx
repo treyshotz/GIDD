@@ -5,17 +5,18 @@ import URLS from 'URLS';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'hooks/Snackbar';
 import { useMaps } from 'hooks/Utils';
-import { GoogleMap, Marker } from '@react-google-maps/api';
+import { GoogleMap as GoogleMapRef, Marker } from '@react-google-maps/api';
 
 // Material-UI
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 
+// Project components
+import GoogleMap from 'components/miscellaneous/GoogleMap';
+
 const useStyles = makeStyles((theme) => ({
   containerStyle: {
-    width: '100%',
     height: 500,
-    borderRadius: theme.shape.borderRadius,
     marginBottom: theme.spacing(1),
   },
 }));
@@ -30,7 +31,7 @@ const ActivitiesMap = ({ useHook, hookArgs, userId }: ActivitiesMapProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const showSnackbar = useSnackbar();
-  const mapRef = useRef<GoogleMap>(null);
+  const mapRef = useRef<GoogleMapRef>(null);
   const { isLoaded: isMapLoaded } = useMaps();
   const { data } = useHook(userId, { ...hookArgs });
   const activities = useMemo(
@@ -60,7 +61,7 @@ const ActivitiesMap = ({ useHook, hookArgs, userId }: ActivitiesMapProps) => {
   }
   return (
     <div>
-      <GoogleMap center={{ lat: 60, lng: 10 }} mapContainerClassName={classes.containerStyle} ref={mapRef} zoom={8}>
+      <GoogleMap mapContainerClassName={classes.containerStyle} ref={mapRef} zoom={8}>
         {activities.map((activity) => (
           <Marker key={activity.id} onClick={() => navigate(`${URLS.ACTIVITIES}${activity.id}/`)} position={activity.geoLocation} title={activity.title} />
         ))}

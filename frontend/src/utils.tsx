@@ -1,6 +1,7 @@
 import slugify from 'slugify';
 import { subMinutes } from 'date-fns';
 import { TrainingLevel } from 'types/Enums';
+import { PaginationResponse } from 'types/Types';
 
 export const urlEncode = (text = '') => slugify(text, { lower: true, strict: true, locale: 'nb' });
 
@@ -120,4 +121,8 @@ export const traningLevelToText = (level: TrainingLevel) => {
     case TrainingLevel.HIGH:
       return 'Høy';
   }
+};
+
+export const getNextPaginationPage = (pagination: PaginationResponse<unknown>) => {
+  return pagination.last ? null : pagination.number + 1;
 };

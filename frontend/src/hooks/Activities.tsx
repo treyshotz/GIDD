@@ -1,7 +1,7 @@
 import { useMutation, useInfiniteQuery, useQuery, useQueryClient, UseMutationResult } from 'react-query';
 import API from 'api/api';
+import { getNextPaginationPage } from 'utils';
 import { Activity, ActivityList, ActivityRequired, UserList, PaginationResponse, Registration, RequestResponse } from 'types/Types';
-
 export const ACTIVITIES_QUERY_KEY = 'activities';
 export const ACTIVITIES_QUERY_KEY_REGISTRATION = 'activity_registrations';
 export const HOSTS_QUERY_KEY = 'activity_hosts';
@@ -25,7 +25,7 @@ export const useActivities = (filters?: any) => {
     [ACTIVITIES_QUERY_KEY, filters],
     ({ pageParam = 0 }) => API.getActivities({ ...filters, page: pageParam }),
     {
-      getNextPageParam: (lastPage) => lastPage.next,
+      getNextPageParam: getNextPaginationPage,
     },
   );
 };
@@ -40,7 +40,7 @@ export const useMyParticipatingActivities = (userId?: string, filters?: any) => 
     [ACTIVITIES_QUERY_KEY, 'me_participating', filters],
     ({ pageParam = 0 }) => API.getMyParticipatingActivities(userId, { ...filters, page: pageParam }),
     {
-      getNextPageParam: (lastPage) => lastPage.next,
+      getNextPageParam: getNextPaginationPage,
     },
   );
 };
@@ -55,7 +55,7 @@ export const useMyHostActivities = (filters?: any) => {
     [ACTIVITIES_QUERY_KEY, 'me_host', filters],
     ({ pageParam = 0 }) => API.getMyHostActivities({ ...filters, page: pageParam }),
     {
-      getNextPageParam: (lastPage) => lastPage.next,
+      getNextPageParam: getNextPaginationPage,
     },
   );
 };
@@ -215,7 +215,7 @@ export const useActivityInvitedUsers = (activityId: string, filters?: any) => {
     [ACTIVITIES_QUERY_KEY, activityId, INVITED_USERS_QUERY_KEY, filters],
     ({ pageParam = 0 }) => API.getActivityInvitedUsers(activityId, { ...filters, page: pageParam }),
     {
-      getNextPageParam: (lastPage) => lastPage.next,
+      getNextPageParam: getNextPaginationPage,
     },
   );
 };

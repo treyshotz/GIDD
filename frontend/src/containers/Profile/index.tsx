@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { urlEncode } from 'utils';
 import Helmet from 'react-helmet';
 import classnames from 'classnames';
 import { useUser, useLogout } from 'hooks/User';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import URLS from 'URLS';
+import { traningLevelToText } from 'utils';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
@@ -84,6 +86,7 @@ const useStyles = makeStyles((theme) => ({
 const Profile = () => {
   const classes = useStyles();
   const { userId }: { userId?: string } = useParams();
+  const { data: signedInUser } = useUser();
   const { data: user, isLoading, isError } = useUser(userId);
   const logout = useLogout();
   const futureActivitiesTab = { value: 'futureActivities', label: 'Kommende aktiviteter', icon: AktivitiesIcon };
@@ -91,6 +94,15 @@ const Profile = () => {
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
   const tabs = [futureActivitiesTab, pastActivitiesTab, ...(userId ? [] : [editTab])];
   const [tab, setTab] = useState(futureActivitiesTab.value);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && signedInUser && user.id === signedInUser.id) {
+      navigate(`${URLS.PROFILE}`, { replace: true });
+    } else if (userId && user) {
+      navigate(`${URLS.USERS}${user.id}/${urlEncode(`${user.firstName} ${user.surname}`)}/`, { replace: true });
+    }
+  }, [user, signedInUser, navigate]);
 
   if (isError) {
     return <Http404 />;
@@ -113,6 +125,9 @@ const Profile = () => {
               <Typography align='center' variant='h2'>{`${user.firstName} ${user.surname}`}</Typography>
               <Typography align='center' variant='subtitle2'>
                 {user.email}
+              </Typography>
+              <Typography align='center' variant='subtitle2'>
+                {traningLevelToText(user.level)}
               </Typography>
             </div>
           </Paper>

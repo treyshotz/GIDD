@@ -31,6 +31,7 @@ const Activities = lazy(() => import('containers/Activities'));
 const ActivityDetails = lazy(() => import('containers/ActivityDetails'));
 const ActivityAdmin = lazy(() => import('containers/ActivityAdmin'));
 const Profile = lazy(() => import('containers/Profile'));
+const Users = lazy(() => import('containers/Users'));
 
 type AuthRouteProps = {
   path: string;
@@ -107,10 +108,11 @@ const AppRoutes = () => {
         <Route element={<Activities />} path='' />
       </Route>
       <Route element={<Auth />} path={`${URLS.LOGIN}*`} />
-      <Route path={URLS.PROFILE}>
-        <Route element={<Profile />} path=':userId/' />
-        <AuthRoute element={<Profile />} path='' />
+      <Route path={URLS.USERS}>
+        <Route element={<Profile />} path=':userId/*' />
+        <Route element={<Users />} path='' />
       </Route>
+      <AuthRoute element={<Profile />} path={URLS.PROFILE} />
       <AuthRoute path={URLS.ADMIN_ACTIVITIES}>
         <Route element={<ActivityAdmin />} path=':activityId/' />
         <Route element={<ActivityAdmin />} path='' />

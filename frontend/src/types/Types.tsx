@@ -17,8 +17,6 @@ export type PaginationResponse<T> = {
   totalElements: number;
   totalPages: number;
   number: number;
-  next: number | null;
-  previous: number | null;
   content: Array<T>;
   empty: boolean;
   last: boolean;
@@ -31,9 +29,10 @@ export type User = {
   email: string;
   birthDate: string | null;
   level: TrainingLevel;
+  image: string;
 };
 
-export type UserList = Pick<User, 'id' | 'firstName' | 'surname' | 'email'>;
+export type UserList = Pick<User, 'id' | 'firstName' | 'surname' | 'email' | 'image'>;
 
 export type UserCreate = Pick<User, 'email' | 'firstName' | 'surname'> & {
   password: string;
