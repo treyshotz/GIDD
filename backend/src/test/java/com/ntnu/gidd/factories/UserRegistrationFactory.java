@@ -18,7 +18,6 @@ public class UserRegistrationFactory implements FactoryBean<UserRegistrationDto>
                   .firstName(getRandomString(6))
                   .surname(getRandomString(6))
                   .password(password)
-                  .matchingPassword(password)
                   .email("test" + random.nextInt() + "@mail.no")
                   .birthDate(LocalDate.now())
                   .build();

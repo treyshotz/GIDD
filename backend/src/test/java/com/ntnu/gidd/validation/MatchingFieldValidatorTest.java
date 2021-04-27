@@ -1,14 +1,14 @@
 package com.ntnu.gidd.validation;
 
-import com.ntnu.gidd.dto.User.UserRegistrationDto;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.validation.*;
-import java.time.LocalDate;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,10 +32,10 @@ public class MatchingFieldValidatorTest {
        */
       @Test
       public void testNonMatchingFields() {
-            UserRegistrationDto user = new UserRegistrationDto("Test", "Testesen", "password", "differentPassword", "test@mail.no", LocalDate.now());
+            MatchingFieldsTestDelegate testDelegate = new MatchingFieldsTestDelegate("word", "differentword");
 
-            Set<ConstraintViolation<UserRegistrationDto>> violations = validator.validate(user);
-            assertEquals(violations.size(), 1);
+            Set<ConstraintViolation<MatchingFieldsTestDelegate>> violations = validator.validate(testDelegate);
+            assertFalse(violations.isEmpty());
       }
 
       /**
@@ -43,9 +43,9 @@ public class MatchingFieldValidatorTest {
        */
       @Test
       public void testMatchingFields() {
-            UserRegistrationDto user = new UserRegistrationDto("A", "B", "password", "password", "test@mail.no", LocalDate.now());
+            MatchingFieldsTestDelegate testDelegate = new MatchingFieldsTestDelegate("same word", "same word");
 
-            Set<ConstraintViolation<UserRegistrationDto>> violations = validator.validate(user);
+            Set<ConstraintViolation<MatchingFieldsTestDelegate>> violations = validator.validate(testDelegate);
             assertTrue(violations.isEmpty());
       }
 

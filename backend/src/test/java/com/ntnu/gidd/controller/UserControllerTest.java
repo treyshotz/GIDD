@@ -122,18 +122,19 @@ public class UserControllerTest {
 	@ParameterizedTest
 	@MethodSource("provideValidEmails")
 	@WithMockUser(value = "spring")
-	public void testCreateUserWithValidEmail(String email) throws Exception {
-		String password = "Ithinkthisisvalid123";
-		String matchingPassword = "Ithinkthisisvalid123";
+	public void testCreateUserWithValidEmailAndPassword(String email) throws Exception {
+		String password = "ValidPassword123";
 		
-		UserRegistrationDto validUser = new UserRegistrationDto(firstName, surname, password, matchingPassword, email, birthDate);
+		UserRegistrationDto validUser = new UserRegistrationDto(firstName, surname, password, email, birthDate);
 		
 		mockMvc.perform(post(URI)
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(validUser)))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.firstName").value(validUser.getFirstName()));
+				.andExpect(jsonPath("$.firstName").value(validUser.getFirstName()))
+				.andExpect(jsonPath("$.data.password").doesNotExist())
+				.andExpect(jsonPath("$.data.email").doesNotExist());
 	}
 
 	@Test
@@ -169,9 +170,9 @@ public class UserControllerTest {
 		userRepository.save(user);
 		
 		String email = user.getEmail();
-		String password = "Ithinkthisisvalid123";
-		
-		UserRegistrationDto validUser = new UserRegistrationDto(firstName, surname, password, password, email, birthDate);
+		String password = "ValidPassword123";
+
+		UserRegistrationDto validUser = new UserRegistrationDto(firstName, surname, password, email, birthDate);
 		
 		
 		mockMvc.perform(post(URI)
@@ -191,35 +192,38 @@ public class UserControllerTest {
 	@MethodSource("provideInvalidEmails")
 	@WithMockUser(value = "spring")
 	public void testCreateUserWithInvalidEmail(String email) throws Exception {
-		String password = "Ithinkthisisvalid123";
+		String password = "ValidPassword123";
 		
-		UserRegistrationDto invalidUser = new UserRegistrationDto(firstName, surname, password, password, email, birthDate);
+		UserRegistrationDto invalidUser = new UserRegistrationDto(firstName, surname, password, email, birthDate);
 		
 		mockMvc.perform(post(URI)
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(invalidUser)))
-				.andExpect(status().isNotAcceptable())
-				.andExpect(jsonPath("$.message").value("must be a well-formed email address"));
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").value("INVALID_METHOD_ARGUMENT"))
+				.andExpect(jsonPath("$.data.email").exists());
 	}
-	
+
 	/**
-	 * Tests that a user cannot be created when the password fields isn't matching
+	 * Test that a user cannot be created if password is too weak
 	 *
 	 * @throws Exception
 	 */
 	@Test
-	public void testCreateUserWithNotMatchingPasswordFails() throws Exception {
-		String email = "test123@test.no";
-		String password = "Ithinkthisisvalid123";
-		
-		UserRegistrationDto invalidUser = new UserRegistrationDto(firstName, surname, password, "not the same", email, birthDate);
-		
+	@WithMockUser(value = "spring")
+	public void testCreateUserWithInvalidPassword() throws Exception {
+		String password = "abc123";
+
+		UserRegistrationDto invalidUser = new UserRegistrationDto(firstName, surname, password, "test@testersen.com", birthDate);
+
 		mockMvc.perform(post(URI)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(invalidUser)))
-				.andExpect(status().isNotAcceptable())
-				.andExpect(jsonPath("$.message").value("Fields doesn't match"));
+			.with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(invalidUser)))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("INVALID_METHOD_ARGUMENT"))
+			.andExpect(jsonPath("$.data.password").exists());
 	}
 	
 	/**

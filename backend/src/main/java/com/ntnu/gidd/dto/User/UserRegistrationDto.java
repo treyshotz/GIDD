@@ -1,6 +1,7 @@
 package com.ntnu.gidd.dto.User;
 
 import com.ntnu.gidd.validation.FieldMatch;
+import com.ntnu.gidd.validation.ValidPassword;
 import lombok.*;
 
 import javax.validation.constraints.Email;
@@ -13,7 +14,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@FieldMatch(field = "password", fieldMatch = "matchingPassword")
 public class UserRegistrationDto {
       @NotNull
       @NotEmpty
@@ -26,8 +26,8 @@ public class UserRegistrationDto {
       
       @NotNull
       @NotEmpty
+      @ValidPassword
       private String password;
-      private String matchingPassword;
 
       @NotNull
       @NotEmpty
