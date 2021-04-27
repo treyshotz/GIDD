@@ -21,6 +21,7 @@ import com.ntnu.gidd.service.Activity.expression.ActivityExpression;
 import com.ntnu.gidd.service.ActivityImage.ActivityImageService;
 import com.ntnu.gidd.service.Activity.ActivityService;
 import com.ntnu.gidd.service.Email.EmailService;
+import com.ntnu.gidd.service.Geolocation.GeolocationService;
 import com.ntnu.gidd.service.Registration.RegistrationService;
 import com.ntnu.gidd.service.User.UserService;
 import com.ntnu.gidd.service.User.UserServiceImpl;
@@ -68,6 +69,9 @@ public class ActivityServiceImpl implements ActivityService {
     private EmailService emailService;
 
     @Autowired
+    private GeolocationService geolocationService;
+    
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -97,7 +101,7 @@ public class ActivityServiceImpl implements ActivityService {
 
         if (activity.getGeoLocation() != null)
             setGeoLocation(activity, updateActivity);
-
+        
 
         if(updateActivity.isClosed()){
           closeActivity(activity);
@@ -227,7 +231,7 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     private void setGeoLocation(ActivityDto activity, Activity newActivity) {
-        GeoLocationDto geoLocationDto = activity.getGeoLocation();
+        GeoLocationDto geoLocationDto = geolocationService.findOrCreate(activity.getGeoLocation().getLat(), activity.getGeoLocation().getLng());
         GeoLocation geoLocation = new GeoLocation(geoLocationDto
                                                           .getLat(), activity.getGeoLocation()
                 .getLng());
