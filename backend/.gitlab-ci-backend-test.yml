@@ -16,4 +16,4 @@
 backend-test-mr:
   extends: .backend-test
   stage: test
-  script: mvn package --activate-profiles test
+  script: make test
