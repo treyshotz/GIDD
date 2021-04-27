@@ -58,7 +58,7 @@ public class Activity extends UUIDModel {
     @JoinColumn(name = "activity_id", nullable = false, insertable = false)
     private List<ActivityImage> images;
 
-    @ManyToOne(cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE,  fetch = FetchType.LAZY)
     @JoinColumns( {
             @JoinColumn(name="lat", referencedColumnName="lat"),
             @JoinColumn(name="lng", referencedColumnName="lng")
