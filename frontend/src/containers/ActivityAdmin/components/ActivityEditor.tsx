@@ -24,6 +24,7 @@ import SubmitButton from 'components/inputs/SubmitButton';
 import TextField from 'components/inputs/TextField';
 import Select from 'components/inputs/Select';
 import Bool from 'components/inputs/Bool';
+import EquipmentEditor from 'containers/ActivityAdmin/components/EquipmentEditor';
 import GoogleMap from 'components/miscellaneous/GoogleMap';
 
 const useStyles = makeStyles((theme) => ({
@@ -65,7 +66,7 @@ export type ActivityEditorProps = {
   goToActivity: (newActivity: string | null) => void;
 };
 
-type FormValues = Pick<Activity, 'title' | 'description' | 'capacity' | 'level' | 'images' | 'inviteOnly'> & {
+type FormValues = Pick<Activity, 'title' | 'description' | 'capacity' | 'level' | 'images' | 'inviteOnly' | 'equipment'> & {
   startDate: Date;
   endDate: Date;
   signupStart: Date;
@@ -78,7 +79,6 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
   const [openImages, setOpenImages] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [autocomplete, setAutocomplete] = useState<any>(null);
-  const [geoLocation, setLocation] = useState<LatLng | null>(null);
   const [center, setCenter] = useState<LatLng>({ lat: 60, lng: 10 });
   const mapRef = useRef<GoogleMapRef>(null);
   const { data, isLoading } = useActivityById(activityId || '');
@@ -86,8 +86,9 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
   const updateActivity = useUpdateActivity(activityId || '');
   const deleteActivity = useDeleteActivity(activityId || '');
   const showSnackbar = useSnackbar();
-  const { control, handleSubmit, register, formState, setError, reset, setValue, watch } = useForm<FormValues>();
+  const { control, handleSubmit, register, trigger, formState, setError, reset, setValue, watch } = useForm<FormValues>();
   const { isLoaded: isMapLoaded } = useMaps();
+  const geoLocation = watch('geoLocation');
 
   const setValues = useCallback(
     (newValues: Activity | null) => {
@@ -95,6 +96,7 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
         capacity: newValues?.capacity || 0,
         description: newValues?.description || '',
         endDate: newValues?.endDate ? parseISO(newValues.endDate) : new Date(),
+        equipment: newValues?.equipment || [],
         level: newValues?.level || TrainingLevel.MEDIUM,
         geoLocation: newValues?.geoLocation || null,
         images: newValues?.images || [],
@@ -192,7 +194,7 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
       const latLng = autocomplete.getPlace().geometry.location.toJSON() as LatLng;
       mapRef?.current?.state?.map?.panTo(latLng);
       setCenter(latLng);
-      setLocation(latLng);
+      setValue('geoLocation', latLng);
     }
   };
 
@@ -262,6 +264,7 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
             <Dialog onClose={() => setOpenImages(false)} open={openImages} titleText='Endre bilder'>
               <ImageUpload formState={formState} label='Legg til bilde' name='images' register={register('images')} setValue={setValue} watch={watch} />
             </Dialog>
+            <EquipmentEditor control={control} formState={formState} name='equipment' register={register} trigger={trigger} />
           </div>
           <TextField
             formState={formState}
@@ -285,7 +288,7 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
                     options={{
                       drawingMode: 'Point',
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      featureFactory: (geo: any) => !geo?.g || setLocation(geo.g?.toJSON()),
+                      featureFactory: (geo: any) => !geo?.g || setValue('geoLocation', geo.g?.toJSON()),
                     }}
                   />
                 </GoogleMap>

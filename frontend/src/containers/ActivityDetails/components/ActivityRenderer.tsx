@@ -91,6 +91,10 @@ const useStyles = makeStyles((theme) => ({
   containerStyle: {
     height: 300,
   },
+  list: {
+    listStylePosition: 'inside',
+    margin: 0,
+  },
 }));
 
 export type ActivityRendererProps = {
@@ -214,8 +218,19 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
               Endre aktivitet
             </Button>
           )}
-        </div>
-        <div className={classes.grid}>
+          {Boolean(data.equipment.length) && (
+            <Paper>
+              <Typography className={classes.detailsHeader} variant='h2'>
+                Utstyr
+              </Typography>
+              <Typography variant='caption'>Arrangøren trenger dette utstyret til aktiviteten. Kommenter om du kan ta med!</Typography>
+              <ul className={classes.list}>
+                {data.equipment.map((item, i) => (
+                  <li key={i}>{`${item.name} - ${item.amount} stk`}</li>
+                ))}
+              </ul>
+            </Paper>
+          )}
           {isMapLoaded && (
             <GoogleMap center={data.geoLocation} mapContainerClassName={classes.containerStyle} zoom={14}>
               <Marker position={data.geoLocation} />

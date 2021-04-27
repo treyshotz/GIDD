@@ -44,7 +44,7 @@ const SignUp = () => {
 
   const onSignup = async (data: SignUpData) => {
     createUser.mutate(
-      { firstName: data.firstName, surname: data.surname, email: data.email, password: data.password, matchingPassword: data.repeatPassword },
+      { firstName: data.firstName, surname: data.surname, email: data.email, password: data.password },
       {
         onSuccess: () => {
           navigate(URLS.LOGIN);
