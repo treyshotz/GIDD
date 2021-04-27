@@ -27,12 +27,13 @@ public class User extends UUIDModel {
     private String email;
     private LocalDate birthDate;
     private String password;
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+
+    @ManyToMany
     @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id" ),
             inverseJoinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "activity_id"}))
     private List<Activity> activities;
+
     @OneToOne
     @JoinColumn(name = "traning_level_id", referencedColumnName = "id")
     private TrainingLevel trainingLevel;
@@ -47,10 +48,8 @@ public class User extends UUIDModel {
     String image;
     @PreRemove
     private void removeActivitiesFromUsers() {
-
-        if(this.activities != null)for (Activity activity : activities) {
-            activity.getHosts().remove(this);
-        }
+        if(activities != null)
+           activities.clear();
     }
 
 }

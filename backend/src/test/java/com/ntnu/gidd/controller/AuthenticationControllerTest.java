@@ -19,26 +19,35 @@ import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.token.JwtRefreshToken;
 import com.ntnu.gidd.security.token.JwtToken;
 import com.ntnu.gidd.security.token.TokenFactory;
+import com.ntnu.gidd.service.Email.EmailServiceImpl;
 import com.ntnu.gidd.util.JwtUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import javax.mail.internet.MimeMessage;
 import javax.swing.text.html.Option;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -48,6 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @SpringBootTest(webEnvironment = MOCK)
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 class AuthenticationControllerTest {
@@ -72,7 +82,14 @@ class AuthenticationControllerTest {
 	
 	@Autowired
 	private PasswordResetTokenRepository passwordResetTokenRepository;
-	
+
+	@SpyBean
+	private JavaMailSender mailSender;
+
+	@Autowired
+	@InjectMocks
+	private EmailServiceImpl emailService;
+
 	@Autowired
 	private TokenFactory tokenFactory;
 	
@@ -114,6 +131,8 @@ class AuthenticationControllerTest {
 				.isValid(true)
 				.build();
 		refreshTokenRepository.save(refreshToken);
+
+		Mockito.doNothing().when(mailSender).send(any(MimeMessage.class));
 	}
 	
 	@AfterEach

@@ -46,12 +46,13 @@ public class Activity extends UUIDModel {
     @OneToOne
     @JoinColumn(name = "creator_id", referencedColumnName = "id")
     private User creator;
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST) // TODO: this persist transient instances
+
+    @ManyToMany
     @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id" ),
     inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
     uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
     private List<User> hosts;
+
     private int capacity;
     @OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
     @JoinColumn(name = "activity_id", nullable = false, insertable = false)
@@ -73,9 +74,8 @@ public class Activity extends UUIDModel {
 
     @PreRemove
     private void removeHostsFromActivity() {
-        if(this.hosts != null)for (User user : hosts) {
-            user.getActivities().remove(this);
-        }
+        if(hosts != null)
+            hosts.clear();
     }
 
     @Transient
