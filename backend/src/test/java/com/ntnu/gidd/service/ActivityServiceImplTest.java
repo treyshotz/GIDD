@@ -4,12 +4,14 @@ import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.dto.EquipmentDto;
 import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
+import com.ntnu.gidd.dto.geolocation.GeoLocationDto;
 import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.factories.EquipmentListFactory;
 import com.ntnu.gidd.factories.RegistrationFactory;
 import com.ntnu.gidd.model.*;
 import com.ntnu.gidd.repository.*;
 import com.ntnu.gidd.service.Email.EmailService;
+import com.ntnu.gidd.service.Geolocation.GeolocationService;
 import com.ntnu.gidd.service.Registration.RegistrationService;
 import com.ntnu.gidd.service.Activity.ActivityServiceImpl;
 import com.ntnu.gidd.service.equipment.EquipmentService;
@@ -50,6 +52,9 @@ public class ActivityServiceImplTest {
 
     @Mock
     private RegistrationService registrationService;
+    
+    @Mock
+    private GeolocationService geolocationService;
 
     @Mock
     private UserRepository userRepository;
@@ -87,6 +92,7 @@ public class ActivityServiceImplTest {
         lenient().when(activityRepository.save(registration.getActivity())).thenReturn(registration.getActivity());
         lenient().when(registrationRepository.save(registration)).thenReturn(registration);
         lenient().doNothing().when(emailService).sendEmail(any(Mail.class));
+        lenient().when(geolocationService.findOrCreate(any(Double.class), any(Double.class))).thenReturn(new GeoLocationDto());
 
     }
 

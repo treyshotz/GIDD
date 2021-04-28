@@ -61,8 +61,8 @@ public class Activity extends UUIDModel {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Equipment> equipment;
-
-    @ManyToOne(cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
+    
+    @ManyToOne(cascade = CascadeType.MERGE,  fetch = FetchType.LAZY)
     @JoinColumns( {
             @JoinColumn(name="lat", referencedColumnName="lat"),
             @JoinColumn(name="lng", referencedColumnName="lng")

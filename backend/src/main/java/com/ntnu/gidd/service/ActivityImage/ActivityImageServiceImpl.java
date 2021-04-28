@@ -26,6 +26,7 @@ public class ActivityImageServiceImpl implements ActivityImageService {
 
     public  List<ActivityImage> updateActivityImage(List<ActivityImageDto> images, Activity activity) {
         activityImageRepository.deleteActivityImageByActivityId(activity.getId());
+        activityImageRepository.flush();
         List<ActivityImage> imageList = images.stream().map(s -> modelMapper.map(s, ActivityImage.class)).collect(Collectors.toList());
         imageList.forEach(s -> {
             s.setActivityId(activity.getId());
