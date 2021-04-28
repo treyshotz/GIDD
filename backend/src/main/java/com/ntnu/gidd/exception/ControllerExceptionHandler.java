@@ -10,12 +10,20 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.mail.MessagingException;
 import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
 public class ControllerExceptionHandler {
+
+      @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+      @ExceptionHandler(Exception.class)
+      public Response handleUncaughtException(MessagingException exception){
+            log.error("[X] Error caught while processing request {}", exception.getMessage());
+            return new Response(exception.getMessage());
+      }
 
       @ResponseStatus(HttpStatus.BAD_REQUEST)
       @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -33,7 +41,7 @@ public class ControllerExceptionHandler {
       }
 
       @ResponseStatus(value = HttpStatus.NOT_FOUND)
-      @ExceptionHandler({ActivityNotFoundExecption.class, UserNotFoundException.class, RegistrationNotFoundException.class, RefreshTokenNotFound.class})
+      @ExceptionHandler({EntityNotFoundException.class})
       public Response handleEntityNotFound(EntityNotFoundException exception){
             log.error("[X] Error caught while processing request {}", exception.getMessage());
             return new Response(exception.getMessage());
@@ -49,6 +57,34 @@ public class ControllerExceptionHandler {
       @ResponseStatus(value = HttpStatus.FORBIDDEN)
       @ExceptionHandler(InvalidUnInviteExecption.class)
       public Response handleNotAbleToUnInvite(InvalidUnInviteExecption exception){
+            log.error("[X] Error caught while processing request {}", exception.getMessage());
+            return new Response(exception.getMessage());
+      }
+
+      @ResponseStatus(value = HttpStatus.FORBIDDEN)
+      @ExceptionHandler(EmailInUseException.class)
+      public Response handleEmailInUse(EmailInUseException exception){
+            log.error("[X] Error caught while processing request {}", exception.getMessage());
+            return new Response(exception.getMessage());
+      }
+
+      @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
+      @ExceptionHandler(PasswordIsIncorrectException.class)
+      public Response handlePasswordIncorrect(PasswordIsIncorrectException exception){
+            log.error("[X] Error caught while processing request {}", exception.getMessage());
+            return new Response(exception.getMessage());
+      }
+
+      @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+      @ExceptionHandler(MessagingException.class)
+      public Response handleMessageException(MessagingException exception){
+            log.error("[X] Error caught while processing request {}", exception.getMessage());
+            return new Response(exception.getMessage());
+      }
+
+      @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+      @ExceptionHandler(ResetPasswordTokenNotFoundException.class)
+      public Response handleInvalidResetPasswordToken(ResetPasswordTokenNotFoundException exception){
             log.error("[X] Error caught while processing request {}", exception.getMessage());
             return new Response(exception.getMessage());
       }

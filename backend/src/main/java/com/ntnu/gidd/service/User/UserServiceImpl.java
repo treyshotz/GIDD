@@ -14,6 +14,7 @@ import com.ntnu.gidd.service.Email.EmailService;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import com.querydsl.core.types.Predicate;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,8 +131,9 @@ public class UserServiceImpl implements UserService {
 	 * @param email
 	 * @return
 	 */
+	@SneakyThrows
 	@Transactional
-	public void forgotPassword(String email) throws MessagingException {
+	public void forgotPassword(String email){
 		User user = getUserByEmail(email);
 		PasswordResetToken passwordResetToken = new PasswordResetToken();
 		passwordResetToken.setUser(user);
