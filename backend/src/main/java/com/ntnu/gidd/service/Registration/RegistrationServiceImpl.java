@@ -3,9 +3,7 @@ package com.ntnu.gidd.service.Registration;
 import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
-import com.ntnu.gidd.exception.ActivityNotFoundExecption;
-import com.ntnu.gidd.exception.RegistrationNotFoundException;
-import com.ntnu.gidd.exception.UserNotFoundException;
+import com.ntnu.gidd.exception.*;
 import com.ntnu.gidd.model.*;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.RegistrationRepository;
@@ -45,6 +43,8 @@ public class RegistrationServiceImpl implements RegistrationService {
   public RegistrationUserDto saveRegistration(UUID user_id, UUID activity_id){
     User user = userRepository.findById(user_id).orElseThrow(UserNotFoundException::new);
     Activity activity = activityRepository.findById(activity_id).orElseThrow(ActivityNotFoundExecption::new);
+    if(activity.isClosed())throw new ActivityClosedExecption();
+    if(activity.getCapacity() <= registrationRepository.findRegistrationsByActivity_Id(activity_id).size()) throw new ActivityFullExecption();
     Registration registration = registrationRepository.save(new Registration(new RegistrationId(user_id, activity_id), user, activity));
     return modelMapper.map(registration, RegistrationUserDto.class);
   }
@@ -73,7 +73,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
   @Override
   public List<User> getRegistratedUsersInActivity(UUID activity_id) {
-    return (registrationRepository.findRegistrationsByActivity_Id(activity_id).orElseThrow(RegistrationNotFoundException::new))
+    return registrationRepository.findRegistrationsByActivity_Id(activity_id)
             .stream().map(s->s.getUser()).collect(Collectors.toList());
   }
 
@@ -163,8 +163,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
   @Override
   public List<RegistrationUserDto> getRegistrationForActivity(UUID activity_id){
-    List<Registration> registrations = (registrationRepository.findRegistrationsByActivity_Id(activity_id)
-        .orElseThrow(RegistrationNotFoundException::new));
+    List<Registration> registrations = registrationRepository.findRegistrationsByActivity_Id(activity_id);
     return registrations.stream().map(p -> modelMapper.map(p, RegistrationUserDto.class)).collect(Collectors.toList());
   }
 

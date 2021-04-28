@@ -48,5 +48,8 @@ public class ActivityDto {
     @NotNull
     private boolean inviteOnly;
     private GeoLocationDto geoLocation;
+    private int likesCount;
+    private boolean hasLiked;
+    private int registered;
 
 }

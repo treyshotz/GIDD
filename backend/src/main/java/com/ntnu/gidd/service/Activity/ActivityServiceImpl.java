@@ -30,6 +30,7 @@ import com.ntnu.gidd.service.User.UserService;
 import com.ntnu.gidd.service.User.UserServiceImpl;
 import com.ntnu.gidd.service.Registration.RegistrationService;
 import com.ntnu.gidd.service.invite.InviteService;
+import com.ntnu.gidd.service.rating.ActivityLikeService;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.ExpressionUtils;
@@ -53,6 +54,8 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.querydsl.core.types.ExpressionUtils.anyOf;
 
 
 @Slf4j
@@ -93,6 +96,9 @@ public class ActivityServiceImpl implements ActivityService {
     @Autowired
     InviteService inviteService;
 
+    @Autowired
+    ActivityLikeService activityLikeService;
+
 
     @Transactional
     @Override
@@ -120,6 +126,7 @@ public class ActivityServiceImpl implements ActivityService {
         if(updateActivity.isClosed()){
           closeActivity(activity);
         }
+
         if (activity.getImages() !=  null) updateActivity.setImages(activityImageService.updateActivityImage(
                 activity.getImages(), updateActivity
         ));
@@ -138,7 +145,8 @@ public class ActivityServiceImpl implements ActivityService {
         closeActivity(activity);
 
         }
-        return modelMapper.map(this.activityRepository.save(updateActivity) ,ActivityDto.class);
+        ActivityDto activityDto = modelMapper.map(this.activityRepository.save(updateActivity), ActivityDto.class);
+        return addRegisteredAmount(activityDto);
 
     }
 
@@ -180,7 +188,9 @@ public class ActivityServiceImpl implements ActivityService {
         if(activity.isInviteOnly() && !checkReadAccess(activity, email)){
             throw new NotInvitedExecption();
         }
-        return modelMapper.map(activity, ActivityDto.class);
+        ActivityDto activityDto = modelMapper.map(activity, ActivityDto.class);
+        activityDto.setHasLiked(activityLikeService.hasLiked(email, activity.getId()));
+        return addRegisteredAmount(activityDto);
 
     }
 
@@ -189,33 +199,26 @@ public class ActivityServiceImpl implements ActivityService {
         return (activity.getInvites().contains(user) | activity.getCreator().equals(user) | activity.getHosts().contains(user));
     }
     @Override
-    public Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable, String username) {
-        QActivity activity = QActivity.activity;
-        if(username.equals("")){
-             predicate = ExpressionUtils.and(predicate,activity.inviteOnly.isFalse());
-        }else {
-            predicate = ExpressionUtils.and(predicate,
-                    activity.inviteOnly.isFalse().or(
-                    activity.invites.any().email.eq(username)
-                    .or(activity.creator.email.eq(username))
-                    .or(activity.hosts.any().email.eq(username)))
+    public Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable, String email) {
 
-            );
-        }
+
 
         assert predicate != null;
-        return this.activityRepository.findAll(predicate, pageable)
+        Page<ActivityListDto> activities = this.activityRepository.findAll(predicate, pageable)
                 .map(s -> modelMapper.map(s, ActivityListDto.class));
+
+        return activityLikeService.checkListLikes(activities,email);
+
     }
 
     @Override
-    public Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable, GeoLocation position, Double range,  String username) {
+    public Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable, GeoLocation position, Double range,  String email) {
         
         predicate = ActivityExpression.of(predicate)
                 .closestTo(position)
                 .range(range)
                 .toPredicate();
-        return getActivities(predicate, pageable, username);
+        return getActivities(predicate, pageable, email);
     }
 
 
@@ -238,7 +241,8 @@ public class ActivityServiceImpl implements ActivityService {
         if (activity.getImages() !=  null) newActivity.setImages(activityImageService.saveActivityImage(
                 newActivity.getImages(), newActivity
         ));
-        return modelMapper.map(newActivity, ActivityDto.class);
+        ActivityDto activityDto = modelMapper.map(newActivity, ActivityDto.class);
+        return addRegisteredAmount(activityDto);
     }
 
     private void setGeoLocation(ActivityDto activity, Activity newActivity) {
@@ -257,6 +261,29 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public void deleteActivity(UUID id){
         this.activityRepository.deleteById(id);
+    }
+
+    public Page<ActivityListDto> getLikedActivities(Predicate predicate, Pageable pageable, String email){
+        QActivity activity = QActivity.activity;
+        predicate = ExpressionUtils.allOf(predicate, activity.likes.any().email.eq(email));
+        Page<ActivityListDto> activities = this.activityRepository.findAll(predicate, pageable)
+                .map(s -> modelMapper.map(s, ActivityListDto.class));
+
+        return activityLikeService.checkListLikes(activities,email);
+    }
+
+    public Page<ActivityListDto> getLikedActivities(Predicate predicate, Pageable pageable, UUID id){
+        QActivity activity = QActivity.activity;
+        predicate = ExpressionUtils.allOf(predicate, activity.likes.any().id.eq(id));
+        Page<ActivityListDto> activities = this.activityRepository.findAll(predicate, pageable)
+                .map(s -> modelMapper.map(s, ActivityListDto.class));
+
+        return activityLikeService.checkListLikes(activities,id);
+    }
+
+    private ActivityDto addRegisteredAmount(ActivityDto dto){
+        dto.setRegistered(registrationService.getRegistratedUsersInActivity(dto.getId()).size());
+        return dto;
     }
 }
 

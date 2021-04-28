@@ -18,6 +18,7 @@ import Collapse from '@material-ui/core/Collapse';
 import EditIcon from '@material-ui/icons/EditRounded';
 import AktivitiesIcon from '@material-ui/icons/DateRangeRounded';
 import HistoryIcon from '@material-ui/icons/HistoryRounded';
+import LikedIcon from '@material-ui/icons/FavoriteRounded';
 
 // Project Components
 import Navigation from 'components/navigation/Navigation';
@@ -91,8 +92,9 @@ const Profile = () => {
   const logout = useLogout();
   const futureActivitiesTab = { value: 'futureActivities', label: 'Kommende aktiviteter', icon: AktivitiesIcon };
   const pastActivitiesTab = { value: 'pastActivities', label: 'Tidligere aktiviteter', icon: HistoryIcon };
+  const favouritesTab = { value: 'favourites', label: 'Favoritter', icon: LikedIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
-  const tabs = [futureActivitiesTab, pastActivitiesTab, ...(userId ? [] : [editTab])];
+  const tabs = [futureActivitiesTab, pastActivitiesTab, favouritesTab, ...(userId ? [] : [editTab])];
   const [tab, setTab] = useState(futureActivitiesTab.value);
   const navigate = useNavigate();
 
@@ -146,10 +148,13 @@ const Profile = () => {
           <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
           <div>
             <Collapse in={tab === futureActivitiesTab.value}>
-              <MyActivities userId={userId} />
+              <MyActivities type='future' userId={userId} />
             </Collapse>
             <Collapse in={tab === pastActivitiesTab.value} mountOnEnter>
-              <MyActivities past userId={userId} />
+              <MyActivities type='past' userId={userId} />
+            </Collapse>
+            <Collapse in={tab === favouritesTab.value} mountOnEnter>
+              <MyActivities type='favourites' userId={userId} />
             </Collapse>
             <Collapse in={tab === editTab.value} mountOnEnter>
               <Paper>

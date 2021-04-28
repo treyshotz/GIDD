@@ -8,6 +8,7 @@ import {
   ActivityList,
   ActivityRequired,
   FileUploadResponse,
+  Like,
   LoginRequestResponse,
   PaginationResponse,
   Registration,
@@ -25,6 +26,7 @@ const ACTIVITIES = 'activities';
 const REGISTRATIONS = 'registrations';
 const INVITES = 'invites';
 const HOSTS = 'hosts';
+const LIKES = 'likes';
 
 export default {
   // Auth
@@ -35,20 +37,18 @@ export default {
       url: `${AUTH}/login`,
       data: { email, password },
       withAuth: false,
+    }).catch((e) => {
+      logout();
+      throw e;
     }),
   forgotPassword: (email: string) => IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/forgot-password/`, data: { email }, withAuth: false }),
   resetPassword: (email: string, newPassword: string, token: string) =>
     IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/reset-password/${token}/`, data: { email, newPassword }, withAuth: false }),
   refreshAccessToken: () =>
-    IFetch<RefreshTokenResponse>({ method: 'GET', url: `${AUTH}/refresh-token/`, refreshAccess: true, withAuth: false, tryAgain: true })
-      .then((tokens) => {
-        setCookie(ACCESS_TOKEN, tokens.token, ACCESS_TOKEN_DURATION);
-        return tokens;
-      })
-      .catch((e) => {
-        logout();
-        throw e;
-      }),
+    IFetch<RefreshTokenResponse>({ method: 'GET', url: `${AUTH}/refresh-token/`, refreshAccess: true, withAuth: false, tryAgain: true }).then((tokens) => {
+      setCookie(ACCESS_TOKEN, tokens.token, ACCESS_TOKEN_DURATION);
+      return tokens;
+    }),
   changePassword: (oldPassword: string, newPassword: string) =>
     IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/change-password/`, data: { oldPassword, newPassword } }),
 
@@ -57,6 +57,8 @@ export default {
   getActivities: (filters?: any) => IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `${ACTIVITIES}/`, data: filters || {} }),
   getMyParticipatingActivities: (userId?: string, filters?: any) =>
     IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `${USERS}/${userId || ME}/${REGISTRATIONS}/`, data: filters || {} }),
+  getMyLikedActivities: (userId?: string, filters?: any) =>
+    IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `${USERS}/${userId || ME}/activity-likes/`, data: filters || {} }),
   getMyHostActivities: (filters?: any) => IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `${USERS}/${ME}/${HOSTS}/`, data: filters || {} }),
   createActivity: (item: ActivityRequired) => IFetch<Activity>({ method: 'POST', url: `${ACTIVITIES}/`, data: item }),
   updateActivity: (id: string, item: ActivityRequired) => IFetch<Activity>({ method: 'PUT', url: `${ACTIVITIES}/${id}/`, data: item }),
@@ -84,6 +86,11 @@ export default {
     IFetch<Registration>({ method: 'POST', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/`, data: { id: userId } }),
   deleteRegistration: (activityId: string, userId: string) =>
     IFetch<RequestResponse>({ method: 'DELETE', url: `${ACTIVITIES}/${activityId}/${REGISTRATIONS}/${userId}/` }),
+
+  // Activity likes
+  getActivityLike: (activityId: string, userId: string) => IFetch<Like>({ method: 'GET', url: `${ACTIVITIES}/${activityId}/${LIKES}/${userId}/` }),
+  createActivityLike: (activityId: string) => IFetch<Like>({ method: 'POST', url: `${ACTIVITIES}/${activityId}/${LIKES}/` }),
+  deleteActivityLike: (activityId: string) => IFetch<Like>({ method: 'DELETE', url: `${ACTIVITIES}/${activityId}/${LIKES}/` }),
 
   // User
   getUser: (userId?: string) => IFetch<User>({ method: 'GET', url: `${USERS}/${userId || ME}/` }),

@@ -15,6 +15,7 @@ import com.ntnu.gidd.service.Geolocation.GeolocationService;
 import com.ntnu.gidd.service.Registration.RegistrationService;
 import com.ntnu.gidd.service.Activity.ActivityServiceImpl;
 import com.ntnu.gidd.service.equipment.EquipmentService;
+import com.ntnu.gidd.service.rating.ActivityLikeService;
 import com.ntnu.gidd.utils.JpaUtils;
 import com.ntnu.gidd.utils.StringRandomizer;
 import com.querydsl.core.types.Predicate;
@@ -63,6 +64,9 @@ public class ActivityServiceImplTest {
     private EmailService emailService;
 
     @Mock
+    private ActivityLikeService activityLikeService;
+
+    @Mock
     private RegistrationRepository registrationRepository;
 
     @Mock
@@ -92,7 +96,9 @@ public class ActivityServiceImplTest {
         lenient().when(activityRepository.save(registration.getActivity())).thenReturn(registration.getActivity());
         lenient().when(registrationRepository.save(registration)).thenReturn(registration);
         lenient().doNothing().when(emailService).sendEmail(any(Mail.class));
+        lenient().when(activityLikeService.hasLiked(any(String.class), any(UUID.class))).thenReturn(false);
         lenient().when(geolocationService.findOrCreate(any(Double.class), any(Double.class))).thenReturn(new GeoLocationDto());
+        lenient().when(activityLikeService.hasLiked(any(String.class), any())).thenReturn(false);
 
     }
 
@@ -149,7 +155,8 @@ public class ActivityServiceImplTest {
         Page<Activity> activities = new PageImpl<>(testList, pageable, testList.size());
 
         lenient().when(activityRepository.findAll(any(Predicate.class),any(Pageable.class))).thenReturn(activities);
-
+        lenient().when(activityLikeService.checkListLikes(any(), any(String.class)))
+                .thenReturn(activities.map(s -> modelMapper.map(s , ActivityListDto.class)));
         Page<ActivityListDto> getActivities = activityService.getActivities(predicate, pageable, "");
 
         for (int i = 0; i < activities.getContent().size(); i++){
@@ -166,7 +173,8 @@ public class ActivityServiceImplTest {
         Page<Activity> activities = new PageImpl<>(testList, pageable, testList.size());
 
         lenient().when(activityRepository.findAll(any(Predicate.class),any(Pageable.class))).thenReturn(activities);
-
+        lenient().when(activityLikeService.checkListLikes(any(), any(String.class)))
+                .thenReturn(activities.map(s -> modelMapper.map(s , ActivityListDto.class)));
         GeoLocation position = new GeoLocation(0.0, 0.0);
         Page<ActivityListDto> getActivities = activityService.getActivities(predicate, pageable, position,
                                                                             1.0,"");

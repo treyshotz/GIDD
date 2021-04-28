@@ -47,60 +47,92 @@ public class Activity extends UUIDModel {
   @JoinColumn(name = "creator_id", referencedColumnName = "id")
   private User creator;
 
-  @ManyToMany
-  @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id"),
-      inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-      uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
-  private List<User> hosts;
+    @ManyToMany
+    @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id" ),
+    inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+    uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
+    private List<User> hosts  = new ArrayList<>();
 
   private int capacity;
 
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  @JoinColumn(name = "activity_id", nullable = false, insertable = false)
-  private List<ActivityImage> images;
+    @OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
+    @JoinColumn(name = "activity_id", nullable = false, insertable = false)
+    private List<ActivityImage> images  = new ArrayList<>();
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<Equipment> equipment;
   @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
   private List<Comment> comments;
 
-  @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
-  @JoinColumns( {
-      @JoinColumn(name = "lat", referencedColumnName = "lat"),
-      @JoinColumn(name = "lng", referencedColumnName = "lng")
-  })
-  private GeoLocation geoLocation;
-  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-  // TODO: this persist transient instances
-  @JoinTable(name = "invites", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id"),
-      inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-      uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
-  private List<User> invites;
+    @ManyToOne(cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
+    @JoinColumns( {
+            @JoinColumn(name="lat", referencedColumnName="lat"),
+            @JoinColumn(name="lng", referencedColumnName="lng")
+    } )
+    private GeoLocation geoLocation;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST) // TODO: this persist transient instances
+    @JoinTable(name = "invites", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id" ),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
+    private List<User> invites  = new ArrayList<>();
+    @Column()
+    private boolean inviteOnly = false;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "activity_rating", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id" ),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
+    private List<User> likes = new ArrayList<>();
 
-  private boolean inviteOnly = false;
+    private void removeHostsFromActivity() {
+        if(hosts != null)
+            hosts.clear();
+    }
 
-  @PreRemove
-  private void removeHostsAndCommentsFromActivity() {
-    clearHost();
-    clearComments();
-  }
+    private void removeInvitesFromActivity() {
+      if (invites != null)
+        invites.clear();
+    }
+
+
+
 
   private void clearHost() {
     if (hosts != null) {
       hosts.clear();
     }
   }
-
+    private void removeLikesFromActivity() {
+        if(likes != null)
+            likes.clear();
+    }
   private void clearComments() {
     if (comments != null) {
       comments.clear();
     }
   }
 
-  @Transient
-  @QueryType(PropertyType.DATETIME)
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private ZonedDateTime startDateBefore;
+  @PreRemove
+    private void removeRelationshipsFromActivity() {
+        removeHostsFromActivity();
+        removeInvitesFromActivity();
+        removeLikesFromActivity();
+        clearComments();
+        clearHost();
+
+    }
+
+
+
+    @Transient
+    public int getLikesCount(){
+        return likes.size();
+    }
+
+    @Transient
+    @QueryType(PropertyType.DATETIME)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private ZonedDateTime  startDateBefore;
+
 
   @Transient
   @QueryType(PropertyType.DATETIME)

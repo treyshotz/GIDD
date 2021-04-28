@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import { Activity } from 'types/Types';
 import URLS from 'URLS';
@@ -22,6 +23,7 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 
 // Project Components
 import ActivityRegistration from 'containers/ActivityDetails/components/ActivityRegistration';
+import ActivityLike from 'containers/ActivityDetails/components/ActivityLike';
 import Paper from 'components/layout/Paper';
 import VerifyDialog from 'components/layout/VerifyDialog';
 import MasonryGrid from 'components/layout/MasonryGrid';
@@ -60,6 +62,9 @@ const useStyles = makeStyles((theme) => ({
   },
   alert: {
     marginBottom: theme.spacing(1),
+  },
+  titleRow: {
+    gridTemplateColumns: '1fr auto',
   },
   title: {
     color: theme.palette.text.primary,
@@ -186,9 +191,12 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
     <div className={classes.rootGrid}>
       <div className={classes.grid}>
         <div>
-          <Typography className={classes.title} gutterBottom variant='h1'>
-            {data.title}
-          </Typography>
+          <div className={classnames(classes.grid, classes.titleRow)}>
+            <Typography className={classes.title} gutterBottom variant='h1'>
+              {data.title}
+            </Typography>
+            <ActivityLike activity={data} />
+          </div>
           <Typography className={classes.description}>{data.description}</Typography>
         </div>
         <div className={classes.grid}>
@@ -200,7 +208,7 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
             <Typography>{`Til: ${formatDate(endDate)}`}</Typography>
             <Typography>{`Start påmelding: ${formatDate(signupStart)}`}</Typography>
             <Typography>{`Slutt påmelding: ${formatDate(signupEnd)}`}</Typography>
-            <Typography>{`Påmeldte: 0/${data.capacity}`}</Typography>
+            <Typography>{`Påmeldte: ${data.registered}/${data.capacity}`}</Typography>
           </Paper>
           <ApplyButton />
           <SwipeableDrawer

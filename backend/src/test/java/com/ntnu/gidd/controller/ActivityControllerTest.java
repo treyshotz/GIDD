@@ -347,17 +347,5 @@ public class ActivityControllerTest {
         );
     }
 
-    @Test
-    public void testActivityControllerGetAllReturnsOKAndAListOfActivitiesWithoutInviteOnly() throws Exception {
-        Activity testActivity = activityFactory.getObject();
-        assert testActivity != null;
-        testActivity.setInviteOnly(true);
-        activityRepository.save(testActivity);
-        this.mvc.perform(get(URI).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.content.[*].inviteOnly").value(false))
-                .andExpect(jsonPath("$.content.length()").value(activityRepository.findAll().size()-1));
-    }
 
 }

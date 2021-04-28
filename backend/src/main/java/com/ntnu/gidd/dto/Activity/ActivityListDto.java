@@ -24,11 +24,12 @@ public class ActivityListDto {
     private String description;
     private ZonedDateTime startDate;
     private ZonedDateTime endDate;
-    private UserListDto creator;
     private boolean closed;
     private TrainingLevelEnum level;
     @NotNull
     private boolean inviteOnly;
     private List<ActivityImageDto> images;
     private GeoLocationDto geoLocation;
+    private int likesCount;
+    private boolean hasLiked;
 }

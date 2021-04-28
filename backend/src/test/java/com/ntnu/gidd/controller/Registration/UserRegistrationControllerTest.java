@@ -86,13 +86,6 @@ public class UserRegistrationControllerTest {
     userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
   }
 
-  @AfterEach
-  public void cleanup() {
-    registrationRepository.delete(registration);
-    activityRepository.delete(activity);
-    userRepository.delete(user);
-  }
-
 
   @Test
   public void testUserRegistrationControllerGetRegistrationsForUser() throws Exception {

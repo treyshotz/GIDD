@@ -32,6 +32,7 @@ public class ActivityFactory implements FactoryBean<Activity> {
                 .inviteOnly(false)
                 .invites(List.of())
                 .hosts(List.of())
+                .likes(List.of())
                 .build();
     }
 

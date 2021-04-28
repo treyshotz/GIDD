@@ -14,8 +14,10 @@ public interface ActivityService {
     ActivityDto getActivityById(UUID id, String email);
     ActivityDto saveActivity(ActivityDto activity, String creatorEmail);
     void deleteActivity(UUID id);
-    Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable, GeoLocation position, Double range, String username);
-    Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable,  String username);
+    Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable, GeoLocation position, Double range, String email);
+    Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable,  String email);
+    Page<ActivityListDto> getLikedActivities(Predicate predicate, Pageable pageable, String email);
+    Page<ActivityListDto> getLikedActivities(Predicate predicate, Pageable pageable, UUID id);
 
 }
 

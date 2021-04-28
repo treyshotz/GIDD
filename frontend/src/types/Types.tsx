@@ -47,15 +47,18 @@ export type Activity = {
   creator: UserList;
   description: string;
   endDate: string;
+  registered: number;
   equipment: Array<{
     name: string;
     amount: number;
   }>;
   geoLocation: LatLng;
+  hasLiked: boolean;
   hosts: Array<UserList>;
   id: string;
   inviteOnly: boolean;
   level: TrainingLevel;
+  likesCount: number;
   images: Array<{
     url: string;
   }>;
@@ -80,4 +83,8 @@ export type FileUploadResponse = {
 export type LatLng = {
   lat: number;
   lng: number;
+};
+
+export type Like = {
+  hasLiked: boolean;
 };

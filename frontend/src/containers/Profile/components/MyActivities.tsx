@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useMyParticipatingActivities } from 'hooks/Activities';
+import { useMyParticipatingActivities, useMyLikedActivities } from 'hooks/Activities';
 
 // Material UI
 import { makeStyles } from '@material-ui/core/styles';
@@ -27,20 +27,24 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export type MyActivitiesProps = {
-  past?: boolean;
+  type: 'future' | 'past' | 'favourites';
   userId?: string;
 };
 
-const MyActivities = ({ past = false, userId }: MyActivitiesProps) => {
+const MyActivities = ({ type, userId }: MyActivitiesProps) => {
   const classes = useStyles();
   const [view, setView] = useState<'list' | 'calendar' | 'map'>('list');
   const filters = useMemo(
-    () => ({
-      [past ? 'registrationStartDateBefore' : 'registrationStartDateAfter']: new Date().toISOString(),
-    }),
-    [past],
+    () =>
+      type === 'favourites'
+        ? {}
+        : {
+            [type === 'past' ? 'registrationStartDateBefore' : 'registrationStartDateAfter']: new Date().toISOString(),
+          },
+    [type],
   );
-  const { data, error, hasNextPage, fetchNextPage, isFetching } = useMyParticipatingActivities(userId, filters);
+  const useHook = type === 'favourites' ? useMyLikedActivities : useMyParticipatingActivities;
+  const { data, error, hasNextPage, fetchNextPage, isFetching } = useHook(userId, filters);
   const activities = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !activities.length && !isFetching, [activities, isFetching]);
 
@@ -71,7 +75,7 @@ const MyActivities = ({ past = false, userId }: MyActivitiesProps) => {
         <Calendar activities={activities} />
       </Collapse>
       <Collapse in={view === 'map'} mountOnEnter>
-        <ActivitiesMap hookArgs={filters} useHook={useMyParticipatingActivities} userId={userId} />
+        <ActivitiesMap hookArgs={filters} useHook={useHook} userId={userId} />
       </Collapse>
     </>
   );
