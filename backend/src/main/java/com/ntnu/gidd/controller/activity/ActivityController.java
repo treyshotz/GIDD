@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -72,6 +73,7 @@ public class ActivityController {
 
     @PutMapping("{activityId}/")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("@securityService.userHasActivityAccess(#activityId)")
     public ActivityDto updateActivity(@PathVariable UUID activityId, @RequestBody ActivityDto activity){
         try {
         log.debug("[X] Request to update Activity with id={}", activityId);
@@ -92,6 +94,7 @@ public class ActivityController {
 
     @DeleteMapping("/{activityId}/")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("@securityService.userHasActivityAccess(#activityId)")
     public Response deleteActivity(@PathVariable UUID activityId){
         log.debug("[X] Request to delete Activity with id={}", activityId);
         activityService.deleteActivity(activityId);

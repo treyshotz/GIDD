@@ -8,6 +8,7 @@ import com.ntnu.gidd.service.Host.HostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -37,6 +38,7 @@ public class ActivityHostController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("@securityService.isCreator(#activityId)")
     public List<UserListDto> update(@PathVariable UUID activityId, @RequestBody UserEmailDto user){
         try {
             log.debug("[X] Request to create host on activity with id={}", activityId);
@@ -50,6 +52,7 @@ public class ActivityHostController {
 
     @DeleteMapping("{userId}/")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("@securityService.isCreator(#activityId)")
     public List<UserListDto>  delete(@PathVariable UUID activityId, @PathVariable UUID userId){
         try {
             log.debug("[X] Request to deleted host on activity with id={}", activityId);

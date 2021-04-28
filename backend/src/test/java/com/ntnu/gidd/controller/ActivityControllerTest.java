@@ -201,12 +201,14 @@ public class ActivityControllerTest {
 
         Activity testActivity = activityFactory.getObject();
         assert testActivity != null;
+        User user = userRepository.save(userFactory.getObject());
+        UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
+        testActivity.setCreator(user);
         testActivity = activityRepository.save(testActivity);
 
         this.mvc.perform(delete(URI + testActivity.getId().toString() + "/")
-            .with(csrf())
+            .with(user(userDetails))
             .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.message").value("Activity has been deleted"));
 

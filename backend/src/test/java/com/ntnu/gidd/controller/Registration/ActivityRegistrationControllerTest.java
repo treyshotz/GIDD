@@ -14,6 +14,8 @@ import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.RegistrationRepository;
 import com.ntnu.gidd.repository.UserRepository;
 import javax.transaction.Transactional;
+
+import com.ntnu.gidd.security.UserDetailsImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -102,8 +105,10 @@ public class ActivityRegistrationControllerTest {
   @WithMockUser(value = "spring")
   @Test
   public void testActivityRegistrationControllerGetRegistrationWithCompositeIdActivity() throws Exception {
+    UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
     this.mvc.perform(get(URI + activity.getId() + "/registrations/" + user.getId() + "/")
-        .accept(MediaType.APPLICATION_JSON))
+        .accept(MediaType.APPLICATION_JSON)
+        .with(user(userDetails)))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.user.email").value(user.getEmail()));
@@ -139,12 +144,15 @@ public class ActivityRegistrationControllerTest {
 
     Registration testRegistration = new RegistrationFactory().getObject();
     assert testRegistration != null;
+    userRepository.save(registration.getUser());
+    activityRepository.save(registration.getActivity());
     userRepository.save(testRegistration.getUser());
     activityRepository.save(testRegistration.getActivity());
     registrationRepository.save(testRegistration);
+    UserDetails userDetails = UserDetailsImpl.builder().email(testRegistration.getUser().getEmail()).build();
 
     this.mvc.perform(delete(URI + testRegistration.getActivity().getId() + "/registrations/" + testRegistration.getUser().getId() + "/")
-        .with(csrf())
+        .with(user(userDetails))
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
   }

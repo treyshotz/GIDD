@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -60,6 +61,7 @@ public class CommentController {
 
   @PutMapping("{commentId}/")
   @ResponseStatus(HttpStatus.OK)
+  @PreAuthorize("@securityService.commentPermissions(#activityId, #commentId)")
   public CommentDto updateComment(@PathVariable UUID commentId, @RequestBody CommentDto commentDto, Authentication authentication, @PathVariable UUID activityId){
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     log.debug("[X] Request to update comment with id={}", commentId);
@@ -68,6 +70,7 @@ public class CommentController {
 
   @DeleteMapping("{commentId}/")
   @ResponseStatus(HttpStatus.OK)
+  @PreAuthorize("@securityService.commentPermissions(#activityId, #commentId)")
   public void deleteComment(@PathVariable UUID commentId, Authentication authentication, @PathVariable UUID activityId){
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     log.debug("[X] Request to delete comment with id={}", commentId);
@@ -76,6 +79,7 @@ public class CommentController {
 
   @DeleteMapping
   @ResponseStatus(HttpStatus.OK)
+  @PreAuthorize("@securityService.userHasActivityAccess(#activityId)")
   public void deleteAllCommentsOnActivity(@PathVariable UUID activityId, Authentication authentication){
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     log.debug("[X] Request to delete all comments on activity with id={}", activityId);

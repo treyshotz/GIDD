@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,7 @@ public class UserController {
 
     @PutMapping("{userId}/")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("@securityService.isUser(#userId)")
     public UserDto updateUser(@PathVariable UUID userId, @RequestBody UserDto user){
         return this.userService.updateUser(userId, user);
     }

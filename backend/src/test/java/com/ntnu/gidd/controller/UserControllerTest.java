@@ -250,8 +250,9 @@ public class UserControllerTest {
 	public void testUpdateUserUpdatesUserAndReturnUpdatedData() throws Exception {
 		String surname = StringRandomizer.getRandomString(8);
 		user.setSurname(surname);
+		UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
 		mockMvc.perform(put(URI + user.getId() + "/")
-				.with(csrf())
+				.with(user(userDetails))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(user)))
 				.andExpect(status().isOk())

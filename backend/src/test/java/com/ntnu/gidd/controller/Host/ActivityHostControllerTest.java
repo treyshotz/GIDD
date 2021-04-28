@@ -8,6 +8,7 @@ import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.UserRepository;
+import com.ntnu.gidd.security.UserDetailsImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -90,9 +92,11 @@ public class ActivityHostControllerTest {
         assert user != null;
         userRepository.save(user);
         UserEmailDto userDto = UserEmailDto.builder().email(user.getEmail()).build();
-
+        UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
+        activity.setCreator(user);
+        activityRepository.save(activity);
         this.mvc.perform(post(getURI(activity))
-                .with(csrf())
+                .with(user(userDetails))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isOk())
@@ -109,10 +113,12 @@ public class ActivityHostControllerTest {
         assert deleteUser != null;
         list.add(deleteUser);
         activity.setHosts(list);
+        activity.setCreator(deleteUser);
         userRepository.save(deleteUser);
         activityRepository.save(activity);
+        UserDetails userDetails = UserDetailsImpl.builder().email(deleteUser.getEmail()).build();
         this.mvc.perform(delete(getURI(activity)+activity.getHosts().get(0).getId().toString()+"/")
-                .with(csrf())
+                .with(user(userDetails))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].email").value(deleteUser.getEmail()));

@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ntnu.gidd.service.Registration.RegistrationService;
@@ -62,12 +63,14 @@ public class ActivityRegistrationController {
 
   @GetMapping("{userId}/")
   @ResponseStatus(HttpStatus.OK)
+  @PreAuthorize("@securityService.registrationPermissions(#activityId, #userId)")
   public RegistrationUserDto getRegistrationWithCompositeIdActivity(@PathVariable UUID userId, @PathVariable UUID activityId) {
     return registrationService.getRegistrationWithCompositeId(userId, activityId);
   }
 
   @DeleteMapping("{userId}/")
   @ResponseStatus(HttpStatus.OK)
+  @PreAuthorize("@securityService.registrationPermissions(#activityId, #userId)")
   public Response deleteRegistration(@PathVariable UUID activityId, @PathVariable UUID userId){
     try {
       log.debug("[X] Request to delete Registration with userId={} ", userId);
