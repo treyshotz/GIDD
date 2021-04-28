@@ -41,6 +41,7 @@ public class UserHostController {
     @GetMapping("{activityId}/")
     @ResponseStatus(HttpStatus.OK)
     public ActivityDto get(@PathVariable UUID activityId, Authentication authentication){
+        log.debug("[X] Request to get Activity of user with userEmail={} and activityId={}", authentication.getName(),activityId);
         return hostService.getActivityFromUserByEmail(authentication.getName(), activityId);
     }
     @DeleteMapping("{activityId}/")
