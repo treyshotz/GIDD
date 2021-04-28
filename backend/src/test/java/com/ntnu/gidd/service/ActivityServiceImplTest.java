@@ -126,7 +126,7 @@ public class ActivityServiceImplTest {
 
         when(equipmentService.saveAndReturnEquipments(equipmentDtos)).thenReturn(equipments);
 
-        ActivityDto updateActivity = activityService.updateActivity(activity.getId(),modelMapper.map(activity,ActivityDto.class));
+        ActivityDto updateActivity = activityService.updateActivity(activity.getId(),modelMapper.map(activity,ActivityDto.class), userDetails.getUsername());
 
         assertThat(activity.getId()).isEqualTo(updateActivity.getId());
 

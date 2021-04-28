@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface ActivityService {
-    ActivityDto updateActivity(UUID id, ActivityDto activity);
+    ActivityDto updateActivity(UUID id, ActivityDto activity, String email);
     ActivityDto getActivityById(UUID id, String email);
     ActivityDto saveActivity(ActivityDto activity, String creatorEmail);
     void deleteActivity(UUID id);

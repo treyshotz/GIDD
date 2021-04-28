@@ -95,7 +95,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Transactional
     @Override
-    public ActivityDto updateActivity(UUID activityId, ActivityDto activity) {
+    public ActivityDto updateActivity(UUID activityId, ActivityDto activity, String email) {
         Activity updateActivity = this.activityRepository.findById(activityId)
                 .orElseThrow(ActivityNotFoundException::new);
         activityRepository.flush();
@@ -136,6 +136,7 @@ public class ActivityServiceImpl implements ActivityService {
 
         }
         ActivityDto activityDto = modelMapper.map(this.activityRepository.save(updateActivity), ActivityDto.class);
+        activityDto.setHasLiked(activityLikeService.hasLiked(email, activity.getId()));
         return addRegisteredAmount(activityDto);
 
     }
