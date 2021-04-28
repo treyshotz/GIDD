@@ -98,12 +98,12 @@ public class CommentControllerTest {
 
 
   }
-
   @AfterEach
-  public void cleanUp() {
+  public void cleanUp(){
     activityRepository.deleteAll();
     commentRepository.deleteAll();
     userRepository.deleteAll();
+
   }
 
 

@@ -86,9 +86,9 @@ public class ActivityRegistrationControllerTest {
 
   @AfterEach
   public void cleanup() {
-    registrationRepository.delete(registration);
-    activityRepository.delete(activity);
-    userRepository.delete(user);
+    registrationRepository.deleteAll();
+    activityRepository.deleteAll();
+    userRepository.deleteAll();
   }
 
   @WithMockUser(value = "spring")

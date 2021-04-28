@@ -1,7 +1,6 @@
 package com.ntnu.gidd.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -52,11 +51,26 @@ public class User extends UUIDModel {
     private List<Comment> comments;
     
 
+    private void removeComments(){
+        if(comments != null)
+            comments.clear();
+    }
 
-    @PreRemove
     private void removeActivitiesFromUsers() {
         if(activities != null)
            activities.clear();
+    }
+
+    private void removeInvites(){
+        if(invites != null)
+            invites.clear();
+    }
+    @PreRemove
+    public void removeRelationships(){
+        removeComments();
+        removeInvites();
+        removeActivitiesFromUsers();
+        removeComments();
     }
 
 }

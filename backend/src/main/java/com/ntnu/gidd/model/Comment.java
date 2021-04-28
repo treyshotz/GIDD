@@ -2,11 +2,7 @@ package com.ntnu.gidd.model;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,6 +25,11 @@ public class Comment  extends UUIDModel{
 
   @ManyToOne
   private User user;
+
+  @PreRemove
+  public void removeRelationships(){
+    if(user !=null) user = null;
+  }
 
 
 }

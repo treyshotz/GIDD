@@ -61,10 +61,10 @@ public class Activity extends UUIDModel {
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<Equipment> equipment;
-  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
   private List<Comment> comments;
 
-    @ManyToOne(cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE,  fetch = FetchType.LAZY)
     @JoinColumns( {
             @JoinColumn(name="lat", referencedColumnName="lat"),
             @JoinColumn(name="lng", referencedColumnName="lng")
@@ -93,9 +93,6 @@ public class Activity extends UUIDModel {
         invites.clear();
     }
 
-
-
-
   private void clearHost() {
     if (hosts != null) {
       hosts.clear();
@@ -110,6 +107,10 @@ public class Activity extends UUIDModel {
       comments.clear();
     }
   }
+  private void clearCreator(){
+      if(creator != null)
+        creator = null;
+  }
 
   @PreRemove
     private void removeRelationshipsFromActivity() {
@@ -118,6 +119,7 @@ public class Activity extends UUIDModel {
         removeLikesFromActivity();
         clearComments();
         clearHost();
+        clearCreator();
 
     }
 

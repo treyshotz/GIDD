@@ -57,6 +57,7 @@ public class UserRegistrationsListControllerTest {
     private User user;
 
 
+
     @BeforeEach
     public void setup() throws Exception {
         activity = activityFactory.getObject();
@@ -77,10 +78,10 @@ public class UserRegistrationsListControllerTest {
     }
 
     @AfterEach
-    private void cleanup(){
+    public void cleanup() {
         registrationRepository.deleteAll();
-        userRepository.deleteAll();
         activityRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test

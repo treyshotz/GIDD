@@ -73,6 +73,7 @@ public class ActivityHostControllerTest {
     public void cleanUp(){
         activityRepository.deleteAll();
         userRepository.deleteAll();
+
     }
 
     @WithMockUser(value = "spring")

@@ -120,15 +120,12 @@ public class ActivityServiceImpl implements ActivityService {
           closeActivity(activity);
         }
 
-        if (activity.getImages() !=  null) updateActivity.setImages(activityImageService.updateActivityImage(
-                activity.getImages(), updateActivity
-        ));
-
         if(!updateActivity.isInviteOnly() && activity.isInviteOnly()){
             inviteService.inviteBatch(activityId,
                     registrationService.getRegistratedUsersInActivity(activityId));
         }
         updateActivity.setInviteOnly(activity.isInviteOnly());
+
         if (activity.getImages() !=  null){
             updateActivity.setImages(activityImageService.updateActivityImage(activity.getImages(), updateActivity));
 
@@ -230,10 +227,11 @@ public class ActivityServiceImpl implements ActivityService {
         if (activity.getEquipment() != null)
             setEquipment(activity, newActivity);
 
-        newActivity  = this.activityRepository.save(newActivity);
         if (activity.getImages() !=  null) newActivity.setImages(activityImageService.saveActivityImage(
                 newActivity.getImages(), newActivity
         ));
+        newActivity  = this.activityRepository.save(newActivity);
+
         ActivityDto activityDto = modelMapper.map(newActivity, ActivityDto.class);
         return addRegisteredAmount(activityDto);
     }

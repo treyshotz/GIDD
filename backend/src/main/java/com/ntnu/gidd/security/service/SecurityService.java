@@ -1,14 +1,8 @@
 package com.ntnu.gidd.security.service;
 
 
-import com.ntnu.gidd.model.Activity;
-import com.ntnu.gidd.model.Comment;
-import com.ntnu.gidd.model.Registration;
-import com.ntnu.gidd.model.User;
-import com.ntnu.gidd.repository.ActivityRepository;
-import com.ntnu.gidd.repository.CommentRepository;
-import com.ntnu.gidd.repository.RegistrationRepository;
-import com.ntnu.gidd.repository.UserRepository;
+import com.ntnu.gidd.model.*;
+import com.ntnu.gidd.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +21,8 @@ public class SecurityService {
     RegistrationRepository registrationRepository;
 
     CommentRepository commentRepository;
+
+    PostRepository postRepository;
 
 
     private User getUser(){
@@ -78,12 +74,25 @@ public class SecurityService {
         }
         return false;
     }
+
+    private boolean isOwnPost(UUID postId){
+        Post post = postRepository.findById(postId).orElse(null);
+        User user = getUser();
+        if(post != null && user != null){
+            return post.getCreator().equals(user);
+        }
+        return false;
+    }
     public boolean registrationPermissions(UUID activityId, UUID userId){
         return isCreator(activityId) || isRegisteredUser(activityId, userId);
     }
 
     public boolean commentPermissions(UUID activityId, UUID commentId){
         return userHasActivityAccess(activityId)|| isOwnComment(commentId);
+    }
+
+    public boolean postPermissions(UUID postId){
+        return isOwnPost(postId);
     }
 
 

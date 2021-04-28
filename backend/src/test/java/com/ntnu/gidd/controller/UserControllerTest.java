@@ -85,10 +85,10 @@ public class UserControllerTest {
 	 * Cleans up the saved users after each test
 	 */
 	@AfterEach
-	public void cleanUp() {
+	public void cleanUp(){
 		userRepository.deleteAll();
 	}
-	
+
 	/**
 	 * Provides a stream of Valid emails to provide parameterized test
 	 *

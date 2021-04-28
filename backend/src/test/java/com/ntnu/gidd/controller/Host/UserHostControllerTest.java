@@ -68,11 +68,10 @@ public class UserHostControllerTest {
         user = userRepository.save(user);
 
     }
-
     @AfterEach
     public void cleanUp(){
-        activityRepository.deleteAll();
         userRepository.deleteAll();
+        activityRepository.deleteAll();
     }
 
     @WithMockUser(value = "spring")
