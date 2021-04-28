@@ -17,6 +17,7 @@ import NotFoundIndicator from 'components/miscellaneous/NotFoundIndicator';
 import ActivityCard from 'components/layout/ActivityCard';
 import Container from 'components/layout/Container';
 import MasonryGrid from 'components/layout/MasonryGrid';
+import Feed from 'containers/Feed';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -60,8 +61,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Landing = () => {
-  const classes = useStyles();
   const isAuthenticated = useIsAuthenticated();
+  if (isAuthenticated) {
+    return <Feed />;
+  }
+  return <NotAuthedLanding />;
+};
+
+const NotAuthedLanding = () => {
+  const classes = useStyles();
   const { data, error, hasNextPage, fetchNextPage, isFetching } = useActivities();
   const activities = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !activities.length && !isFetching, [activities, isFetching]);
@@ -80,16 +88,12 @@ const Landing = () => {
           Det er bare å gidde
         </Typography>
         <div className={classes.btnGroup}>
-          {!isAuthenticated && (
-            <>
-              <Button className={classes.button} component={Link} to={URLS.LOGIN} variant='outlined'>
-                Logg inn
-              </Button>
-              <Button className={classes.button} component={Link} to={URLS.SIGNUP} variant='outlined'>
-                Registrer deg
-              </Button>
-            </>
-          )}
+          <Button className={classes.button} component={Link} to={URLS.LOGIN} variant='outlined'>
+            Logg inn
+          </Button>
+          <Button className={classes.button} component={Link} to={URLS.SIGNUP} variant='outlined'>
+            Registrer deg
+          </Button>
         </div>
       </div>
       <Container className={classes.activityContainer}>

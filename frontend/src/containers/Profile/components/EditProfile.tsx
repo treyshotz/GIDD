@@ -19,6 +19,7 @@ import TextField from 'components/inputs/TextField';
 import SubmitButton from 'components/inputs/SubmitButton';
 import { Button } from '@material-ui/core';
 import Dialog from 'components/layout/Dialog';
+import { SingleImageUpload } from 'components/inputs/Upload';
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -35,7 +36,7 @@ export type EditProfileProps = {
   user: User;
 };
 
-type UserEditData = Pick<User, 'firstName' | 'surname' | 'email' | 'level'> & {
+type UserEditData = Pick<User, 'firstName' | 'surname' | 'email' | 'level' | 'image'> & {
   birthDate: Date | null;
 };
 
@@ -52,13 +53,14 @@ const EditProfile = ({ user }: EditProfileProps) => {
   const updateUser = useUpdateUser();
   const changePassword = useChangePassword();
   const showSnackbar = useSnackbar();
-  const { register, control, formState, handleSubmit } = useForm<UserEditData>({
+  const { register, control, formState, handleSubmit, setValue, watch } = useForm<UserEditData>({
     defaultValues: {
       firstName: user.firstName,
       surname: user.surname,
       email: user.email,
       level: user.level,
       birthDate: user.birthDate ? parseISO(user.birthDate) : null,
+      image: user.image,
     },
   });
   const submit = async (data: UserEditData) => {
@@ -123,6 +125,15 @@ const EditProfile = ({ user }: EditProfileProps) => {
             </MenuItem>
           ))}
         </Select>
+        <SingleImageUpload
+          formState={formState}
+          label='Legg til bilde'
+          name='image'
+          register={register('image')}
+          setValue={setValue}
+          variant='outlined'
+          watch={watch}
+        />
         <div className={classes.btnRow}>
           <SubmitButton disabled={updateUser.isLoading} formState={formState}>
             Oppdater bruker

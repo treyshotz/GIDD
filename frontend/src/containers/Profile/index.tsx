@@ -18,6 +18,7 @@ import Collapse from '@material-ui/core/Collapse';
 import EditIcon from '@material-ui/icons/EditRounded';
 import AktivitiesIcon from '@material-ui/icons/DateRangeRounded';
 import HistoryIcon from '@material-ui/icons/HistoryRounded';
+import PostsIcon from '@material-ui/icons/ViewAgendaRounded';
 import LikedIcon from '@material-ui/icons/FavoriteRounded';
 
 // Project Components
@@ -28,6 +29,7 @@ import Tabs from 'components/layout/Tabs';
 import Http404 from 'containers/Http404';
 import EditProfile from 'containers/Profile/components/EditProfile';
 import MyActivities from 'containers/Profile/components/MyActivities';
+import MyPosts from 'containers/Profile/components/MyPosts';
 
 import BACKGROUND from 'assets/img/snow_mountains.jpg';
 
@@ -48,7 +50,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   avatar: {
-    background: theme.palette.primary.main,
     height: 120,
     width: 120,
     margin: 'auto',
@@ -90,12 +91,13 @@ const Profile = () => {
   const { data: signedInUser } = useUser();
   const { data: user, isLoading, isError } = useUser(userId);
   const logout = useLogout();
+  const posts = { value: 'posts', label: 'Innlegg', icon: PostsIcon };
   const futureActivitiesTab = { value: 'futureActivities', label: 'Kommende aktiviteter', icon: AktivitiesIcon };
   const pastActivitiesTab = { value: 'pastActivities', label: 'Tidligere aktiviteter', icon: HistoryIcon };
   const favouritesTab = { value: 'favourites', label: 'Favoritter', icon: LikedIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
-  const tabs = [futureActivitiesTab, pastActivitiesTab, favouritesTab, ...(userId ? [] : [editTab])];
-  const [tab, setTab] = useState(futureActivitiesTab.value);
+  const tabs = [posts, futureActivitiesTab, pastActivitiesTab, favouritesTab, ...(userId ? [] : [editTab])];
+  const [tab, setTab] = useState(posts.value);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -122,7 +124,7 @@ const Profile = () => {
       <Container className={classnames(classes.grid, classes.root)}>
         <div className={classes.grid}>
           <Paper blurred className={classnames(classes.grid, classes.avatarContainer)}>
-            <Avatar className={classes.avatar}>{`${user.firstName.substr(0, 1)}${user.surname.substr(0, 1)}`}</Avatar>
+            <Avatar className={classes.avatar} src={user.image}>{`${user.firstName.substr(0, 1)}${user.surname.substr(0, 1)}`}</Avatar>
             <div>
               <Typography align='center' variant='h2'>{`${user.firstName} ${user.surname}`}</Typography>
               <Typography align='center' variant='subtitle2'>
@@ -147,6 +149,9 @@ const Profile = () => {
         <div className={classes.grid}>
           <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
           <div>
+            <Collapse in={tab === posts.value}>
+              <MyPosts userId={userId || signedInUser?.id} />
+            </Collapse>
             <Collapse in={tab === futureActivitiesTab.value}>
               <MyActivities type='future' userId={userId} />
             </Collapse>

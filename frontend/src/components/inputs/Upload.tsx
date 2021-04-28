@@ -71,12 +71,9 @@ export const ImageUpload = forwardRef(({ register, watch, setValue, name, formSt
     }
   };
 
-  const removeImage = async (url: string) => {
+  const removeImage = async (i: number) => {
     if (images) {
-      setValue(
-        name,
-        images.filter((img) => img.url !== url),
-      );
+      setValue(name, images.slice(0, i).concat(images.slice(i + 1, images.length)));
     }
   };
 
@@ -87,7 +84,7 @@ export const ImageUpload = forwardRef(({ register, watch, setValue, name, formSt
           <ListItem component={Paper} key={i} noPadding>
             <img className={classes.img} src={image.url} />
             <ListItemSecondaryAction>
-              <VerifyDialog iconButton onConfirm={() => removeImage(image.url)} titleText='Fjern bilde'>
+              <VerifyDialog iconButton onConfirm={() => removeImage(i)} titleText='Fjern bilde'>
                 <DeleteIcon className={classes.remove} />
               </VerifyDialog>
             </ListItemSecondaryAction>
@@ -109,3 +106,70 @@ export const ImageUpload = forwardRef(({ register, watch, setValue, name, formSt
 });
 
 ImageUpload.displayName = 'ImageUpload';
+
+export type SingleImageUploadProps = ButtonProps &
+  Pick<UseFormReturn, 'formState'> & {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    watch: UseFormWatch<any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setValue: UseFormSetValue<any>;
+    name: string;
+    register: UseFormRegisterReturn;
+    label?: string;
+  };
+
+export const SingleImageUpload = forwardRef(({ register, watch, setValue, name, formState, label = 'Last opp fil', ...props }: SingleImageUploadProps) => {
+  const classes = useStyles();
+  const showSnackbar = useSnackbar();
+  const image: string | undefined = watch(name);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const upload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setIsLoading(true);
+      try {
+        const data = await API.uploadFile(file);
+        setValue(name, data.data.display_url);
+        showSnackbar('Bildet ble lagt til', 'info');
+      } catch (e) {
+        showSnackbar(e.detail, 'error');
+      }
+      setIsLoading(false);
+    }
+  };
+
+  const removeImage = async () => {
+    setValue(name, '');
+  };
+
+  return (
+    <div className={classes.root}>
+      {image ? (
+        <List className={classes.root}>
+          <ListItem component={Paper} noPadding>
+            <img className={classes.img} src={image} />
+            <ListItemSecondaryAction>
+              <VerifyDialog iconButton onConfirm={removeImage} titleText='Fjern bilde'>
+                <DeleteIcon className={classes.remove} />
+              </VerifyDialog>
+            </ListItemSecondaryAction>
+          </ListItem>
+        </List>
+      ) : (
+        <div>
+          <input hidden {...register} />
+          <input accept='image/*' hidden id='file-upload-button' onChange={upload} type='file' />
+          <label htmlFor='file-upload-button'>
+            <Button className={classes.button} color='primary' component='span' disabled={isLoading} fullWidth variant='contained' {...props}>
+              {label}
+            </Button>
+          </label>
+        </div>
+      )}
+      {Boolean(formState.errors[name]) && <FormHelperText error>{formState.errors[name]?.message}</FormHelperText>}
+    </div>
+  );
+});
+
+SingleImageUpload.displayName = 'SingleImageUpload';

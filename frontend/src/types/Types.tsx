@@ -11,6 +11,7 @@ export type LoginRequestResponse = {
 
 export type RefreshTokenResponse = {
   token: string;
+  refreshToken: string;
 };
 
 export type PaginationResponse<T> = {
@@ -43,7 +44,7 @@ export type ActivityRequired = Partial<Activity> & Pick<Activity, 'title' | 'sta
 export type Activity = {
   capacity: number;
   closed: boolean;
-  createdDate: string;
+  createdAt: string;
   creator: UserList;
   description: string;
   endDate: string;
@@ -83,6 +84,22 @@ export type FileUploadResponse = {
 export type LatLng = {
   lat: number;
   lng: number;
+};
+
+export type Post = {
+  id: string;
+  creator: UserList;
+  createdAt: string;
+  image: string;
+  content: string;
+  likesCount: number;
+  hasLiked: boolean;
+  activity: ActivityList | null;
+  commentsCount: number;
+};
+
+export type PostCreate = Pick<Post, 'content' | 'image'> & {
+  activityId?: string;
 };
 
 export type Like = {

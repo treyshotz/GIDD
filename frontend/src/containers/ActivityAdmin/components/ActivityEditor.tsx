@@ -271,7 +271,7 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
             maxRows={15}
             minRows={5}
             multiline
-            {...register('description', { required: 'Gi arrengementet en beskrivelse' })}
+            {...register('description', { required: 'Gi arrangementet en beskrivelse' })}
             required
           />
           <Paper className={classes.mapFilter}>

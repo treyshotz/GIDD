@@ -86,7 +86,7 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
       MuiAvatar: {
         styleOverrides: {
           root: {
-            backgroundColor: '#f57c00',
+            background: get<string>({ light: '#475960', dark: '#bddde5' }),
             color: get<string>({ light: '#ffffff', dark: '#000000' }),
             fontWeight: 'bold',
           },
@@ -116,7 +116,7 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
         styleOverrides: {
           root: {
             height: 50,
-            fontWeight: 300,
+            fontWeight: get<number | undefined>({ light: 500, dark: 400 }),
           },
           contained: {
             boxShadow: 'none',

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Activity } from 'types/Types';
 
 // Services
@@ -12,9 +13,11 @@ import { IconButton, Tooltip, IconButtonProps, Typography } from '@material-ui/c
 // Icons
 import NotLikedIcon from '@material-ui/icons/FavoriteBorderRounded';
 import LikedIcon from '@material-ui/icons/FavoriteRounded';
+import ShareIcon from '@material-ui/icons/ShareRounded';
 
 // Project components
 import Paper from 'components/layout/Paper';
+import PostCreateCard from 'containers/Feed/components/PostCreateCard';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,6 +39,7 @@ const ActivityLike = ({ activity }: ActivityLikeProps) => {
   const createLike = useCreateActivityLike(activity.id);
   const deleteLike = useRemoveActivityLike(activity.id);
   const showSnackbar = useSnackbar();
+  const [shareOpen, setShareOpen] = useState(false);
 
   const toggle = async () => {
     if (!isAuthenticated) {
@@ -66,6 +70,12 @@ const ActivityLike = ({ activity }: ActivityLikeProps) => {
       <Tooltip title={activity.hasLiked ? 'Fjern fra dine favoritter' : 'Legg til dine favoritter'}>
         <IconButton onClick={toggle}>{activity.hasLiked ? <LikedIcon /> : <NotLikedIcon />}</IconButton>
       </Tooltip>
+      <Tooltip title='Del med følgerne dine'>
+        <IconButton onClick={() => setShareOpen(true)}>
+          <ShareIcon />
+        </IconButton>
+      </Tooltip>
+      <PostCreateCard activity={activity} onClose={() => setShareOpen(false)} open={shareOpen} />
     </Paper>
   );
 };

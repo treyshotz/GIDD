@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IFetch } from 'api/fetch';
 import { setCookie } from 'api/cookie';
-import { ACCESS_TOKEN, ACCESS_TOKEN_DURATION } from 'constant';
+import { ACCESS_TOKEN, ACCESS_TOKEN_DURATION, REFRESH_TOKEN, REFRESH_TOKEN_DURATION } from 'constant';
 import { logout } from 'hooks/User';
 import {
   Activity,
@@ -11,6 +11,8 @@ import {
   Like,
   LoginRequestResponse,
   PaginationResponse,
+  Post,
+  PostCreate,
   Registration,
   RequestResponse,
   RefreshTokenResponse,
@@ -22,6 +24,7 @@ import {
 const USERS = 'users';
 const ME = 'me';
 const AUTH = 'auth';
+const POSTS = 'posts';
 const ACTIVITIES = 'activities';
 const REGISTRATIONS = 'registrations';
 const INVITES = 'invites';
@@ -37,20 +40,32 @@ export default {
       url: `${AUTH}/login`,
       data: { email, password },
       withAuth: false,
-    }).catch((e) => {
-      logout();
-      throw e;
+      tryAgain: false,
     }),
-  forgotPassword: (email: string) => IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/forgot-password/`, data: { email }, withAuth: false }),
+  forgotPassword: (email: string) =>
+    IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/forgot-password/`, data: { email }, withAuth: false, tryAgain: false }),
   resetPassword: (email: string, newPassword: string, token: string) =>
-    IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/reset-password/${token}/`, data: { email, newPassword }, withAuth: false }),
+    IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/reset-password/${token}/`, data: { email, newPassword }, withAuth: false, tryAgain: false }),
   refreshAccessToken: () =>
-    IFetch<RefreshTokenResponse>({ method: 'GET', url: `${AUTH}/refresh-token/`, refreshAccess: true, withAuth: false, tryAgain: true }).then((tokens) => {
-      setCookie(ACCESS_TOKEN, tokens.token, ACCESS_TOKEN_DURATION);
-      return tokens;
-    }),
+    IFetch<RefreshTokenResponse>({ method: 'GET', url: `${AUTH}/refresh-token/`, refreshAccess: true, withAuth: false })
+      .then((tokens) => {
+        setCookie(ACCESS_TOKEN, tokens.token, ACCESS_TOKEN_DURATION);
+        setCookie(REFRESH_TOKEN, tokens.refreshToken, REFRESH_TOKEN_DURATION);
+        return tokens;
+      })
+      .catch((e) => {
+        logout();
+        throw e;
+      }),
   changePassword: (oldPassword: string, newPassword: string) =>
     IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/change-password/`, data: { oldPassword, newPassword } }),
+
+  // Feed
+  getPost: (postId: string) => IFetch<Post>({ method: 'GET', url: `${POSTS}/${postId}/` }),
+  getFeed: (filters?: any) => IFetch<PaginationResponse<Post>>({ method: 'GET', url: `${POSTS}/`, data: filters || {} }),
+  createPost: (newPost: PostCreate) => IFetch<Post>({ method: 'POST', url: `${POSTS}/`, data: newPost }),
+  updatePost: (postId: string, updatedPost: Partial<Post>) => IFetch<Post>({ method: 'PUT', url: `${POSTS}/${postId}/`, data: updatedPost }),
+  deletePost: (postId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${POSTS}/${postId}/` }),
 
   // Activity
   getActivity: (id: string) => IFetch<Activity>({ method: 'GET', url: `${ACTIVITIES}/${id}/` }),

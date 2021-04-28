@@ -82,10 +82,7 @@ export const useUpdateUser = (): UseMutationResult<User, RequestResponse, { user
   return useMutation(({ userId, user }) => API.updateUser(userId, user), {
     onSuccess: (data) => {
       queryClient.invalidateQueries(USERS_QUERY_KEY);
-      const user = queryClient.getQueryData<User | undefined>(USER_QUERY_KEY);
-      if (data.id === user?.id) {
-        queryClient.setQueryData(USER_QUERY_KEY, data);
-      }
+      queryClient.setQueryData([USER_QUERY_KEY, null], data);
     },
   });
 };

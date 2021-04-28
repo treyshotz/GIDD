@@ -24,4 +24,6 @@ public class PostDto {
     @NotNull
     private ActivityListDto activity;
     private int commentsCount;
+    @NotNull
+    private ZonedDateTime createdAt;
 }

@@ -50,7 +50,9 @@ const SignUp = () => {
           navigate(URLS.LOGIN);
         },
         onError: (e) => {
-          setError('password', { message: e.message || 'Noe gikk galt' });
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          setError('password', { message: e.data.password.replace(/,/g, ' ') || 'Noe gikk galt' });
         },
       },
     );

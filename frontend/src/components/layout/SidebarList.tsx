@@ -13,7 +13,7 @@ import Hidden from '@material-ui/core/Hidden';
 import Fab from '@material-ui/core/Fab';
 import Zoom from '@material-ui/core/Zoom';
 import Typography from '@material-ui/core/Typography';
-// import Divider from '@material-ui/core/Divider';
+import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Skeleton from '@material-ui/core/Skeleton';
 
@@ -91,11 +91,15 @@ const SidebarList = <Type,>({
   noExpired = false,
 }: SidebarListProps<Type>) => {
   const classes = useStyles();
-  const { data, hasNextPage, fetchNextPage, isLoading } = useHook();
+  const now = useMemo(() => new Date().toISOString(), []);
+  const { data, hasNextPage, fetchNextPage, isLoading } = useHook({
+    startDateAfter: now,
+  });
   const items = useMemo(() => (data ? data.pages.map((page) => page.content).flat() : []), [data]);
-  // const { data: expiredData, hasNextPage: hasNextExpiredPage, fetchNextPage: fetchNextExpiredPage, isLoading: isExpiredLoading }
-  // = useHook({ expired: true });
-  // const expiredItems = useMemo(() => (expiredData ? expiredData.pages.map((page) => page.content).flat() : []), [expiredData]);
+  const { data: expiredData, hasNextPage: hasNextExpiredPage, fetchNextPage: fetchNextExpiredPage, isLoading: isExpiredLoading } = useHook({
+    startDateBefore: now,
+  });
+  const expiredItems = useMemo(() => (expiredData ? expiredData.pages.map((page) => page.content).flat() : []), [expiredData]);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('lg'));
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -157,7 +161,7 @@ const SidebarList = <Type,>({
               ))}
             </List>
           </Pagination>
-          {/* {!noExpired && (
+          {!noExpired && (
             <>
               <Divider />
               <div className={classes.header}>
@@ -167,12 +171,12 @@ const SidebarList = <Type,>({
                 <List className={classes.list} dense disablePadding>
                   {isExpiredLoading && <ListItemLoading />}
                   {expiredItems.map((item) => (
-                    <ListItem item={item} key={item[idKey]} />
+                    <ListItem item={item} key={String(item[idKey])} />
                   ))}
                 </List>
               </Pagination>
             </>
-          )} */}
+          )}
         </div>
       </Drawer>
       <Hidden lgUp>

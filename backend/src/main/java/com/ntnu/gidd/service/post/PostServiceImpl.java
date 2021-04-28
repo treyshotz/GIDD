@@ -48,8 +48,12 @@ public class PostServiceImpl implements PostService{
     @Override
     public PostDto savePost(PostCreateDto post, String email) {
         Post newPost = Post.builder().id(UUID.randomUUID()).content(post.getContent()).image(post.getImage()).build();
-        Activity activity = activityRepository.findById(post.getActivityId()).orElse(null);
-        newPost.setActivity(activity);
+        if (post.getActivityId() != null) {
+            Activity activity = activityRepository.findById(post.getActivityId()).orElse(null);
+            newPost.setActivity(activity);
+        } else {
+            newPost.setActivity(null);
+        }
         newPost.setCreator(userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new));
         newPost = postRepository.save(newPost);
         return modelMapper.map(newPost, PostDto.class);
