@@ -64,7 +64,7 @@ public class Activity extends UUIDModel {
   @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
   private List<Comment> comments;
 
-  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+  @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
   @JoinColumns( {
       @JoinColumn(name = "lat", referencedColumnName = "lat"),
       @JoinColumn(name = "lng", referencedColumnName = "lng")

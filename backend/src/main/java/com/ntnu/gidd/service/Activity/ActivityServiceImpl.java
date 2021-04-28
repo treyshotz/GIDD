@@ -120,9 +120,6 @@ public class ActivityServiceImpl implements ActivityService {
         if(updateActivity.isClosed()){
           closeActivity(activity);
         }
-        if (activity.getImages() !=  null) {
-          updateActivity.setImages(activityImageService.updateActivityImage(activity.getImages(), updateActivity));
-        }
         if (activity.getImages() !=  null) updateActivity.setImages(activityImageService.updateActivityImage(
                 activity.getImages(), updateActivity
         ));
