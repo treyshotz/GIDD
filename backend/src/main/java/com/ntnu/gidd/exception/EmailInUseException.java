@@ -6,11 +6,13 @@ public class EmailInUseException extends EntityExistsException {
 
 	private static final long serialVersionUID = 1L;
 
+	public static final String DEFAULT_MESSAGE = "Email is already associated with another user";
+
 	public EmailInUseException(String errorMessage) {
 		super(errorMessage);
 	}
 
 	public EmailInUseException() {
-		super("Email is already associated with another user");
+		super(DEFAULT_MESSAGE);
 	}
 }

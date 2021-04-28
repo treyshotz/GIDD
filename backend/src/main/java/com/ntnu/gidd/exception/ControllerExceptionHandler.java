@@ -34,7 +34,7 @@ public class ControllerExceptionHandler {
                   errorMessages.put(error.getField(), error.getDefaultMessage());
             });
 
-            String message = "One or more method arguments is invalid";
+            String message = "One or more method arguments are invalid";
 
             log.error("[X] Error caught {}", message);
             return new ExceptionResponse(message, errorMessages);
@@ -83,8 +83,15 @@ public class ControllerExceptionHandler {
       }
 
       @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-      @ExceptionHandler(ResetPasswordTokenNotFoundException.class)
-      public Response handleInvalidResetPasswordToken(ResetPasswordTokenNotFoundException exception){
+      @ExceptionHandler({InvalidJwtToken.class})
+      public Response handleInvalidToken(ResetPasswordTokenNotFoundException exception){
+            log.error("[X] Error caught while processing request {}", exception.getMessage());
+            return new Response(exception.getMessage());
+      }
+
+      @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+      @ExceptionHandler({RefreshTokenNotFound.class})
+      public Response handleRefreshTokenNotFound(RefreshTokenNotFound exception){
             log.error("[X] Error caught while processing request {}", exception.getMessage());
             return new Response(exception.getMessage());
       }
