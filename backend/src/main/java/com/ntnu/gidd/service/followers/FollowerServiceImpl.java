@@ -1,5 +1,6 @@
 package com.ntnu.gidd.service.followers;
 
+import com.ntnu.gidd.dto.User.UserDto;
 import com.ntnu.gidd.dto.followers.FollowRequest;
 import com.ntnu.gidd.exception.InvalidFollowRequestException;
 import com.ntnu.gidd.model.User;
@@ -8,8 +9,13 @@ import com.ntnu.gidd.service.User.UserService;
 import com.ntnu.gidd.util.Response;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -18,6 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class FollowerServiceImpl implements FollowerService {
 
     private UserService userService;
+
+    private UserRepository userRepository;
+
+    private ModelMapper modelMapper;
 
     @Override
     public Response registerFollow(FollowRequest followRequest) {
@@ -33,5 +43,14 @@ public class FollowerServiceImpl implements FollowerService {
 
         log.debug("[X] Successfully followed user (actor:{}, subject:{}", actor.getId(), subject.getId());
         return new Response("Successfully followed user");
+    }
+
+    @Override
+    public Page<UserDto> getFollowingFor(UUID id, Pageable pageable) {
+        log.debug("[X] Retrieving all users this user is following (id:{})", id);
+        User subject = userService.getUserById(id);
+
+        return userRepository.findByFollowersId(subject.getId(), pageable)
+                .map(user -> modelMapper.map(user, UserDto.class));
     }
 }

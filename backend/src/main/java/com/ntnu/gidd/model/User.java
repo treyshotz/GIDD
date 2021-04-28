@@ -52,7 +52,7 @@ public class User extends UUIDModel {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, insertable = false)
     private List<Comment> comments;
-    
+
 
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})

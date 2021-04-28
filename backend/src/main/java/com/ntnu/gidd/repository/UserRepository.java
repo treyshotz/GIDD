@@ -15,5 +15,5 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID> , QuerydslPredicateExecutor<User> {
     Page<User> findUserByInvites(Activity activity, Pageable pageable);
     Optional<User> findByEmail(String email);
-
+    Page<User> findByFollowersId(UUID id, Pageable pageable);
 }
