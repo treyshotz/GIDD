@@ -5,7 +5,7 @@ import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.dto.geolocation.GeoLocationDto;
 import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
 import com.ntnu.gidd.exception.ActivityNotFoundException;
-import com.ntnu.gidd.exception.NotInvitedExecption;
+import com.ntnu.gidd.exception.NotInvitedException;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.*;
 import com.ntnu.gidd.model.Activity;
@@ -179,7 +179,7 @@ public class ActivityServiceImpl implements ActivityService {
         Activity activity = this.activityRepository.findById(id).
                 orElseThrow(ActivityNotFoundException::new);
         if(activity.isInviteOnly() && !checkReadAccess(activity, email)){
-            throw new NotInvitedExecption();
+            throw new NotInvitedException();
         }
         ActivityDto activityDto = modelMapper.map(activity, ActivityDto.class);
         activityDto.setHasLiked(activityLikeService.hasLiked(email, activity.getId()));

@@ -47,8 +47,8 @@ public class ControllerExceptionHandler {
       }
 
       @ResponseStatus(value = HttpStatus.FORBIDDEN)
-      @ExceptionHandler(NotInvitedExecption.class)
-      public Response handleNotInvited(NotInvitedExecption exception){
+      @ExceptionHandler(NotInvitedException.class)
+      public Response handleNotInvited(NotInvitedException exception){
             log.error("[X] Error caught while processing request {}", exception.getMessage());
             return new Response(exception.getMessage());
       }

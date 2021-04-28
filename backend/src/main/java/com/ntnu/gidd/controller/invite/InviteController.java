@@ -50,7 +50,7 @@ public class InviteController {
     public Page<UserListDto>  delete(@QuerydslPredicate(root = User.class) Predicate predicate,
                                      @PageableDefault(size = Constants.PAGINATION_SIZE, sort="firstName", direction = Sort.Direction.DESC) Pageable pageable,
                                      @PathVariable UUID activityId, @PathVariable UUID userId){
-        log.debug("[X] Request to deleted host on activity with id={}", activityId);
+        log.debug("[X] Request to delete host on activity with id={}", activityId);
         return inviteService.unInviteUser(predicate, pageable, activityId, userId);
     }
 }
