@@ -165,7 +165,6 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
       endDate: data.endDate.toJSON(),
       signupEnd: data.signupEnd.toJSON(),
       signupStart: data.signupStart.toJSON(),
-      inviteOnly: false,
     };
     if (activityId) {
       await updateActivity.mutate(activity, {

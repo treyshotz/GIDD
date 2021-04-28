@@ -85,6 +85,8 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     private EquipmentService equipmentService;
+
+    @Autowired
     InviteService inviteService;
 
 
