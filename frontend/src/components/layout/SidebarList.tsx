@@ -153,7 +153,7 @@ const SidebarList = <Type,>({
               <AddIcon />
             </IconButton>
           </div>
-          <Pagination fullWidth hasNextPage={hasNextPage} nextPage={fetchNextPage}>
+          <Pagination fullWidth hasNextPage={hasNextPage} nextPage={fetchNextPage} variant='text'>
             <List className={classes.list} dense disablePadding>
               {isLoading && <ListItemLoading />}
               {items.map((item) => (
@@ -167,7 +167,7 @@ const SidebarList = <Type,>({
               <div className={classes.header}>
                 <Typography variant='h3'>Tidligere</Typography>
               </div>
-              <Pagination fullWidth hasNextPage={hasNextExpiredPage} nextPage={fetchNextExpiredPage}>
+              <Pagination fullWidth hasNextPage={hasNextExpiredPage} nextPage={fetchNextExpiredPage} variant='text'>
                 <List className={classes.list} dense disablePadding>
                   {isExpiredLoading && <ListItemLoading />}
                   {expiredItems.map((item) => (

@@ -70,7 +70,7 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
       values: {
         xs: 0,
         sm: 400,
-        md: 600,
+        md: 650,
         lg: 900,
         xl: 1200,
       },
@@ -157,7 +157,7 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
       },
       colors: {
         topbar: get<string>({ light: '#cecef5', dark: '#26292d' }),
-        gradient: get<string>({ light: 'linear-gradient(to bottom, #adbcdf82, #abc8c073)', dark: 'linear-gradient(to bottom, #105370d0, #26b9cc94)' }),
+        gradient: get<string>({ light: 'linear-gradient(to bottom, #adbcdf82, #abc8c073)', dark: 'linear-gradient(to bottom, #160202ab, #07072769)' }),
       },
     },
     shape: {

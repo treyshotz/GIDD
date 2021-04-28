@@ -28,6 +28,7 @@ import Paper from 'components/layout/Paper';
 import VerifyDialog from 'components/layout/VerifyDialog';
 import MasonryGrid from 'components/layout/MasonryGrid';
 import GoogleMap from 'components/miscellaneous/GoogleMap';
+import Comments from 'components/miscellaneous/Comments';
 
 const useStyles = makeStyles((theme) => ({
   image: {
@@ -99,6 +100,12 @@ const useStyles = makeStyles((theme) => ({
   list: {
     listStylePosition: 'inside',
     margin: 0,
+  },
+  comments: {
+    gridColumn: 'span 2',
+    [theme.breakpoints.down('md')]: {
+      gridColumn: 'span 1',
+    },
   },
 }));
 
@@ -256,6 +263,9 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
             <img className={classes.img} key={i} src={image.url} />
           ))}
         </MasonryGrid>
+      </div>
+      <div className={classes.comments}>
+        <Comments activityId={data.id} />
       </div>
     </div>
   );

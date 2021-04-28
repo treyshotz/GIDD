@@ -50,9 +50,10 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(2),
   },
   btnGroup: {
-    display: 'flex',
+    display: 'grid',
     gap: theme.spacing(1),
     paddingTop: theme.spacing(1),
+    gridTemplateColumns: 'auto auto',
   },
   button: {
     color: theme.palette.common.white,

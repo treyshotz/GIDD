@@ -19,6 +19,7 @@ import {
   User,
   UserCreate,
   UserList,
+  Comment,
 } from 'types/Types';
 
 const USERS = 'users';
@@ -30,6 +31,7 @@ const REGISTRATIONS = 'registrations';
 const INVITES = 'invites';
 const HOSTS = 'hosts';
 const LIKES = 'likes';
+const COMMENTS = 'comments';
 
 export default {
   // Auth
@@ -115,4 +117,16 @@ export default {
   // Upload file
   uploadFile: (file: File | Blob) =>
     IFetch<FileUploadResponse>({ method: 'POST', url: 'https://api.imgbb.com/1/upload?key=909df01fa93bd63405c9a36d662523f3', file, withAuth: false }),
+
+  // Comments
+  getComment: (activityId: string, id: string) => IFetch<PaginationResponse<Comment>>({ method: 'GET', url: `${ACTIVITIES}/${activityId}/${COMMENTS}/${id}/` }),
+  getComments: (activityId: string, filters?: any) =>
+    IFetch<PaginationResponse<Comment>>({ method: 'GET', url: `${ACTIVITIES}/${activityId}/${COMMENTS}/`, data: filters || {} }),
+  createComment: (activityId: string, item: Pick<Comment, 'comment'>) =>
+    IFetch<Comment>({ method: 'POST', url: `${ACTIVITIES}/${activityId}/${COMMENTS}/`, data: item }),
+  updateComment: (activityId: string, item: Pick<Comment, 'comment'>) =>
+    IFetch<Comment>({ method: 'PUT', url: `${ACTIVITIES}/${activityId}/${COMMENTS}/`, data: item }),
+  deleteComment: (activityId: string, id: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${ACTIVITIES}/${activityId}/${COMMENTS}/${id}/` }),
+  editComment: (activityId: string, id: string, item: Pick<Comment, 'comment'>) =>
+    IFetch<Comment>({ method: 'PUT', url: `${ACTIVITIES}/${activityId}/${COMMENTS}/${id}/`, data: item }),
 };

@@ -71,6 +71,13 @@ export type Activity = {
 
 export type ActivityList = Pick<Activity, 'id' | 'title' | 'closed' | 'startDate' | 'endDate' | 'level' | 'description' | 'images' | 'geoLocation'>;
 
+export type Comment = {
+  id: string;
+  comment: string;
+  user: UserList;
+  createdAt: string;
+};
+
 export type Registration = {
   user: User;
 };
