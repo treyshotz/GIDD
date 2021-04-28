@@ -62,9 +62,10 @@ public class ActivityController {
     @PutMapping("{activityId}/")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("@securityService.userHasActivityAccess(#activityId)")
-    public ActivityDto updateActivity(@PathVariable UUID activityId, @RequestBody ActivityDto activity){
+    public ActivityDto updateActivity(@PathVariable UUID activityId, @RequestBody ActivityDto activity, Authentication authentication){
         log.debug("[X] Request to update Activity with id={}", activityId);
-        return activityService.updateActivity(activityId, activity);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return activityService.updateActivity(activityId, activity, userDetails.getUsername());
     }
 
     @PostMapping
