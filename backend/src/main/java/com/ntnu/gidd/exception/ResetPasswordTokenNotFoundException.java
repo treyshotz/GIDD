@@ -2,7 +2,7 @@ package com.ntnu.gidd.exception;
 
 public class ResetPasswordTokenNotFoundException extends EntityNotFoundException {
 
-	public static final String DEFAULT_MESSAGE = "Reset-password token was not found";
+	private static final String DEFAULT_MESSAGE = "Reset-password token was not found";
 
 	public ResetPasswordTokenNotFoundException(String errorMessage) {
 		super(errorMessage);

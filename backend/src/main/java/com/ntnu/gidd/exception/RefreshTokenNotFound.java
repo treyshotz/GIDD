@@ -2,7 +2,7 @@ package com.ntnu.gidd.exception;
 
 public class RefreshTokenNotFound extends EntityNotFoundException {
 
-    public static final String DEFAULT_MESSAGE = "Refresh token not found";
+    private static final String DEFAULT_MESSAGE = "Refresh token not found";
 
     public RefreshTokenNotFound(String error) {
         super(error);

@@ -2,7 +2,7 @@ package com.ntnu.gidd.exception;
 
 public class TrainingLevelNotFound extends EntityNotFoundException {
 
-    public static final String DEFAULT_MESSAGE = "Training level not found";
+    private static final String DEFAULT_MESSAGE = "Training level not found";
 
     public TrainingLevelNotFound(String error) {
         super(error);

@@ -180,7 +180,7 @@ public class UserControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(validUser)))
 				.andExpect(status().isForbidden())
-				.andExpect(jsonPath("$.message").value(EmailInUseException.DEFAULT_MESSAGE));
+				.andExpect(jsonPath("$.message").value("Email is already associated with another user"));
 		
 	}
 	

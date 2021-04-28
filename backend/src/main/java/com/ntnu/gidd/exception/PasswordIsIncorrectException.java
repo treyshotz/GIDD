@@ -2,7 +2,7 @@ package com.ntnu.gidd.exception;
 
 public class PasswordIsIncorrectException extends RuntimeException {
 
-	public static final String DEFAULT_MESSAGE = "Password is incorrect";
+	private static final String DEFAULT_MESSAGE = "Password is incorrect";
 
 	public PasswordIsIncorrectException(String error) {
 		super(error);
