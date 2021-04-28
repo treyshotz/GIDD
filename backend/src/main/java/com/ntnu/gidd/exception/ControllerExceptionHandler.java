@@ -33,8 +33,8 @@ public class ControllerExceptionHandler {
       }
 
       @ResponseStatus(value = HttpStatus.NOT_FOUND)
-      @ExceptionHandler(ActivityNotFoundExecption.class)
-      public Response handleActivityNotFound(ActivityNotFoundExecption exception){
+      @ExceptionHandler({ActivityNotFoundExecption.class, UserNotFoundException.class, RegistrationNotFoundException.class, RefreshTokenNotFound.class})
+      public Response handleEntityNotFound(EntityNotFoundException exception){
             log.error("[X] Error caught while processing request {}", exception.getMessage());
             return new Response(exception.getMessage());
       }
@@ -46,23 +46,9 @@ public class ControllerExceptionHandler {
             return new Response(exception.getMessage());
       }
 
-      @ResponseStatus(value = HttpStatus.NOT_FOUND)
-      @ExceptionHandler(UserNotFoundException.class)
-      public Response handleUserNotFound(UserNotFoundException exception){
-            log.error("[X] Error caught while processing request {}", exception.getMessage());
-            return new Response(exception.getMessage());
-      }
-
       @ResponseStatus(value = HttpStatus.FORBIDDEN)
       @ExceptionHandler(InvalidUnInviteExecption.class)
       public Response handleNotAbleToUnInvite(InvalidUnInviteExecption exception){
-            log.error("[X] Error caught while processing request {}", exception.getMessage());
-            return new Response(exception.getMessage());
-      }
-
-      @ResponseStatus
-      @ExceptionHandler(RegistrationNotFoundException.class)
-      public Response handleRegistrationNotFound(RegistrationNotFoundException exception){
             log.error("[X] Error caught while processing request {}", exception.getMessage());
             return new Response(exception.getMessage());
       }
