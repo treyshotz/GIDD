@@ -46,6 +46,13 @@ public class User extends UUIDModel {
     private PasswordResetToken resetToken;
 
     String image;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, insertable = false)
+    private List<Comment> comments;
+    
+
+
     @PreRemove
     private void removeActivitiesFromUsers() {
         if(activities != null)

@@ -45,6 +45,7 @@ public class ActivityDto {
     private int capacity;
     private List<ActivityImageDto> images;
     private List<EquipmentDto> equipment;
+    @NotNull
     private boolean inviteOnly;
     private GeoLocationDto geoLocation;
 

@@ -6,6 +6,7 @@ import com.ntnu.gidd.dto.User.UserListDto;
 import com.ntnu.gidd.model.Equipment;
 import com.ntnu.gidd.dto.geolocation.GeoLocationDto;
 import com.ntnu.gidd.util.TrainingLevelEnum;
+import javax.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.ZonedDateTime;
@@ -26,6 +27,7 @@ public class ActivityListDto {
     private UserListDto creator;
     private boolean closed;
     private TrainingLevelEnum level;
+    @NotNull
     private boolean inviteOnly;
     private List<ActivityImageDto> images;
     private GeoLocationDto geoLocation;

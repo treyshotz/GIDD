@@ -3,7 +3,7 @@ package com.ntnu.gidd.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.time.ZonedDateTime ;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,75 +21,90 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-@Table(name="activity")
+@Table(name = "activity")
 @EqualsAndHashCode(callSuper = true)
 public class Activity extends UUIDModel {
 
-    @NotNull
-    private String title;
-    @NotNull
-    @Column(columnDefinition = "TEXT")
-    private String description;
-    @NotNull
-    private ZonedDateTime  startDate;
-    @NotNull
-    private ZonedDateTime  endDate;
-    @NotNull
-    private ZonedDateTime  signupStart;
-    @NotNull
-    private ZonedDateTime  signupEnd;
-    @NotNull
-    private boolean closed;
-    @OneToOne
-    @JoinColumn(name = "traning_level_id", referencedColumnName = "id")
-    private TrainingLevel trainingLevel;
-    @OneToOne
-    @JoinColumn(name = "creator_id", referencedColumnName = "id")
-    private User creator;
+  @NotNull
+  private String title;
+  @NotNull
+  @Column(columnDefinition = "TEXT")
+  private String description;
+  @NotNull
+  private ZonedDateTime startDate;
+  @NotNull
+  private ZonedDateTime endDate;
+  @NotNull
+  private ZonedDateTime signupStart;
+  @NotNull
+  private ZonedDateTime signupEnd;
+  @NotNull
+  private boolean closed;
+  @OneToOne
+  @JoinColumn(name = "traning_level_id", referencedColumnName = "id")
+  private TrainingLevel trainingLevel;
+  @OneToOne
+  @JoinColumn(name = "creator_id", referencedColumnName = "id")
+  private User creator;
 
-    @ManyToMany
-    @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id" ),
-    inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-    uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
-    private List<User> hosts;
+  @ManyToMany
+  @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+      uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
+  private List<User> hosts;
 
-    private int capacity;
+  private int capacity;
 
-    @OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
-    @JoinColumn(name = "activity_id", nullable = false, insertable = false)
-    private List<ActivityImage> images;
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JoinColumn(name = "activity_id", nullable = false, insertable = false)
+  private List<ActivityImage> images;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Equipment> equipment;
-    
-    @ManyToOne(cascade = CascadeType.MERGE,  fetch = FetchType.LAZY)
-    @JoinColumns( {
-            @JoinColumn(name="lat", referencedColumnName="lat"),
-            @JoinColumn(name="lng", referencedColumnName="lng")
-    } )
-    private GeoLocation geoLocation;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST) // TODO: this persist transient instances
-    @JoinTable(name = "invites", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id" ),
-            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
-    private List<User> invites;
-    @Column()
-    private boolean inviteOnly = false;
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<Equipment> equipment;
+  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+  private List<Comment> comments;
 
-    @PreRemove
-    private void removeHostsFromActivity() {
-        if(hosts != null)
-            hosts.clear();
+  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+  @JoinColumns( {
+      @JoinColumn(name = "lat", referencedColumnName = "lat"),
+      @JoinColumn(name = "lng", referencedColumnName = "lng")
+  })
+  private GeoLocation geoLocation;
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+  // TODO: this persist transient instances
+  @JoinTable(name = "invites", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+      uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
+  private List<User> invites;
+
+  private boolean inviteOnly = false;
+
+  @PreRemove
+  private void removeHostsAndCommentsFromActivity() {
+    clearHost();
+    clearComments();
+  }
+
+  private void clearHost() {
+    if (hosts != null) {
+      hosts.clear();
     }
+  }
 
-    @Transient
-    @QueryType(PropertyType.DATETIME)
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private ZonedDateTime  startDateBefore;
+  private void clearComments() {
+    if (comments != null) {
+      comments.clear();
+    }
+  }
 
-    @Transient
-    @QueryType(PropertyType.DATETIME)
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private ZonedDateTime  startDateAfter;
+  @Transient
+  @QueryType(PropertyType.DATETIME)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+  private ZonedDateTime startDateBefore;
+
+  @Transient
+  @QueryType(PropertyType.DATETIME)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+  private ZonedDateTime startDateAfter;
 
 }

@@ -28,7 +28,7 @@ public class UserFactory implements FactoryBean<User> {
                 .surname(getRandomString(5))
                 .password(encoder.encode(getRandomString(10)))
                 .birthDate(LocalDate.now())
-                .created_at(ZonedDateTime.now())
+                .createdAt(ZonedDateTime.now())
                 .build();
     }
 

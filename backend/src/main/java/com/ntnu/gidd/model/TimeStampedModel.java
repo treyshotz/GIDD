@@ -1,7 +1,9 @@
 package com.ntnu.gidd.model;
 
 
+
 import java.time.ZonedDateTime;
+import javax.persistence.EntityListeners;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +12,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.MappedSuperclass;
-import java.time.LocalDateTime;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
 @Getter
@@ -18,9 +20,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @SuperBuilder
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public class TimeStampedModel {
-    @CreatedDate
-    private ZonedDateTime created_at;
-    @LastModifiedDate
-    private ZonedDateTime updated_at;
+
+  @CreatedDate
+  private ZonedDateTime createdAt;
+
+  @LastModifiedDate
+  private ZonedDateTime updatedAt;
 }
