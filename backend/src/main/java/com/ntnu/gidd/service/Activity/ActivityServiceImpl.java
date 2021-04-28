@@ -97,7 +97,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public ActivityDto updateActivity(UUID activityId, ActivityDto activity) {
         Activity updateActivity = this.activityRepository.findById(activityId)
-                .orElseThrow(ActivityNotFoundExecption::new);
+                .orElseThrow(ActivityNotFoundException::new);
         activityRepository.flush();
         updateActivity.setTitle(activity.getTitle());
         updateActivity.setDescription(activity.getDescription());
