@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -52,6 +53,8 @@ class FollowerServiceImplTest {
 
     private List<User> followedByActor;
 
+    private List<User> subjectsFollowers;
+
     private Pageable pageable;
 
     @BeforeEach
@@ -68,9 +71,16 @@ class FollowerServiceImplTest {
 
         followedByActor = List.of(subject);
         pageable = JpaUtils.getDefaultPageable();
-        Page<User> following = new PageImpl<>(followedByActor, pageable, followedByActor.size());
+        Page<User> followers = new PageImpl<>(followedByActor, pageable, followedByActor.size());
 
         lenient().when(userRepository.findByFollowersId(actor.getId(), pageable))
+                .thenReturn(followers);
+
+        subjectsFollowers = List.of(actor);
+        pageable = JpaUtils.getDefaultPageable();
+        Page<User> following = new PageImpl<>(subjectsFollowers, pageable, followedByActor.size());
+
+        lenient().when(userRepository.findByFollowingId(subject.getId(), pageable))
                 .thenReturn(following);
     }
 
@@ -131,5 +141,40 @@ class FollowerServiceImplTest {
 
         assertThatExceptionOfType(UserNotFoundException.class)
                 .isThrownBy(() -> followerService.getFollowingFor(nonExistentUserId, pageable));
+    }
+
+
+    @Test
+    void testGetFollowersOfReturnsAllUsersFollowingGivenUser() {
+        Page<UserDto> actualFollowers = followerService.getFollowersOf(subject.getId(), pageable);
+
+        assertThat(actualFollowers).hasSameSizeAs(followedByActor);
+
+        Stream<UUID> actualFollowingIds = actualFollowers.stream()
+                .map(UserDto::getId);
+
+        assertThat(actualFollowingIds).contains(actor.getId());
+    }
+
+    @Test
+    void testGetFollowersOfWhenUserHasNoFollowersReturnsEmptyPage() {
+        int expectedSize = 0;
+        Page<User> emptyFollowersPage = new PageImpl<>(new ArrayList<>(), pageable, expectedSize);
+
+        lenient().when(userRepository.findByFollowingId(subject.getId(), pageable))
+                .thenReturn(emptyFollowersPage);
+
+        Page<UserDto> actualFollowers = followerService.getFollowersOf(subject.getId(), pageable);
+
+        assertThat(actualFollowers).hasSize(expectedSize);
+    }
+
+    @Test
+    void testGetFollowersOfWhenUserDoesNotExistThrowsError() {
+        UUID nonExistentUserId = UUID.randomUUID();
+        when(userService.getUserById(nonExistentUserId)).thenThrow(UserNotFoundException.class);
+
+        assertThatExceptionOfType(UserNotFoundException.class)
+                .isThrownBy(() -> followerService.getFollowersOf(nonExistentUserId, pageable));
     }
 }

@@ -53,7 +53,7 @@ public class FollowingController {
 
     @GetMapping("{userId}/following/")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "List all users the current user is following")
+    @ApiOperation(value = "List all users the user with the given id is following")
     public Page<UserDto> getFollowing(@PathVariable UUID userId,
                                       @PageableDefault(size = Constants.PAGINATION_SIZE, sort="firstName", direction = Sort.Direction.ASC) Pageable pageable) {
         return getFollowingFor(userId, pageable);

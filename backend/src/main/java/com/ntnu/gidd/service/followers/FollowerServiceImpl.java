@@ -53,4 +53,13 @@ public class FollowerServiceImpl implements FollowerService {
         return userRepository.findByFollowersId(subject.getId(), pageable)
                 .map(user -> modelMapper.map(user, UserDto.class));
     }
+
+    @Override
+    public Page<UserDto> getFollowersOf(UUID id, Pageable pageable) {
+        log.debug("[X] Retrieving followers of user with id {}", id);
+        User subject = userService.getUserById(id);
+
+        return userRepository.findByFollowingId(subject.getId(), pageable)
+                .map(user -> modelMapper.map(user, UserDto.class));
+    }
 }

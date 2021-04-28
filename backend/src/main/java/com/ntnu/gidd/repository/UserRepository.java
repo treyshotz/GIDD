@@ -22,6 +22,7 @@ public interface UserRepository extends JpaRepository<User, UUID> , QuerydslPred
     Page<User> findUserByInvites(Activity activity, Pageable pageable);
     Optional<User> findByEmail(String email);
     Page<User> findByFollowersId(UUID id, Pageable pageable);
+    Page<User> findByFollowingId(UUID id, Pageable pageable);
 
     @Override
     default void customize(QuerydslBindings bindings, QUser user) {

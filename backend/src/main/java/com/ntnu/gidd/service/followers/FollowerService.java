@@ -13,4 +13,6 @@ public interface FollowerService {
      Response registerFollow(FollowRequest followRequest);
 
     Page<UserDto> getFollowingFor(UUID id, Pageable pageable);
+
+    Page<UserDto> getFollowersOf(UUID id, Pageable pageable);
 }

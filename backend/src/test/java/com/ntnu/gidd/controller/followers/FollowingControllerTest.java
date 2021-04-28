@@ -48,8 +48,6 @@ class FollowingControllerTest {
 
     private User subject;
 
-    private User nonFollowing;
-
     private UserDetailsImpl actorUserDetails;
 
     private String subjectIdRequestBody;
@@ -58,7 +56,7 @@ class FollowingControllerTest {
     void setUp() throws Exception {
         actor = userFactory.getObject();
         subject = userFactory.getObject();
-        nonFollowing = userFactory.getObject();
+        User nonFollowing = userFactory.getObject();
 
         actor = userRepository.saveAndFlush(actor);
         subject = userRepository.saveAndFlush(subject);
@@ -197,6 +195,71 @@ class FollowingControllerTest {
     }
     @Test
     public void testGetFollowingWhenUnauthenticatedReturnsHttp401() throws Exception {
+        mvc.perform(get(getUsersUri(actor))
+                            .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    //
+
+    @Test
+    public void testGetCurrentUsersFollowersWhenSuccessfulReturnsHttp200() throws Exception {
+        mvc.perform(get(URI_ME)
+                            .with(user(actorUserDetails))
+                            .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetCurrentUsersFollowersWhenSuccessfulReturnsAllUserAreFollowing() throws Exception {
+        actor.addFollowing(subject);
+        userRepository.save(actor);
+
+        mvc.perform(get(URI_ME)
+                            .with(user(actorUserDetails))
+                            .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.length()").value(actor.getFollowing().size()))
+                .andExpect(jsonPath("$.content.[*].id", hasItem(subject.getId().toString())));
+    }
+
+    @Test
+    public void testGetCurrentUsersFollowersWhenUnauthenticatedReturnsHttp401() throws Exception {
+        mvc.perform(get(URI_ME)
+                            .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void testGetFollowersWhenSuccessfulReturnsHttp200() throws Exception {
+        mvc.perform(get(getUsersUri(actor))
+                            .with(user(actorUserDetails))
+                            .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetFollowersWhenSuccessfulReturnsAllUserAreFollowing() throws Exception {
+        actor.addFollowing(subject);
+        userRepository.save(actor);
+
+        mvc.perform(get(getUsersUri(actor))
+                            .with(user(actorUserDetails))
+                            .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.length()").value(actor.getFollowing().size()))
+                .andExpect(jsonPath("$.content.[*].id", hasItem(subject.getId().toString())));
+    }
+
+    @Test
+    public void testGetFollowersWhenUserNotFoundReturnsHttp404() throws Exception {
+        User nonExistentUser = userFactory.getObject();
+
+        mvc.perform(get(getUsersUri(nonExistentUser))
+                            .with(user(actorUserDetails))
+                            .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+    @Test
+    public void testGetFollowersWhenUnauthenticatedReturnsHttp401() throws Exception {
         mvc.perform(get(getUsersUri(actor))
                             .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
