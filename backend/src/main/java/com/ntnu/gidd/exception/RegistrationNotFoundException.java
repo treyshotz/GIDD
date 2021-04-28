@@ -1,6 +1,7 @@
 package com.ntnu.gidd.exception;
 
 public class RegistrationNotFoundException extends EntityNotFoundException {
+
     private static final long serialVersionUID = 1L;
 
     public static final String DEFAULT_MESSAGE = "Registration does not exist";

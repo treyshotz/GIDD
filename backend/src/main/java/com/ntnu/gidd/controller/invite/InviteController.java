@@ -2,12 +2,7 @@ package com.ntnu.gidd.controller.invite;
 
 import com.ntnu.gidd.dto.User.UserEmailDto;
 import com.ntnu.gidd.dto.User.UserListDto;
-import com.ntnu.gidd.exception.ActivityNotFoundExecption;
-import com.ntnu.gidd.exception.InvalidUnInviteExecption;
-import com.ntnu.gidd.exception.UserNotFoundException;
-import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.User;
-import com.ntnu.gidd.service.Host.HostService;
 import com.ntnu.gidd.service.invite.InviteService;
 import com.ntnu.gidd.util.Constants;
 import com.querydsl.core.types.Predicate;
@@ -20,9 +15,7 @@ import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.UUID;
 
 

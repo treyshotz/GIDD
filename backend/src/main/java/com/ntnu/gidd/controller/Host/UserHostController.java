@@ -2,8 +2,6 @@ package com.ntnu.gidd.controller.Host;
 
 import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
-import com.ntnu.gidd.exception.ActivityNotFoundExecption;
-import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.service.Host.HostService;
 import com.ntnu.gidd.util.Constants;
@@ -18,7 +16,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;

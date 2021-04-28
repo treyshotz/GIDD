@@ -1,14 +1,14 @@
 package com.ntnu.gidd.exception;
 
-public class ActivityNotFoundExecption extends EntityNotFoundException{
+public class ActivityNotFoundException extends EntityNotFoundException{
 
     public static final String DEFAULT_MESSAGE = "This activity does not exist";
 
-    public ActivityNotFoundExecption(String errorMessage){
+    public ActivityNotFoundException(String errorMessage){
         super(errorMessage);
     }
 
-    public ActivityNotFoundExecption(){
+    public ActivityNotFoundException(){
         super(DEFAULT_MESSAGE);
     }
 

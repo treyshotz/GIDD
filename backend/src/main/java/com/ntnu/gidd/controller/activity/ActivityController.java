@@ -4,8 +4,6 @@ package com.ntnu.gidd.controller.activity;
 
 import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
-import com.ntnu.gidd.exception.ActivityNotFoundExecption;
-import com.ntnu.gidd.exception.NotInvitedExecption;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.GeoLocation;
 import com.ntnu.gidd.service.Activity.ActivityService;
@@ -24,7 +22,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 

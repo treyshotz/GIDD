@@ -2,8 +2,8 @@ package com.ntnu.gidd.service.invite;
 
 import com.ntnu.gidd.dto.User.UserEmailDto;
 import com.ntnu.gidd.dto.User.UserListDto;
-import com.ntnu.gidd.exception.ActivityNotFoundExecption;
-import com.ntnu.gidd.exception.InvalidUnInviteExecption;
+import com.ntnu.gidd.exception.ActivityNotFoundException;
+import com.ntnu.gidd.exception.InvalidUnInviteException;
 import com.ntnu.gidd.exception.RegistrationNotFoundException;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.Activity;
@@ -38,7 +38,7 @@ public class InviteServiceImpl  implements InviteService{
 
     @Override
     public Page<UserListDto> inviteUser(Predicate predicate, Pageable pageable, UUID activityId, UserEmailDto user) {
-        Activity activity = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundExecption::new);
+        Activity activity = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new);
         List<User> invites = new ArrayList<>();
         invites.addAll(activity.getInvites());
         invites.add(userRepository.findByEmail(user.getEmail()).orElseThrow(UserNotFoundException::new));
@@ -53,11 +53,11 @@ public class InviteServiceImpl  implements InviteService{
         try{
             if(registrationService.getRegistrationWithCompositeId(userId,activityId) != null){
                 log.debug("[x] Request to uninvite a user that is registered");
-                throw new InvalidUnInviteExecption();
+                throw new InvalidUnInviteException();
             }
-        }catch (RegistrationNotFoundException |ActivityNotFoundExecption | UserNotFoundException ignored){}
+        }catch (RegistrationNotFoundException | ActivityNotFoundException | UserNotFoundException ignored){}
 
-        Activity activity = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundExecption::new);
+        Activity activity = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new);
         List<User> invites = new ArrayList<>();
         invites.addAll(activity.getInvites());
         invites.remove(userRepository.findById(userId).orElseThrow(UserNotFoundException::new));
@@ -68,7 +68,7 @@ public class InviteServiceImpl  implements InviteService{
 
     @Override
     public boolean inviteBatch(UUID activityId, List<User> users) {
-        Activity activity = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundExecption::new);
+        Activity activity = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new);
         List<User> invites = new ArrayList<>();
         if(activity.getInvites().size() != 0) invites.addAll(activity.getInvites());
         invites.addAll(users);
@@ -79,7 +79,7 @@ public class InviteServiceImpl  implements InviteService{
 
     @Override
     public Page<UserListDto> getAllInvites(Predicate predicate, Pageable pageable, UUID activityId) {
-        Activity activity = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundExecption::new);
+        Activity activity = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new);
         return userRepository.findUserByInvites(activity, pageable).map(s -> modelMapper.map(s, UserListDto.class));
     }
 

@@ -2,10 +2,9 @@ package com.ntnu.gidd.service.Activity;
 
 import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
-import com.ntnu.gidd.dto.EquipmentDto;
 import com.ntnu.gidd.dto.geolocation.GeoLocationDto;
 import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
-import com.ntnu.gidd.exception.ActivityNotFoundExecption;
+import com.ntnu.gidd.exception.ActivityNotFoundException;
 import com.ntnu.gidd.exception.NotInvitedExecption;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.*;
@@ -21,18 +20,14 @@ import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.service.Activity.expression.ActivityExpression;
 import com.ntnu.gidd.service.ActivityImage.ActivityImageService;
-import com.ntnu.gidd.service.Activity.ActivityService;
 import com.ntnu.gidd.service.Email.EmailService;
 import com.ntnu.gidd.service.Geolocation.GeolocationService;
 import com.ntnu.gidd.service.Registration.RegistrationService;
 import com.ntnu.gidd.service.equipment.EquipmentService;
 import com.ntnu.gidd.service.User.UserService;
-import com.ntnu.gidd.service.User.UserServiceImpl;
-import com.ntnu.gidd.service.Registration.RegistrationService;
 import com.ntnu.gidd.service.invite.InviteService;
 import com.ntnu.gidd.service.rating.ActivityLikeService;
 import com.ntnu.gidd.util.TrainingLevelEnum;
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 
@@ -40,7 +35,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.mail.MessagingException;
 
-import com.querydsl.jpa.JPAExpressions;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 
@@ -53,7 +47,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.ExpressionUtils.anyOf;
 
@@ -184,7 +177,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public ActivityDto getActivityById(UUID id, String email) {
         Activity activity = this.activityRepository.findById(id).
-                orElseThrow(ActivityNotFoundExecption::new);
+                orElseThrow(ActivityNotFoundException::new);
         if(activity.isInviteOnly() && !checkReadAccess(activity, email)){
             throw new NotInvitedExecption();
         }

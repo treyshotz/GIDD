@@ -3,7 +3,6 @@ package com.ntnu.gidd.exception;
 import com.ntnu.gidd.util.Response;
 import com.ntnu.gidd.util.ExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -55,8 +54,8 @@ public class ControllerExceptionHandler {
       }
 
       @ResponseStatus(value = HttpStatus.FORBIDDEN)
-      @ExceptionHandler(InvalidUnInviteExecption.class)
-      public Response handleNotAbleToUnInvite(InvalidUnInviteExecption exception){
+      @ExceptionHandler(InvalidUnInviteException.class)
+      public Response handleNotAbleToUnInvite(InvalidUnInviteException exception){
             log.error("[X] Error caught while processing request {}", exception.getMessage());
             return new Response(exception.getMessage());
       }
