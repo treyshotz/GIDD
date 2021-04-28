@@ -94,4 +94,11 @@ public class ControllerExceptionHandler {
             log.error("[X] Error caught while processing request {}", exception.getMessage());
             return new Response(exception.getMessage());
       }
+
+      @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+      @ExceptionHandler({InvalidFollowRequestException.class})
+      public Response handleInvalidFollowRequest(InvalidFollowRequestException exception){
+            log.error("[X] Error caught while processing request {}", exception.getMessage());
+            return new Response(exception.getMessage());
+      }
 }

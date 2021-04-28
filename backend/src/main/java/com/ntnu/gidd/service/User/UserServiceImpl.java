@@ -60,7 +60,12 @@ public class UserServiceImpl implements UserService {
 	private User getUserByEmail(String email) {
 		return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 	}
-	
+
+	@Override
+	public User getUserById(UUID id) {
+		return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+	}
+
 	private boolean emailExist(String email) {
 		return userRepository.findByEmail(email).isPresent();
 	}

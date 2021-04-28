@@ -6,9 +6,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -51,26 +54,51 @@ public class User extends UUIDModel {
     private List<Comment> comments;
     
 
-    private void removeComments(){
-        if(comments != null)
-            comments.clear();
+    @ManyToMany(fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    @JoinTable(name = "follower",
+        joinColumns = @JoinColumn(name = "follower_id"),
+        inverseJoinColumns = @JoinColumn(name = "following_id"))
+    private List<User> following;
+
+    @ManyToMany(mappedBy = "following", fetch = FetchType.EAGER)
+    private List<User> followers;
+
+    public void addFollowing(User userToFollow) {
+        if (following == null)
+            following = new ArrayList<>();
+
+        following.add(userToFollow);
+        userToFollow.addFollower(this);
     }
 
-    private void removeActivitiesFromUsers() {
-        if(activities != null)
-           activities.clear();
+    private void addFollower(User follower) {
+        if (followers == null)
+            followers = new ArrayList<>();
+
+        followers.add(follower);
     }
 
-    private void removeInvites(){
-        if(invites != null)
-            invites.clear();
-    }
     @PreRemove
     public void removeRelationships(){
         removeComments();
         removeInvites();
         removeActivitiesFromUsers();
         removeComments();
+    }
+
+    private void removeComments(){
+        if(comments != null)
+            comments.clear();
+    }
+    private void removeActivitiesFromUsers() {
+        if(activities != null)
+           activities.clear();
+    }
+    private void removeInvites(){
+        if(invites != null)
+            invites.clear();
     }
 
 }

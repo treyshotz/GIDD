@@ -31,6 +31,10 @@ public class UserDetailsImpl implements UserDetails {
         return email;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
