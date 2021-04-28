@@ -3,7 +3,7 @@ package com.ntnu.gidd.controller.Registration;
 import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
 import com.ntnu.gidd.dto.User.UserEmailDto;
 import com.ntnu.gidd.exception.ActivityFullExecption;
-import com.ntnu.gidd.exception.ActivityNotFoundExecption;
+import com.ntnu.gidd.exception.ActivityNotFoundException;
 import com.ntnu.gidd.exception.RegistrationNotFoundException;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.Activity;
@@ -41,7 +41,7 @@ public class ActivityRegistrationController {
   public RegistrationUserDto postRegistration(@PathVariable UUID activityId, @RequestBody UserEmailDto user) {
     try{
 
-    }catch (UserNotFoundException | ActivityNotFoundExecption ex){
+    }catch (UserNotFoundException | ActivityNotFoundException ex){
       throw new ResponseStatusException(
               HttpStatus.NOT_FOUND, ex.getMessage());
     }catch (ActivityFullExecption ex){

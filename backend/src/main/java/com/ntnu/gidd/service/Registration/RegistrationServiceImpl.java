@@ -44,7 +44,7 @@ public class RegistrationServiceImpl implements RegistrationService {
   @Override
   public RegistrationUserDto saveRegistration(UUID user_id, UUID activity_id){
     User user = userRepository.findById(user_id).orElseThrow(UserNotFoundException::new);
-    Activity activity = activityRepository.findById(activity_id).orElseThrow(ActivityNotFoundExecption::new);
+    Activity activity = activityRepository.findById(activity_id).orElseThrow(ActivityNotFoundException::new);
     if(activity.isClosed())throw new ActivityClosedExecption();
     if(activity.getCapacity() <= registrationRepository.findRegistrationsByActivity_Id(activity_id).size()) throw new ActivityFullExecption();
     Registration registration = registrationRepository.save(new Registration(new RegistrationId(user_id, activity_id), user, activity));
