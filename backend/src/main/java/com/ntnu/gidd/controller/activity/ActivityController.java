@@ -4,8 +4,6 @@ package com.ntnu.gidd.controller.activity;
 
 import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
-import com.ntnu.gidd.exception.ActivityNotFoundExecption;
-import com.ntnu.gidd.exception.NotInvitedExecption;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.GeoLocation;
 import com.ntnu.gidd.service.Activity.ActivityService;
@@ -24,7 +22,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
@@ -58,31 +55,16 @@ public class ActivityController {
     public ActivityDto get(@PathVariable UUID activityId,  Authentication authentication){
         UserDetails userDetails = (authentication!=null)? (UserDetails) authentication.getPrincipal() : null;
         String email = (userDetails != null) ? userDetails.getUsername() : "";
-        try {
-            return activityService.getActivityById(activityId, email);
-        }catch (ActivityNotFoundExecption  ex){
-            log.debug("[X] Request to update Activity with id={}", activityId);
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, ex.getMessage(), ex);
-        } catch (NotInvitedExecption ex){
-            log.debug("[X] Request to update Activity with id={}", activityId);
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN, ex.getMessage(), ex);
-        }
+        log.debug("[X] Request to get Activity with id={}", activityId);
+        return activityService.getActivityById(activityId, email);
     }
 
     @PutMapping("{activityId}/")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("@securityService.userHasActivityAccess(#activityId)")
     public ActivityDto updateActivity(@PathVariable UUID activityId, @RequestBody ActivityDto activity){
-        try {
         log.debug("[X] Request to update Activity with id={}", activityId);
-        return this.activityService.updateActivity(activityId, activity);
-    } catch (ActivityNotFoundExecption ex){
-        log.debug("[X] Request to update Activity with id={}", activityId);
-        throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, ex.getMessage(), ex);
-    }
+        return activityService.updateActivity(activityId, activity);
     }
 
     @PostMapping

@@ -3,6 +3,7 @@ package com.ntnu.gidd.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.ntnu.gidd.dto.User.UserRegistrationDto;
+import com.ntnu.gidd.exception.EmailInUseException;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.UserRepository;
@@ -179,7 +180,7 @@ public class UserControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(validUser)))
 				.andExpect(status().isForbidden())
-				.andExpect(status().reason(containsString("Email is already associated with another user")));
+				.andExpect(jsonPath("$.message").value("Email is already associated with another user"));
 		
 	}
 	
@@ -201,7 +202,7 @@ public class UserControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(invalidUser)))
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.message").value("INVALID_METHOD_ARGUMENT"))
+				.andExpect(jsonPath("$.message").value("One or more method arguments are invalid"))
 				.andExpect(jsonPath("$.data.email").exists());
 	}
 
@@ -222,7 +223,7 @@ public class UserControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(invalidUser)))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("INVALID_METHOD_ARGUMENT"))
+			.andExpect(jsonPath("$.message").value("One or more method arguments are invalid"))
 			.andExpect(jsonPath("$.data.password").exists());
 	}
 	

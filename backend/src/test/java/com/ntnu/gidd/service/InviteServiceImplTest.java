@@ -1,19 +1,15 @@
 package com.ntnu.gidd.service;
 
 import com.ntnu.gidd.config.ModelMapperConfig;
-import com.ntnu.gidd.dto.User.UserDto;
 import com.ntnu.gidd.dto.User.UserEmailDto;
 import com.ntnu.gidd.dto.User.UserListDto;
-import com.ntnu.gidd.exception.ActivityNotFoundExecption;
 import com.ntnu.gidd.factories.ActivityFactory;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.Activity;
-import com.ntnu.gidd.model.Registration;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.service.Registration.RegistrationService;
-import com.ntnu.gidd.service.invite.InviteService;
 import com.ntnu.gidd.service.invite.InviteServiceImpl;
 import com.ntnu.gidd.utils.JpaUtils;
 import com.querydsl.core.types.Predicate;
@@ -32,7 +28,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.assertj.core.api.Assertions.in;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
 

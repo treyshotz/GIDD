@@ -4,8 +4,8 @@ import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.dto.LikeDto;
 import com.ntnu.gidd.dto.User.UserEmailDto;
 import com.ntnu.gidd.dto.User.UserListDto;
-import com.ntnu.gidd.exception.ActivityNotFoundExecption;
-import com.ntnu.gidd.exception.InvalidUnInviteExecption;
+import com.ntnu.gidd.exception.ActivityNotFoundException;
+import com.ntnu.gidd.exception.InvalidUnInviteException;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.service.invite.InviteService;
@@ -52,7 +52,7 @@ public class ActivityLikeController {
             UserDetails userDetails =  (UserDetails) authentication.getPrincipal() ;
             String email = userDetails.getUsername();
             return new LikeDto(activityLikeService.addLike(email, activityId));
-        }catch (UserNotFoundException | ActivityNotFoundExecption ex){
+        }catch (UserNotFoundException | ActivityNotFoundException ex){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage());
         }
@@ -66,7 +66,7 @@ public class ActivityLikeController {
             UserDetails userDetails =  (UserDetails) authentication.getPrincipal() ;
             String email = userDetails.getUsername();
             return new LikeDto(activityLikeService.removeLike(email, activityId));
-        }catch (UserNotFoundException | ActivityNotFoundExecption ex){
+        }catch (UserNotFoundException | ActivityNotFoundException ex){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage());
         }

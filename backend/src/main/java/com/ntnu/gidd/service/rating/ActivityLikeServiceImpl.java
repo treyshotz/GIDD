@@ -1,7 +1,7 @@
 package com.ntnu.gidd.service.rating;
 
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
-import com.ntnu.gidd.exception.ActivityNotFoundExecption;
+import com.ntnu.gidd.exception.ActivityNotFoundException;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.User;
@@ -44,7 +44,7 @@ public class ActivityLikeServiceImpl  implements ActivityLikeService{
     }
 
     public boolean addLike(String email, UUID ActivityId){
-        Activity activity = activityRepository.findById(ActivityId).orElseThrow(ActivityNotFoundExecption::new);
+        Activity activity = activityRepository.findById(ActivityId).orElseThrow(ActivityNotFoundException::new);
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
         if(user != null && activity !=null){
             if(activity.getLikes().contains(user))return true;
@@ -58,7 +58,7 @@ public class ActivityLikeServiceImpl  implements ActivityLikeService{
     }
 
     public boolean removeLike(String email, UUID ActivityId){
-        Activity activity = activityRepository.findById(ActivityId).orElseThrow(ActivityNotFoundExecption::new);
+        Activity activity = activityRepository.findById(ActivityId).orElseThrow(ActivityNotFoundException::new);
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
         if(user != null && activity !=null){
             List<User> likes = activity.getLikes();

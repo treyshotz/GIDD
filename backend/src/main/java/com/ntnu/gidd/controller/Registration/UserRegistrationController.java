@@ -41,7 +41,8 @@ public class UserRegistrationController {
                                                                sort="activity.startDate", direction = Sort.Direction.ASC) Pageable pageable,
                                                        Authentication authentication) {
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-    log.debug("[X] Request to look up acivites registered for user with username={}", userDetails.getUsername());
+
+    log.debug("[X] Request to look up activities registered for user with username={}", userDetails.getUsername());
     return registrationService.getRegistrationWithUsername(predicate, pageable, userDetails.getUsername());
   }
 
@@ -49,6 +50,7 @@ public class UserRegistrationController {
   @ResponseStatus(HttpStatus.OK)
   public ActivityDto getRegistrationWithCompositeIdUser(Authentication authentication, @PathVariable UUID activityId) {
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
     return registrationService.getRegistrationWithUsernameAndActivityId(userDetails.getUsername(), activityId);
   }
 
@@ -56,15 +58,9 @@ public class UserRegistrationController {
   @ResponseStatus(HttpStatus.OK)
   public Response deleteRegistration(Authentication authentication, @PathVariable UUID activityId){
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-    try {
-      log.debug("[X] Request to delete Registration with activityId={} ", activityId);
-      registrationService.deleteRegistrationWithUsernameAndActivityId(userDetails.getUsername(), activityId);
-      return new Response("Registration has been deleted");
-    } catch (RegistrationNotFoundException ex) {
-      log.debug("[X] Request to delete Registration with activityId={} resulted in RegistrationNotFound", activityId);
-      throw new ResponseStatusException(
-              HttpStatus.NOT_FOUND, ex.getMessage(), ex
-      );
-    }
+
+    log.debug("[X] Request to delete Registration with activityId={} ", activityId);
+    registrationService.deleteRegistrationWithUsernameAndActivityId(userDetails.getUsername(), activityId);
+    return new Response("Registration has been deleted");
   }
 }

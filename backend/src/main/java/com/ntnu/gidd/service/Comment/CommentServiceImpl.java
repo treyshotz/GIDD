@@ -2,7 +2,7 @@ package com.ntnu.gidd.service.Comment;
 
 import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Comment.CommentDto;
-import com.ntnu.gidd.exception.ActivityNotFoundExecption;
+import com.ntnu.gidd.exception.ActivityNotFoundException;
 import com.ntnu.gidd.exception.NotHostOrCreatorException;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.Activity;
@@ -71,7 +71,7 @@ public class CommentServiceImpl implements CommentService {
     if (checkIfHostOrCreater(activityId, creatorEmail) || checkIfOwnerOfComment(creatorEmail, comment)) {
 
       Comment updateCommentDto = this.commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
-      Activity updateActivity = this.activityRepository.findById(activityId).orElseThrow(ActivityNotFoundExecption::new);
+      Activity updateActivity = this.activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new);
 
       List<Comment> comments =  new ArrayList<>(updateActivity.getComments());
       comments.remove(updateCommentDto);
@@ -100,7 +100,7 @@ public class CommentServiceImpl implements CommentService {
     User user = userRepository.findByEmail(creatorEmail).orElseThrow(UserNotFoundException::new);
     comment.setUser(user);
 
-    Activity updateActivity = this.activityRepository.findById(activityId).orElseThrow(ActivityNotFoundExecption::new);
+    Activity updateActivity = this.activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new);
     List<Comment> comments =  new ArrayList<>(updateActivity.getComments());
     comment.setId(UUID.randomUUID());
     comment = commentRepository.save(comment);
@@ -137,7 +137,7 @@ public class CommentServiceImpl implements CommentService {
   public void deleteAllCommentsOnActivity(UUID activityId, String creatorEmail) {
     if (checkIfHostOrCreater(activityId, creatorEmail)) {
 
-      Activity updateActivity = this.activityRepository.findById(activityId).orElseThrow(ActivityNotFoundExecption::new);
+      Activity updateActivity = this.activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new);
 
       List<Comment> comments =  new ArrayList<>(updateActivity.getComments());
       comments.clear();
@@ -158,7 +158,7 @@ public class CommentServiceImpl implements CommentService {
   @Override
   public Page<CommentDto>  getCommentsOnActivity(Pageable pageable, UUID activityId) {
 
-    Activity activityToFind = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundExecption::new);
+    Activity activityToFind = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new);
     Page<Comment> comments = new PageImpl<>(activityToFind.getComments(), pageable, activityToFind.getComments().size());
     return comments.map((s-> modelMapper.map(s, CommentDto.class)));
 
@@ -174,7 +174,7 @@ public class CommentServiceImpl implements CommentService {
   private boolean checkIfHostOrCreater(UUID activityId, String creatorEmail){
 
     User user = userRepository.findByEmail(creatorEmail).orElseThrow(UserNotFoundException::new);
-    Activity activity = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundExecption::new);
+    Activity activity = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new);
     return (activity.getCreator().equals(user) || activity.getHosts().contains(user));
   }
 

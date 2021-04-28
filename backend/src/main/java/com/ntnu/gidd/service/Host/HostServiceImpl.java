@@ -4,7 +4,7 @@ import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.dto.User.UserEmailDto;
 import com.ntnu.gidd.dto.User.UserListDto;
-import com.ntnu.gidd.exception.ActivityNotFoundExecption;
+import com.ntnu.gidd.exception.ActivityNotFoundException;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.QActivity;
@@ -58,7 +58,7 @@ public class HostServiceImpl implements HostService {
     @Override
     public ActivityDto getActivityFromUser(UUID userId, UUID activityId) {
         return modelMapper.map(activityRepository.findActivityByIdAndHosts_Id(activityId, userId)
-                .orElseThrow(ActivityNotFoundExecption::new), ActivityDto.class);
+                .orElseThrow(ActivityNotFoundException::new), ActivityDto.class);
 
     }
     
@@ -66,20 +66,20 @@ public class HostServiceImpl implements HostService {
     public ActivityDto getActivityFromUserByEmail(String email, UUID activityId) {
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
         return modelMapper.map(activityRepository.findActivityByIdAndHosts_Id(activityId, user.getId())
-                .orElseThrow(ActivityNotFoundExecption::new), ActivityDto.class);
+                .orElseThrow(ActivityNotFoundException::new), ActivityDto.class);
         
     }
 
     @Override
     public List<UserListDto> getByActivityId(UUID id) {
-        return activityRepository.findById(id).orElseThrow(ActivityNotFoundExecption::new)
+        return activityRepository.findById(id).orElseThrow(ActivityNotFoundException::new)
                 .getHosts().stream().map(a -> modelMapper.map(a, UserListDto.class)).collect(Collectors.toList());
     }
 
     @Override
     public List<UserListDto>  addHosts(UUID activityId, UserEmailDto user) {
         Activity activity = activityRepository.findById(activityId)
-                .orElseThrow(ActivityNotFoundExecption::new);
+                .orElseThrow(ActivityNotFoundException::new);
         ArrayList<User> list = new ArrayList<>(activity.getHosts()) ;
         list.add(userRepository.findByEmail(user.getEmail()).
                 orElseThrow(UserNotFoundException::new));
@@ -93,7 +93,7 @@ public class HostServiceImpl implements HostService {
     @Override
     public List<UserListDto> deleteHost(UUID activityId, UUID userId) {
         Activity activity = activityRepository.findById(activityId)
-                .orElseThrow(ActivityNotFoundExecption::new);
+                .orElseThrow(ActivityNotFoundException::new);
         ArrayList<User> list = new ArrayList<>(activity.getHosts()) ;
        list.remove(userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new));
@@ -108,7 +108,7 @@ public class HostServiceImpl implements HostService {
     public List<ActivityListDto> deleteHostfromUser(UUID activityId, UUID userId) {
        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         ArrayList<Activity> list = new ArrayList<>(user.getActivities());
-        list.remove(activityRepository.findById(activityId).orElseThrow(ActivityNotFoundExecption::new));
+        list.remove(activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new));
         user.setActivities(list);
        return userRepository.save(user).getActivities().stream()
                .map(a -> modelMapper.map(a, ActivityListDto.class))
@@ -119,7 +119,7 @@ public class HostServiceImpl implements HostService {
     public List<ActivityListDto> deleteHostfromUserByEmail(UUID activityId, String email) {
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
         ArrayList<Activity> list = new ArrayList<>(user.getActivities());
-        list.remove(activityRepository.findById(activityId).orElseThrow(ActivityNotFoundExecption::new));
+        list.remove(activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new));
         user.setActivities(list);
         return userRepository.save(user).getActivities().stream()
                 .map(a -> modelMapper.map(a, ActivityListDto.class))

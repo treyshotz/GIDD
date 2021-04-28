@@ -37,26 +37,22 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("@securityService.isUser(#userId)")
     public UserDto updateUser(@PathVariable UUID userId, @RequestBody UserDto user){
+        log.debug("[X] Request to update user with id={}", user.getId());
         return this.userService.updateUser(userId, user);
     }
 
     @GetMapping("{userId}/")
     @ResponseStatus(HttpStatus.OK)
     public UserDto getUser(@PathVariable UUID userId){
-        try {
-            return userService.getUserByUUID(userId);
-
-        }catch (UserNotFoundException ex){
-            log.error("[X] User with id {} not found, userId", userId);
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, ex.getMessage(), ex);
-        }
+        log.debug("[X] Request to get user with id={}", userId);
+        return userService.getUserByUUID(userId);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<UserDto> getAllUser(@QuerydslPredicate(root = Activity.class) Predicate predicate,
                               @PageableDefault(size = Constants.PAGINATION_SIZE, sort="firstName", direction = Sort.Direction.ASC) Pageable pageable){
+        log.debug("[X] Request to look up users");
         return this.userService.getAll(predicate, pageable);
     }
 
@@ -64,6 +60,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public UserDto getUser(Authentication authentication){
         UserDetails user = (UserDetails) authentication.getPrincipal();
+
+        log.debug("[X] Request to get personal userinfo with token");
         return this.userService.getUserDtoByEmail(user.getUsername());
     }
 
@@ -71,13 +69,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto createUser(@Valid @RequestBody UserRegistrationDto userRegistrationDto){
         log.debug("[X] Request to save user with email={}", userRegistrationDto.getEmail());
-        try{
-            return userService.saveUser(userRegistrationDto);
-        }
-        catch (EmailInUseException exception){
-            log.error("[X] Email is already in use", exception);
-            throw new ResponseStatusException(
-                  HttpStatus.FORBIDDEN, exception.getMessage(), exception);
-        }
+        return userService.saveUser(userRegistrationDto);
     }
 }

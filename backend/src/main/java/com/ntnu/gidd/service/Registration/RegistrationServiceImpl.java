@@ -3,6 +3,9 @@ package com.ntnu.gidd.service.Registration;
 import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
+import com.ntnu.gidd.exception.ActivityNotFoundException;
+import com.ntnu.gidd.exception.RegistrationNotFoundException;
+import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.exception.*;
 import com.ntnu.gidd.model.*;
 import com.ntnu.gidd.repository.ActivityRepository;
@@ -15,7 +18,6 @@ import java.util.stream.Collectors;
 import com.ntnu.gidd.repository.UserRepository;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -42,7 +44,7 @@ public class RegistrationServiceImpl implements RegistrationService {
   @Override
   public RegistrationUserDto saveRegistration(UUID user_id, UUID activity_id){
     User user = userRepository.findById(user_id).orElseThrow(UserNotFoundException::new);
-    Activity activity = activityRepository.findById(activity_id).orElseThrow(ActivityNotFoundExecption::new);
+    Activity activity = activityRepository.findById(activity_id).orElseThrow(ActivityNotFoundException::new);
     if(activity.isClosed())throw new ActivityClosedExecption();
     if(activity.getCapacity() <= registrationRepository.findRegistrationsByActivity_Id(activity_id).size()) throw new ActivityFullExecption();
     Registration registration = registrationRepository.save(new Registration(new RegistrationId(user_id, activity_id), user, activity));

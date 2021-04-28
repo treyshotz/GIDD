@@ -11,6 +11,7 @@ import com.ntnu.gidd.service.User.UserService;
 import com.ntnu.gidd.util.Response;
 import com.ntnu.gidd.dto.User.UserPasswordResetDto;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,23 +38,13 @@ public class AuthenticationController {
 	@GetMapping("/refresh-token/")
 	public JwtTokenResponse refreshToken(HttpServletRequest request) {
 		String header = request.getHeader(jwtConfig.getHeader());
-		try {
-			return jwtService.refreshToken(header);
-		} catch (RefreshTokenNotFound ex) {
-			log.error("[X] Token refresh failed with exception", ex);
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, ex.getMessage());
-		}
+		return jwtService.refreshToken(header);
 	}
 	
 	@PostMapping("/change-password/")
 	@ResponseStatus(HttpStatus.OK)
 	public Response updatePassword(Principal principal, @RequestBody UserPasswordUpdateDto user) {
-		try {
-			userService.changePassword(principal, user);
-		} catch (PasswordIsIncorrectException ex) {
-			log.error("[X] User {} tried to change password with incorrect current password", principal.getName(), ex);
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, ex.getMessage());
-		}
+		userService.changePassword(principal, user);
 		return new Response("Password was successfully changed");
 	}
 	
@@ -63,19 +54,13 @@ public class AuthenticationController {
 	 * @param UserPasswordForgotDto of the users which should have its password reset
 	 * @return
 	 */
+	@SneakyThrows
 	@PostMapping("/forgot-password/")
 	@ResponseStatus(HttpStatus.OK)
 	public Response forgotPassword(@RequestBody UserPasswordForgotDto UserPasswordForgotDto) {
-		try {
-			userService.forgotPassword(UserPasswordForgotDto.getEmail());
-			log.info("Email sent to {} for resetting password", UserPasswordForgotDto.getEmail());
-		} catch (UserNotFoundException ex) {
-			log.error("Could not find user {}", UserPasswordForgotDto);
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-		} catch (MessagingException ex) {
-			log.error("Something went wrong during sending email", ex);
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong during sending email");
-		}
+		userService.forgotPassword(UserPasswordForgotDto.getEmail());
+
+		log.info("Email sent to {} for resetting password", UserPasswordForgotDto.getEmail());
 		return new Response("An email for resetting password has been sent!");
 	}
 	
@@ -88,20 +73,9 @@ public class AuthenticationController {
 	@PostMapping("/reset-password/{passwordResetTokenId}/")
 	@ResponseStatus(HttpStatus.OK)
 	public Response resetPassword(@RequestBody UserPasswordResetDto userPasswordResetDto, @PathVariable UUID passwordResetTokenId) {
-		try {
-			userService.validateResetPassword(userPasswordResetDto, passwordResetTokenId);
-			log.info("Password was changed for user {}", userPasswordResetDto.getEmail());
-		} catch (UserNotFoundException e) {
-			log.error("Could not change password. User {} was not found!", userPasswordResetDto.getEmail());
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-		} catch (ResetPasswordTokenNotFoundException e) {
-			log.error("Could not find reset password token for {}!", userPasswordResetDto.getEmail());
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		} catch (InvalidResetPasswordToken e) {
-			log.error("Reset token is invalid!");
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Reset token is invalid!");
-		}
-		return new Response("Password was changed sucessfully");
+		userService.validateResetPassword(userPasswordResetDto, passwordResetTokenId);
+		log.info("Password was changed for user {}", userPasswordResetDto.getEmail());
+		return new Response("Password was changed successfully");
 	}
 	
 }

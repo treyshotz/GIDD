@@ -3,7 +3,7 @@ package com.ntnu.gidd.controller.Registration;
 import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
 import com.ntnu.gidd.dto.User.UserEmailDto;
 import com.ntnu.gidd.exception.ActivityFullExecption;
-import com.ntnu.gidd.exception.ActivityNotFoundExecption;
+import com.ntnu.gidd.exception.ActivityNotFoundException;
 import com.ntnu.gidd.exception.RegistrationNotFoundException;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.Activity;
@@ -41,7 +41,7 @@ public class ActivityRegistrationController {
   public RegistrationUserDto postRegistration(@PathVariable UUID activityId, @RequestBody UserEmailDto user) {
     try{
 
-    }catch (UserNotFoundException | ActivityNotFoundExecption ex){
+    }catch (UserNotFoundException | ActivityNotFoundException ex){
       throw new ResponseStatusException(
               HttpStatus.NOT_FOUND, ex.getMessage());
     }catch (ActivityFullExecption ex){
@@ -72,16 +72,9 @@ public class ActivityRegistrationController {
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("@securityService.registrationPermissions(#activityId, #userId)")
   public Response deleteRegistration(@PathVariable UUID activityId, @PathVariable UUID userId){
-    try {
-      log.debug("[X] Request to delete Registration with userId={} ", userId);
-      registrationService.deleteRegistrationWithCompositeId(userId, activityId);
-      return new Response("Registration has been deleted");
-    } catch (RegistrationNotFoundException ex) {
-      log.debug("[X] Request to delete Registration with userId={} resulted in RegistrationNotFound", userId);
-      throw new ResponseStatusException(
-              HttpStatus.NOT_FOUND, ex.getMessage(), ex
-      );
-    }
+    log.debug("[X] Request to delete Registration with userId={} ", userId);
+    registrationService.deleteRegistrationWithCompositeId(userId, activityId);
+    return new Response("Registration has been deleted");
   }
 
 }
