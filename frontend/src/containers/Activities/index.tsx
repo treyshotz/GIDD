@@ -17,7 +17,7 @@ import NotFoundIndicator from 'components/miscellaneous/NotFoundIndicator';
 import Calendar from 'components/miscellaneous/Calendar';
 import ActivityCard from 'components/layout/ActivityCard';
 import MasonryGrid from 'components/layout/MasonryGrid';
-import SearchBar from 'components/inputs/SearchBar';
+import ActivitiesSearch from 'containers/Activities/components/ActivitiesSearch';
 import ActivitiesMap from 'components/miscellaneous/ActivitiesMap';
 
 const useStyles = makeStyles((theme) => ({
@@ -40,7 +40,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   searchWrapper: {
-    maxWidth: 700,
     margin: 'auto',
   },
   title: {
@@ -64,7 +63,7 @@ export type ActivityFilters = {
   ['trainingLevel.level']?: string;
   startDateAfter?: string;
   startDateBefore?: string;
-  radius?: number;
+  range?: number;
   lat?: number;
   lng?: number;
   sort?: string;
@@ -116,7 +115,7 @@ const Activities = () => {
               Kart
             </Button>
           </ButtonGroup>
-          <SearchBar updateFilters={setFilters} />
+          <ActivitiesSearch updateFilters={setFilters} />
         </div>
         <div>
           <Hidden xlDown>
@@ -133,7 +132,7 @@ const Activities = () => {
               <MasonryGrid>
                 {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen aktiviteter'} />}
                 {activities.map((activity) => (
-                  <ActivityCard activity={activity} key={activity.id} />
+                  <ActivityCard activity={activity} gutterBottom key={activity.id} />
                 ))}
               </MasonryGrid>
             </Pagination>

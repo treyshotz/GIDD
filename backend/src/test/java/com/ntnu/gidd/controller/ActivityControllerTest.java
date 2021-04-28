@@ -2,7 +2,9 @@ package com.ntnu.gidd.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ntnu.gidd.factories.ActivityFactory;
+import com.ntnu.gidd.factories.EquipmentListFactory;
 import com.ntnu.gidd.factories.UserFactory;
+import com.ntnu.gidd.model.*;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.GeoLocation;
 
@@ -11,6 +13,7 @@ import static org.hamcrest.Matchers.not;
 import com.ntnu.gidd.model.TrainingLevel;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
+import com.ntnu.gidd.repository.EquipmentRepository;
 import com.ntnu.gidd.repository.GeoLocationRepository;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.security.UserDetailsImpl;
@@ -34,6 +37,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -63,6 +67,9 @@ public class ActivityControllerTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EquipmentRepository equipmentRepository;
 
     @Autowired
     private TrainingLevelService trainingLevelService;
@@ -101,9 +108,6 @@ public class ActivityControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.title").value(activity.getTitle()))
                 .andExpect(jsonPath("$.description").value(activity.getDescription()));
-
-
-
     }
 
 
@@ -168,6 +172,28 @@ public class ActivityControllerTest {
             .andExpect(jsonPath("$.geoLocation.lng").value(expectedGeoLocation.getLng()));
     }
 
+    @WithMockUser(value = "spring")
+    @Test
+    public void testCreateActivityWithSavedEquipmentSavesActivityWithExistingEquipment() throws Exception{
+        Activity activity = activityFactory.getObject();
+        User user = userFactory.getObject();
+        userRepository.save(user);
+        UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
+        activity.setEquipment(new EquipmentListFactory().getObject());
+        List<Equipment> expectedEquipment = activity.getEquipment();
+        equipmentRepository.saveAll(expectedEquipment);
+
+        //EquipmentListFactory creates a random list of equipment with 2 <= size <= 5
+        //Therefore we compare the first 2 items in equipmentlist
+        
+        this.mvc.perform(post(URI).with(user(userDetails))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(activity)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.equipment.length()").value(expectedEquipment.size()))
+        .andExpect(jsonPath("$.equipment.[*].name", hasItem(expectedEquipment.get(0).getName())))
+        .andExpect(jsonPath("$.equipment.[*].name", hasItem(expectedEquipment.get(1).getName())));
+    }
 
     @WithMockUser(value = "spring")
     @Test

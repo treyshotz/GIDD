@@ -1,15 +1,27 @@
-import { useMutation, useQuery, useQueryClient, UseMutationResult } from 'react-query';
+import { useMutation, useInfiniteQuery, useQuery, useQueryClient, UseMutationResult } from 'react-query';
 import API from 'api/api';
 import URLS from 'URLS';
-import { User, UserCreate, LoginRequestResponse, RequestResponse, RefreshTokenResponse } from 'types/Types';
+import { User, UserList, UserCreate, PaginationResponse, LoginRequestResponse, RequestResponse, RefreshTokenResponse } from 'types/Types';
 import { getCookie, setCookie, removeCookie } from 'api/cookie';
 import { ACCESS_TOKEN, REFRESH_TOKEN, ACCESS_TOKEN_DURATION, REFRESH_TOKEN_DURATION } from 'constant';
+import { getNextPaginationPage } from 'utils';
 
 export const USER_QUERY_KEY = 'user';
 export const USERS_QUERY_KEY = 'users';
 
 export const useUser = (userId?: string) => {
   return useQuery<User | undefined, RequestResponse>([USER_QUERY_KEY, userId], () => API.getUser(userId));
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const useUsers = (filters?: any) => {
+  return useInfiniteQuery<PaginationResponse<UserList>, RequestResponse>(
+    [USERS_QUERY_KEY, filters],
+    ({ pageParam = 0 }) => API.getUsers({ ...filters, page: pageParam }),
+    {
+      getNextPageParam: getNextPaginationPage,
+    },
+  );
 };
 
 export const useRefreshUser = () => {

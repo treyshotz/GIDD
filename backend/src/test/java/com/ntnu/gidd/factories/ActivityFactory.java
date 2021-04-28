@@ -1,6 +1,7 @@
 package com.ntnu.gidd.factories;
 
 import com.ntnu.gidd.model.Activity;
+import com.ntnu.gidd.model.Equipment;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.time.ZonedDateTime;

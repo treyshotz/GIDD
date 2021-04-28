@@ -100,7 +100,7 @@ const Landing = () => {
           <MasonryGrid>
             {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen aktiviteter'} />}
             {activities.map((activity) => (
-              <ActivityCard activity={activity} key={activity.id} />
+              <ActivityCard activity={activity} gutterBottom key={activity.id} />
             ))}
           </MasonryGrid>
         </Pagination>

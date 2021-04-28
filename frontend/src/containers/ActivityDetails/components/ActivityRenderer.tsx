@@ -5,7 +5,7 @@ import URLS from 'URLS';
 import { parseISO, isPast, isFuture } from 'date-fns';
 import { formatDate } from 'utils';
 import { useMaps } from 'hooks/Utils';
-import { GoogleMap, Marker } from '@react-google-maps/api';
+import { Marker } from '@react-google-maps/api';
 
 // Services
 import { useActivityRegistration, useDeleteActivityRegistration } from 'hooks/Activities';
@@ -25,6 +25,7 @@ import ActivityRegistration from 'containers/ActivityDetails/components/Activity
 import Paper from 'components/layout/Paper';
 import VerifyDialog from 'components/layout/VerifyDialog';
 import MasonryGrid from 'components/layout/MasonryGrid';
+import GoogleMap from 'components/miscellaneous/GoogleMap';
 
 const useStyles = makeStyles((theme) => ({
   image: {
@@ -88,9 +89,11 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.shape.borderRadius,
   },
   containerStyle: {
-    width: '100%',
     height: 300,
-    borderRadius: theme.shape.borderRadius,
+  },
+  list: {
+    listStylePosition: 'inside',
+    margin: 0,
   },
 }));
 
@@ -215,8 +218,19 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
               Endre aktivitet
             </Button>
           )}
-        </div>
-        <div className={classes.grid}>
+          {Boolean(data.equipment.length) && (
+            <Paper>
+              <Typography className={classes.detailsHeader} variant='h2'>
+                Utstyr
+              </Typography>
+              <Typography variant='caption'>Arrangøren trenger dette utstyret til aktiviteten. Kommenter om du kan ta med!</Typography>
+              <ul className={classes.list}>
+                {data.equipment.map((item, i) => (
+                  <li key={i}>{`${item.name} - ${item.amount} stk`}</li>
+                ))}
+              </ul>
+            </Paper>
+          )}
           {isMapLoaded && (
             <GoogleMap center={data.geoLocation} mapContainerClassName={classes.containerStyle} zoom={14}>
               <Marker position={data.geoLocation} />

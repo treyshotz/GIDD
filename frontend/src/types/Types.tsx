@@ -17,8 +17,6 @@ export type PaginationResponse<T> = {
   totalElements: number;
   totalPages: number;
   number: number;
-  next: number | null;
-  previous: number | null;
   content: Array<T>;
   empty: boolean;
   last: boolean;
@@ -31,36 +29,40 @@ export type User = {
   email: string;
   birthDate: string | null;
   level: TrainingLevel;
+  image: string;
 };
 
-export type UserList = Pick<User, 'id' | 'firstName' | 'surname' | 'email'>;
+export type UserList = Pick<User, 'id' | 'firstName' | 'surname' | 'email' | 'image'>;
 
 export type UserCreate = Pick<User, 'email' | 'firstName' | 'surname'> & {
   password: string;
-  matchingPassword: string;
 };
 
 export type ActivityRequired = Partial<Activity> & Pick<Activity, 'title' | 'startDate' | 'endDate' | 'signupStart' | 'signupEnd'>;
 
 export type Activity = {
-  id: string;
-  createdDate: string;
-  title: string;
-  description: string;
-  closed: boolean;
   capacity: number;
-  level: TrainingLevel;
-  startDate: string;
+  closed: boolean;
+  createdDate: string;
+  creator: UserList;
+  description: string;
   endDate: string;
-  signupStart: string;
-  signupEnd: string;
+  equipment: Array<{
+    name: string;
+    amount: number;
+  }>;
+  geoLocation: LatLng;
   hosts: Array<UserList>;
+  id: string;
+  inviteOnly: boolean;
+  level: TrainingLevel;
   images: Array<{
     url: string;
   }>;
-  creator: UserList;
-  geoLocation: LatLng;
-  inviteOnly: boolean;
+  startDate: string;
+  signupStart: string;
+  signupEnd: string;
+  title: string;
 };
 
 export type ActivityList = Pick<Activity, 'id' | 'title' | 'closed' | 'startDate' | 'endDate' | 'level' | 'description' | 'images' | 'geoLocation'>;

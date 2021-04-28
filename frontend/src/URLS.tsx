@@ -20,5 +20,6 @@ export default {
   ACTIVITIES: '/activities/',
   ADMIN_ACTIVITIES: '/admin/activities/',
   PROFILE: '/profile/',
+  USERS: '/users/',
   ...AUTH_ROUTES,
 };

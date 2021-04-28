@@ -5,7 +5,7 @@ import { Activity, LatLng } from 'types/Types';
 import { TrainingLevel } from 'types/Enums';
 import { traningLevelToText } from 'utils';
 import { useMaps } from 'hooks/Utils';
-import { GoogleMap, Circle, Autocomplete } from '@react-google-maps/api';
+import { Circle, Autocomplete, Data } from '@react-google-maps/api';
 
 // Material UI Components
 import { makeStyles, Theme } from '@material-ui/core/styles';
@@ -23,7 +23,8 @@ import Select from 'components/inputs/Select';
 import Paper from 'components/layout/Paper';
 import SubmitButton from 'components/inputs/SubmitButton';
 import Slider from 'components/inputs/Slider';
-import Bool from './Bool';
+import Bool from 'components/inputs/Bool';
+import GoogleMap from 'components/miscellaneous/GoogleMap';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -60,9 +61,7 @@ const useStyles = makeStyles((theme) => ({
     margin: 'auto 0',
   },
   mapContainerStyle: {
-    width: '100%',
     height: 300,
-    borderRadius: theme.shape.borderRadius,
   },
   mapFilter: {
     marginTop: theme.spacing(1),
@@ -79,7 +78,6 @@ type FormValues = {
   startDate?: Date;
   level?: Activity['level'] | '';
   radius?: number;
-  latLng?: LatLng;
   enableStartDate: boolean;
   enableEndDate: boolean;
   enableTrainingLevel: boolean;
@@ -87,7 +85,7 @@ type FormValues = {
   sort: string;
 };
 
-export type SearchBarProps = {
+export type ActivitiesSearchProps = {
   updateFilters: (newFilters: ActivityFilters) => void;
 };
 
@@ -98,7 +96,7 @@ const SORT_OPTIONS = [
   { name: 'Tittel - Å-A', key: 'title,DESC' },
 ];
 
-const SearchBar = ({ updateFilters }: SearchBarProps) => {
+const ActivitiesSearch = ({ updateFilters }: ActivitiesSearchProps) => {
   const classes = useStyles();
   const xlUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('xl'));
   const [open, setOpen] = useState(false);
@@ -129,11 +127,11 @@ const SearchBar = ({ updateFilters }: SearchBarProps) => {
       filters['trainingLevel.level'] = data.level;
     }
     if (data.radius && data.enableGeoLocation) {
-      filters.radius = data.radius * 1000;
+      filters.range = data.radius;
     }
-    if (data.latLng && data.enableGeoLocation) {
-      filters.lat = data.latLng.lat;
-      filters.lng = data.latLng.lng;
+    if (location && data.enableGeoLocation) {
+      filters.lat = location.lat;
+      filters.lng = location.lng;
     }
     updateFilters(filters);
   };
@@ -166,7 +164,7 @@ const SearchBar = ({ updateFilters }: SearchBarProps) => {
   }, []);
 
   const Input = forwardRef(({ ...props }: InputBaseProps, ref) => (
-    <InputBase {...props} className={classes.input} inputRef={ref} name={props.name} placeholder='Søk etter aktivitet' />
+    <InputBase {...props} className={classes.input} inputRef={ref} name={props.name} placeholder='Søk etter aktiviteter' />
   ));
   Input.displayName = 'Input';
 
@@ -227,6 +225,13 @@ const SearchBar = ({ updateFilters }: SearchBarProps) => {
                   <Slider control={control} name='radius' />
                   <GoogleMap center={location} mapContainerClassName={classes.mapContainerStyle} zoom={11}>
                     {radius && <Circle center={location} radius={radius * 1000} />}
+                    <Data
+                      options={{
+                        drawingMode: 'Point',
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        featureFactory: (geo: any) => !geo?.g || setLocation(geo.g?.toJSON()),
+                      }}
+                    />
                   </GoogleMap>
                 </>
               )}
@@ -244,4 +249,4 @@ const SearchBar = ({ updateFilters }: SearchBarProps) => {
   );
 };
 
-export default SearchBar;
+export default ActivitiesSearch;
