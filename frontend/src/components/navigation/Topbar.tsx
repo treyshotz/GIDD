@@ -179,7 +179,7 @@ const Topbar = ({ variant }: TopbarProps) => {
             </Hidden>
             <Hidden mdUp>
               <IconButton className={classes.topbarItem} onClick={() => setSidebarOpen((prev) => !prev)}>
-                {sidebarOpen ? <CloseIcon /> : <MenuIcon />}
+                {sidebarOpen ? <CloseIcon aria-label='Lukk meny' /> : <MenuIcon aria-label='Åpne meny' />}
               </IconButton>
               <Sidebar items={items} onClose={() => setSidebarOpen(false)} open={sidebarOpen} />
             </Hidden>

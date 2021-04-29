@@ -114,12 +114,12 @@ const UsersSearch = ({ updateFilters }: UsersSearchProps) => {
       <form onSubmit={handleSubmit(submit)}>
         <div className={classes.root}>
           <Hidden xlUp>
-            <IconButton aria-label='menu' className={classes.iconButton} onClick={() => setOpen((prev) => !prev)}>
+            <IconButton aria-label='Filter eny' className={classes.iconButton} onClick={() => setOpen((prev) => !prev)}>
               <FilterIcon />
             </IconButton>
           </Hidden>
           <Input {...register('name')} />
-          <IconButton className={classes.iconButton} type='submit'>
+          <IconButton aria-label='Søk' className={classes.iconButton} type='submit'>
             <SearchIcon />
           </IconButton>
         </div>

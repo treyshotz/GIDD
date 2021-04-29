@@ -173,12 +173,12 @@ const ActivitiesSearch = ({ updateFilters }: ActivitiesSearchProps) => {
       <form onSubmit={handleSubmit(submit)}>
         <div className={classes.root}>
           <Hidden xlUp>
-            <IconButton aria-label='menu' className={classes.iconButton} onClick={() => setOpen((prev) => !prev)}>
+            <IconButton aria-label='Se filtermeny' className={classes.iconButton} onClick={() => setOpen((prev) => !prev)}>
               <FilterIcon />
             </IconButton>
           </Hidden>
           <Input {...register('title')} />
-          <IconButton className={classes.iconButton} type='submit'>
+          <IconButton aria-label='Søk' className={classes.iconButton} type='submit'>
             <SearchIcon />
           </IconButton>
         </div>

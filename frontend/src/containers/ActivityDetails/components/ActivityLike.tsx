@@ -68,10 +68,10 @@ const ActivityLike = ({ activity }: ActivityLikeProps) => {
     <Paper className={classes.root} noPadding>
       <Typography>{activity.likesCount}</Typography>
       <Tooltip title={activity.hasLiked ? 'Fjern fra dine favoritter' : 'Legg til dine favoritter'}>
-        <IconButton onClick={toggle}>{activity.hasLiked ? <LikedIcon /> : <NotLikedIcon />}</IconButton>
+        <IconButton onClick={toggle}>{activity.hasLiked ? <LikedIcon aria-label='Slutt å like' /> : <NotLikedIcon aria-label='Lik dette' />}</IconButton>
       </Tooltip>
       <Tooltip title='Del med følgerne dine'>
-        <IconButton onClick={() => setShareOpen(true)}>
+        <IconButton aria-label='del' onClick={() => setShareOpen(true)}>
           <ShareIcon />
         </IconButton>
       </Tooltip>

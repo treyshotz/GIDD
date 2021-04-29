@@ -50,7 +50,7 @@ function ThemeSettings({ className, classNameIcon }: ThemeSettingsProps) {
 
   return (
     <>
-      <IconButton aria-label='Change theme' className={className} onClick={() => setOpen(true)}>
+      <IconButton aria-label='Endre fargetema' className={className} onClick={() => setOpen(true)}>
         <LightIcon className={classNameIcon} />
       </IconButton>
       <Dialog fullWidth={false} maxWidth={false} onClose={() => setOpen(false)} open={open} titleText='Tema'>

@@ -118,7 +118,7 @@ const Comments = (props: CommentsProps) => {
       <Avatar src={user?.image} />
       <MuiPaper className={classes.paperRoot} component='form' onSubmit={handleSubmit(submit)}>
         <Input {...register('comment')} />
-        <IconButton aria-label='send' className={classes.iconButton} color='primary' type='submit'>
+        <IconButton aria-label='send kommentar' className={classes.iconButton} color='primary' type='submit'>
           <SendRoundedIcon />
         </IconButton>
       </MuiPaper>

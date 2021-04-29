@@ -82,7 +82,7 @@ const CommentCard = ({ comment, activityId }: CommentProps) => {
           <ListItemText primary={`${comment.user.firstName} ${comment.user.surname}`} secondary={getTimeSince(parseISO(comment.createdAt))} />
           {comment.user.id === user?.id && (
             <ListItemSecondaryAction className={classes.btnGroup}>
-              <IconButton aria-label='delete' onClick={() => setOpen(true)}>
+              <IconButton aria-label='rediger kommentar' onClick={() => setOpen(true)}>
                 <EditIcon />
               </IconButton>
               <Dialog onClose={() => setOpen(false)} open={open}>
@@ -91,7 +91,7 @@ const CommentCard = ({ comment, activityId }: CommentProps) => {
                   <SubmitButton formState={formState}>Oppdater kommentar</SubmitButton>
                 </form>
               </Dialog>
-              <VerifyDialog contentText='Hvis du sletter kommentaren vil den bli slettet' iconButton={true} onConfirm={remove}>
+              <VerifyDialog aria-label='slett kommentar' contentText='Hvis du sletter kommentaren vil den bli slettet' iconButton={true} onConfirm={remove}>
                 <DeleteIcon />
               </VerifyDialog>
             </ListItemSecondaryAction>

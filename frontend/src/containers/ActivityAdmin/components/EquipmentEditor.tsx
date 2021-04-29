@@ -90,7 +90,7 @@ export const EquipmentEditor = forwardRef(({ control, trigger, register, name, f
                   helperText={formState.errors[name]?.[index]?.name?.message}
                   required
                 />
-                <IconButton onClick={() => remove(index)}>
+                <IconButton aria-label='Slett' onClick={() => remove(index)}>
                   <DeleteIcon className={classes.remove} />
                 </IconButton>
               </ListItem>

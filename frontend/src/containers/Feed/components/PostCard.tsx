@@ -65,7 +65,7 @@ const PostCard = ({ post, preview = false }: PostCardProps) => {
           {user?.id === post.creator.id && !preview && (
             <ListItemSecondaryAction className={classes.menu}>
               <PostCreateCard onClose={() => setOpenEdit(false)} open={openEdit} post={post} />
-              <IconButton onClick={() => setOpenEdit(true)}>
+              <IconButton aria-label='Rediger post' onClick={() => setOpenEdit(true)}>
                 <MoreIcon />
               </IconButton>
             </ListItemSecondaryAction>

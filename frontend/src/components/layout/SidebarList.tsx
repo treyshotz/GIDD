@@ -149,7 +149,7 @@ const SidebarList = <Type,>({
         <div className={classes.scroll}>
           <div className={classes.header}>
             <Typography variant='h3'>{title}</Typography>
-            <IconButton onClick={() => handleItemClick(null)}>
+            <IconButton aria-label='lag ny' onClick={() => handleItemClick(null)}>
               <AddIcon />
             </IconButton>
           </div>
