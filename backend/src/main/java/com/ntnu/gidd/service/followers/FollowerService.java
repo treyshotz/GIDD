@@ -15,4 +15,6 @@ public interface FollowerService {
     Page<UserDto> getFollowingFor(UUID id, Pageable pageable);
 
     Page<UserDto> getFollowersOf(UUID id, Pageable pageable);
+
+    Response unfollowUser(UUID actorId, UUID followingId);
 }

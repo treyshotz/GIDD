@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -60,7 +61,7 @@ class FollowingControllerTest {
 
         actor = userRepository.saveAndFlush(actor);
         subject = userRepository.saveAndFlush(subject);
-        nonFollowing = userRepository.saveAndFlush(nonFollowing);
+        userRepository.saveAndFlush(nonFollowing);
 
         actorUserDetails = UserDetailsImpl.builder().id(actor.getId())
                 .email(actor.getEmail())
@@ -70,6 +71,10 @@ class FollowingControllerTest {
 
     private static String getUsersUri(User user) {
         return URI + user.getId().toString() + URI_SUFFIX;
+    }
+
+    private static String getMeDetailUri(User user) {
+        return URI_ME + user.getId().toString() + "/";
     }
 
     @Test
@@ -200,8 +205,6 @@ class FollowingControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    //
-
     @Test
     public void testGetCurrentUsersFollowersWhenSuccessfulReturnsHttp200() throws Exception {
         mvc.perform(get(URI_ME)
@@ -265,4 +268,70 @@ class FollowingControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    @Test
+    public void testUnfollowUserWhenSubjectDoesNotExistReturnsHttp404() throws Exception {
+        User nonExistentUser = userFactory.getObject();
+
+        mvc.perform(delete(getMeDetailUri(nonExistentUser))
+                            .with(user(actorUserDetails))
+                            .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testUnfollowUserWhenSuccessfulReturnsHttp200() throws Exception {
+        actor.addFollowing(subject);
+        userRepository.save(actor);
+
+        mvc.perform(delete(getMeDetailUri(subject))
+                            .with(user(actorUserDetails))
+                            .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").isNotEmpty());
+    }
+
+    @Test
+    public void testUnfollowUserWhenSuccessfulRemovesSubjectFromActorsFollowing() throws Exception {
+        actor.addFollowing(subject);
+        userRepository.save(actor);
+
+        mvc.perform(delete(getMeDetailUri(subject))
+                            .with(user(actorUserDetails))
+                            .accept(MediaType.APPLICATION_JSON));
+
+        actor = userRepository.findById(actor.getId()).get();
+
+        assertThat(actor.getFollowing()).doesNotContain(subject);
+    }
+
+    @Test
+    public void testUnfollowUserWhenSuccessfulRemovesActorFromSubjectsFollowers() throws Exception {
+        actor.addFollowing(subject);
+        userRepository.save(actor);
+
+        mvc.perform(delete(getMeDetailUri(subject))
+                            .with(user(actorUserDetails))
+                            .accept(MediaType.APPLICATION_JSON));
+
+        subject = userRepository.findById(subject.getId()).get();
+
+        assertThat(subject.getFollowers()).doesNotContain(actor);
+    }
+
+    @Test
+    public void testUnfollowUserWhenSubjectDoesNotFollowActorReturnsHttp200() throws Exception {
+        mvc.perform(delete(getMeDetailUri(subject))
+                            .with(user(actorUserDetails))
+                            .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testUnfollowUserWhenUnauthenticatedReturnsHttp401() throws Exception {
+        User nonExistentUser = userFactory.getObject();
+
+        mvc.perform(delete(getMeDetailUri(nonExistentUser))
+                            .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
 }

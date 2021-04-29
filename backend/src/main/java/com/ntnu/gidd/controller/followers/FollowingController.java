@@ -64,4 +64,13 @@ public class FollowingController {
         return followerService.getFollowingFor(userId, pageable);
     }
 
+    @DeleteMapping("/me/following/{userId}/")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Unfollow the given user")
+    private Response unfollowUser(@AuthenticationPrincipal UserDetailsImpl principal,
+                                  @PathVariable UUID userId) {
+        log.debug("[X] Request to unfollow user with id: {}", userId);
+        return followerService.unfollowUser(principal.getId(), userId);
+    }
+
 }

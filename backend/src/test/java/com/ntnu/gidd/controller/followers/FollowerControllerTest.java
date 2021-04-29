@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,9 +41,7 @@ class FollowerControllerTest {
     private UserRepository userRepository;
 
     private UserFactory userFactory = new UserFactory();
-
-    private ObjectMapper objectMapper = new ObjectMapper();
-
+    
     private User actor;
 
     private User subject;
@@ -69,6 +67,10 @@ class FollowerControllerTest {
 
     private static String getUsersUri(User user) {
         return URI + user.getId().toString() + URI_SUFFIX;
+    }
+
+    private static String getMeDetailUri(User user) {
+        return URI_ME + user.getId().toString() + "/";
     }
 
     @Test
@@ -136,4 +138,61 @@ class FollowerControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
+
+    @Test
+    public void testRemoveFollowerWhenSuccessfulReturnsHttp200() throws Exception {
+        subject.addFollowing(actor);
+        userRepository.save(subject);
+
+        mvc.perform(delete(getMeDetailUri(subject))
+                            .with(user(actorUserDetails))
+                            .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").isNotEmpty());
+    }
+
+    @Test
+    public void testRemoveFollowerWhenSuccessfulRemovesSubjectFromActorsFollowers() throws Exception {
+        subject.addFollowing(actor);
+        userRepository.save(subject);
+
+        mvc.perform(delete(getMeDetailUri(subject))
+                            .with(user(actorUserDetails))
+                            .accept(MediaType.APPLICATION_JSON));
+
+        actor = userRepository.findById(actor.getId()).get();
+
+        assertThat(actor.getFollowers()).doesNotContain(subject);
+    }
+
+    @Test
+    public void testRemoveFollowerWhenSuccessfulRemovesActorFromSubjectsFollowing() throws Exception {
+        subject.addFollowing(actor);
+        userRepository.save(subject);
+
+        mvc.perform(delete(getMeDetailUri(subject))
+                            .with(user(actorUserDetails))
+                            .accept(MediaType.APPLICATION_JSON));
+
+        subject = userRepository.findById(subject.getId()).get();
+
+        assertThat(subject.getFollowing()).doesNotContain(actor);
+    }
+
+    @Test
+    public void testRemoveFollowerWhenSubjectDoesNotFollowActorReturnsHttp200() throws Exception {
+        mvc.perform(delete(getMeDetailUri(subject))
+                            .with(user(actorUserDetails))
+                            .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testRemoveFollowerWhenUnauthenticatedReturnsHttp401() throws Exception {
+        User nonExistentUser = userFactory.getObject();
+
+        mvc.perform(delete(getMeDetailUri(nonExistentUser))
+                            .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
 }

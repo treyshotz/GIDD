@@ -88,6 +88,15 @@ public class User extends UUIDModel {
         followers.add(follower);
     }
 
+    public void removeFollowing(User unfollowed) {
+        following.remove(unfollowed);
+        unfollowed.removeFollower(this);
+    }
+
+    private void removeFollower(User follower) {
+        followers.remove(follower);
+    }
+
     @PreRemove
     public void removeRelationships(){
         removeComments();

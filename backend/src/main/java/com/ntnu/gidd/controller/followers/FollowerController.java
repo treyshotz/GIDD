@@ -53,5 +53,15 @@ public class FollowerController {
         log.debug("[X] Request for to list users followers (id:{})", userId);
         return followerService.getFollowersOf(userId, pageable);
     }
+    @DeleteMapping("/me/followers/{userId}/")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Remove the given user from the current users followers")
+    private Response removeFollower(@AuthenticationPrincipal UserDetailsImpl principal,
+                                  @PathVariable UUID userId) {
+        log.debug("[X] Request to remove follower with id: {}", userId);
+        return followerService.unfollowUser(userId, principal.getId());
+    }
+
+
 
 }

@@ -41,9 +41,9 @@ class FollowerServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
-    private ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper = new ModelMapper();
 
-    private UserFactory userFactory = new UserFactory();
+    private final UserFactory userFactory = new UserFactory();
 
     private User actor;
 
@@ -176,5 +176,41 @@ class FollowerServiceImplTest {
 
         assertThatExceptionOfType(UserNotFoundException.class)
                 .isThrownBy(() -> followerService.getFollowersOf(nonExistentUserId, pageable));
+    }
+
+    @Test
+    void testUnfollowUserWhenActorDoesNotExistThrowsError() {
+        UUID nonExistentUserId = UUID.randomUUID();
+        when(userService.getUserById(nonExistentUserId)).thenThrow(UserNotFoundException.class);
+
+        assertThatExceptionOfType(UserNotFoundException.class)
+                .isThrownBy(() -> followerService.unfollowUser(nonExistentUserId, subject.getId()));
+    }
+
+    @Test
+    void testUnfollowUserWhenSubjectDoesNotExistThrowsError() {
+        UUID nonExistentUserId = UUID.randomUUID();
+        when(userService.getUserById(nonExistentUserId)).thenThrow(UserNotFoundException.class);
+
+        assertThatExceptionOfType(UserNotFoundException.class)
+                .isThrownBy(() -> followerService.unfollowUser(actor.getId(), nonExistentUserId));
+    }
+
+    @Test
+    void testUnfollowUserWhenBothExistRemovesSubjectFromActorsFollowing() {
+        actor.addFollowing(subject);
+
+        followerService.unfollowUser(actor.getId(), subject.getId());
+
+        assertThat(actor.getFollowing()).doesNotContain(subject);
+    }
+
+    @Test
+    void testUnfollowUserWhenBothExistRemovesActorFromSubjectsFollowers() {
+        actor.addFollowing(subject);
+
+        followerService.unfollowUser(actor.getId(), subject.getId());
+
+        assertThat(subject.getFollowers()).doesNotContain(actor);
     }
 }

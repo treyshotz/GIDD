@@ -62,4 +62,16 @@ public class FollowerServiceImpl implements FollowerService {
         return userRepository.findByFollowingId(subject.getId(), pageable)
                 .map(user -> modelMapper.map(user, UserDto.class));
     }
+
+    @Override
+    public Response unfollowUser(UUID actorId, UUID subjectId) {
+        log.debug("[X] Unfollowing user with id:{}, actor:{}", subjectId, actorId);
+        User actor = userService.getUserById(actorId);
+        User subject = userService.getUserById(subjectId);
+
+        actor.removeFollowing(subject);
+
+        log.debug("[X] Successfully followed user (actor:{}, subject:{}", actor.getId(), subject.getId());
+        return new Response("Successfully unfollowed user");
+    }
 }
