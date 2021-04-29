@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 
 import java.util.Optional;
+import java.util.UUID;
 
 
 @AllArgsConstructor
@@ -39,5 +40,14 @@ public class JwtUtil {
 	public Optional<JwtRefreshToken> parseToken(String token) {
 		RawJwtAccessToken rawJwtAccessToken = new RawJwtAccessToken(token);
 		return JwtRefreshToken.of(rawJwtAccessToken, jwtConfig.getSecret());
+	}
+
+	public UUID getUserIdFromToken(String token) {
+		Object uuid = Jwts.parser()
+				.setSigningKey(jwtConfig.getSecret())
+				.parseClaimsJws(token.replace(jwtConfig.getPrefix(), ""))
+				.getBody()
+				.get("uuid");
+		return UUID.fromString(String.valueOf(uuid));
 	}
 }

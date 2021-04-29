@@ -185,7 +185,8 @@ class AuthenticationControllerTest {
 	 */
 	@Test
 	void testRefreshTokenWhenRefreshTokenIsNotFoundReturnsHttp401() throws Exception {
-		UserDetails userDetails = UserDetailsImpl.builder()
+		UserDetailsImpl userDetails = UserDetailsImpl.builder()
+				.id(user.getId())
 				.email(user.getEmail())
 				.build();
 		JwtToken unknownToken = tokenFactory.createRefreshToken(userDetails);

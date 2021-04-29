@@ -78,7 +78,7 @@ public class JWTUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
      */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication auth) throws IOException {
-        UserDetails userDetails = ((UserDetailsImpl) auth.getPrincipal());
+        UserDetailsImpl userDetails = ((UserDetailsImpl) auth.getPrincipal());
 
         JwtToken accessToken = tokenFactory.createAccessToken(userDetails);
         JwtToken refreshToken = tokenFactory.createRefreshToken(userDetails);

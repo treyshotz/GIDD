@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Slf4j
 @AllArgsConstructor
@@ -81,7 +82,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private void setAuthentication(String token) {
         String email = jwtUtil.getEmailFromToken(token);
+        UUID id = jwtUtil.getUserIdFromToken(token);
         UserDetails userDetails = UserDetailsImpl.builder()
+                .id(id)
                 .email(email)
                 .build();
 

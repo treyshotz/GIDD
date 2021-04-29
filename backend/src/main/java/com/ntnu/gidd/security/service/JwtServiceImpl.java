@@ -47,7 +47,8 @@ public class JwtServiceImpl implements JwtService {
         doValidateToken(currentJwtRefreshToken);
 
         User user = getUserFromToken(currentJwtRefreshToken);
-        UserDetails userDetails = UserDetailsImpl.builder()
+        UserDetailsImpl userDetails = UserDetailsImpl.builder()
+                .id(user.getId())
                 .email(user.getEmail())
                 .build();
 

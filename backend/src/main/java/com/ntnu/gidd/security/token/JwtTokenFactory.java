@@ -1,6 +1,7 @@
 package com.ntnu.gidd.security.token;
 
 
+import com.ntnu.gidd.security.UserDetailsImpl;
 import com.ntnu.gidd.security.config.JWTConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -24,11 +25,12 @@ public class JwtTokenFactory implements TokenFactory {
     private JWTConfig jwtConfig;
 
     @Override
-    public JwtAccessToken createAccessToken(UserDetails userDetails) {
+    public JwtAccessToken createAccessToken(UserDetailsImpl userDetails) {
         String token = Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getExpiration()))
+                .claim("uuid", userDetails.getId())
                 .signWith(SignatureAlgorithm.HS512, jwtConfig.getSecret())
                 .compact();
 
@@ -36,7 +38,7 @@ public class JwtTokenFactory implements TokenFactory {
     }
 
     @Override
-    public JwtToken createRefreshToken(UserDetails userDetails) {
+    public JwtToken createRefreshToken(UserDetailsImpl userDetails) {
         String token = buildRefreshToken(userDetails);
 
         Jws<Claims> claims = Jwts.parser()
@@ -46,7 +48,7 @@ public class JwtTokenFactory implements TokenFactory {
         return new JwtRefreshToken(token, claims);
     }
 
-    private String buildRefreshToken(UserDetails userDetails) {
+    private String buildRefreshToken(UserDetailsImpl userDetails) {
         Claims claims = Jwts.claims()
                 .setSubject(userDetails.getUsername());
         claims.put("scopes", Arrays.asList(Scopes.REFRESH_TOKEN.scope()));
@@ -57,6 +59,7 @@ public class JwtTokenFactory implements TokenFactory {
                                .toString())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getRefreshExpiration()))
+                .claim("uuid", userDetails.getId())
                 .signWith(SignatureAlgorithm.HS512, jwtConfig.getSecret())
                 .compact();
     }

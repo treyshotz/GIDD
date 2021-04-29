@@ -2,6 +2,7 @@ package com.ntnu.gidd.controller.followers;
 
 
 import com.ntnu.gidd.dto.User.UserDto;
+import com.ntnu.gidd.dto.User.UserEmailDto;
 import com.ntnu.gidd.dto.followers.FollowRequest;
 import com.ntnu.gidd.exception.InvalidFollowRequestException;
 import com.ntnu.gidd.exception.UserNotFoundException;
@@ -36,10 +37,10 @@ public class FollowingController {
     @PostMapping("me/following/")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Follow user with the provided id")
-    public Response followUser(@AuthenticationPrincipal UserDetailsImpl principal, @RequestBody UUID userId) {
-        log.debug("[X] Request for user with id {} to follow user with id {}", principal.getId(), userId);
+    public Response followUser(@AuthenticationPrincipal UserDetailsImpl principal, @RequestBody UserEmailDto user) {
+        log.debug("[X] Request for user with id {} to follow user with id {}", principal.getId(), user.getId());
 
-        FollowRequest followRequest = new FollowRequest(principal.getId(), userId);
+        FollowRequest followRequest = new FollowRequest(principal.getId(), user.getId());
         return followerService.registerFollow(followRequest);
     }
 

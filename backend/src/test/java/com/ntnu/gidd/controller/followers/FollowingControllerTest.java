@@ -1,6 +1,7 @@
 package com.ntnu.gidd.controller.followers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ntnu.gidd.dto.User.UserEmailDto;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.UserRepository;
@@ -66,7 +67,8 @@ class FollowingControllerTest {
         actorUserDetails = UserDetailsImpl.builder().id(actor.getId())
                 .email(actor.getEmail())
                 .build();
-        subjectIdRequestBody = objectMapper.writeValueAsString(subject.getId());
+        UserEmailDto userEmailDto = new UserEmailDto("", subject.getId());
+        subjectIdRequestBody = objectMapper.writeValueAsString(userEmailDto);
     }
 
     private static String getUsersUri(User user) {
@@ -133,7 +135,8 @@ class FollowingControllerTest {
 
     @Test
     public void testFollowUserWhenSubjectNotFoundReturnsStatus404() throws Exception {
-        String nonExistentUserIdRequestBody = objectMapper.writeValueAsString(UUID.randomUUID());
+        UserEmailDto nonExistentUser = new UserEmailDto("", UUID.randomUUID());
+        String nonExistentUserIdRequestBody = objectMapper.writeValueAsString(nonExistentUser);
 
         mvc.perform(post(URI_ME)
                             .with(user(actorUserDetails))
