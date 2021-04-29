@@ -15,8 +15,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public interface PostRepository  extends JpaRepository<Post, UUID> , QuerydslPredicateExecutor<Post> {
+public interface PostRepository  extends JpaRepository<Post, UUID> , QuerydslPredicateExecutor<Post>{
     void deletePostsByCreator(User creator);
+
 
 
 }

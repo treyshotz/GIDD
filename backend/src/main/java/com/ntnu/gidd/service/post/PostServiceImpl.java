@@ -41,6 +41,8 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public Page<PostDto> findAllPosts(Predicate predicate, Pageable pageable, String email) {
+        QPost post = QPost.post;
+        predicate = ExpressionUtils.and(predicate, post.creator.email.eq(email).or(post.creator.followers.any().email.eq(email)));
         Page<PostDto> postDtos = postRepository.findAll(predicate, pageable).map(s -> modelMapper.map(s, PostDto.class));
         return postLikeService.checkListLikes(postDtos, email);
     }

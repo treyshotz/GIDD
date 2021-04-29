@@ -95,10 +95,11 @@ public class PostServiceImplTest {
     public void testPostServiceGetAll(){
         List<Post> postList = List.of(post);
         Page<Post> postPage = new PageImpl<>(postList, pageable, postList.size());
-        when(postRepository.findAll(predicate, pageable)).thenReturn(postPage);
-        lenient().when(postLikeService.checkListLikes(any(), any(String.class)))
-                .thenReturn(postPage.map(s -> usemodelMapper.map(s , PostDto.class)));
-        Page<PostDto> actualPosts = postService.findAllPosts(predicate, pageable, "");
+        Page<PostDto> posters = postPage.map(s -> usemodelMapper.map(s , PostDto.class));
+        lenient().when(postRepository.findAll(any(Predicate.class), any(Pageable.class))).thenReturn(postPage);
+        lenient().when(postLikeService.checkListLikes(any(Page.class), any(String.class)))
+                .thenReturn(posters);
+        Page<PostDto> actualPosts = postService.findAllPosts(predicate, pageable, post.getCreator().getEmail());
 
         assertThat(postPage.getContent().size()).isEqualTo(actualPosts.getContent().size());
         for (int i = 0; i < postList.size() ; i++) {

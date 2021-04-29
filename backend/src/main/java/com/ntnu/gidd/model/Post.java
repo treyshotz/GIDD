@@ -78,5 +78,4 @@ public class Post  extends UUIDModel{
     }
 
 
-
 }
