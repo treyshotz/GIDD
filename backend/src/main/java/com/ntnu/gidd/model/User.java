@@ -33,7 +33,7 @@ public class User extends UUIDModel {
     private LocalDate birthDate;
     private String password;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id" ),
             inverseJoinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "activity_id"}))
@@ -52,7 +52,7 @@ public class User extends UUIDModel {
 
     String image;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false, insertable = false)
     private List<Comment> comments;
 
@@ -108,6 +108,16 @@ public class User extends UUIDModel {
     private void removeInvites(){
         if(invites != null)
             invites.clear();
+    }
+
+    private void removeInvitesFromUsers() {
+        if(invites != null)
+            invites.clear();
+    }
+
+    private void removeCommentsFromUsers() {
+        if (comments != null)
+            comments.clear();
     }
 
 }

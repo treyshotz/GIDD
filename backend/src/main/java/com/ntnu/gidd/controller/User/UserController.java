@@ -8,6 +8,7 @@ import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.service.User.UserService;
 import com.ntnu.gidd.util.Constants;
+import com.ntnu.gidd.util.Response;
 import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -64,6 +66,22 @@ public class UserController {
 
         log.debug("[X] Request to get personal userinfo with token");
         return this.userService.getUserDtoByEmail(user.getUsername());
+    }
+
+    /**
+     * Deletes current user found with authentication
+     * All userdata is also deleted
+     * @param authentication
+     * @return
+     */
+    @DeleteMapping("me/")
+    @Transactional
+    @ResponseStatus(HttpStatus.OK)
+    public Response deleteUser(Authentication authentication){
+        UserDetails user = (UserDetails) authentication.getPrincipal();
+        log.debug("[X] Request to delete User with username={}", user.getUsername());
+        userService.deleteUser(user.getUsername());
+        return new Response("User has been deleted");
     }
 
     @PostMapping

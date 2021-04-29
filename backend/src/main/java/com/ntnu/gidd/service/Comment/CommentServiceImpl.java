@@ -103,9 +103,9 @@ public class CommentServiceImpl implements CommentService {
     Activity updateActivity = this.activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new);
     List<Comment> comments =  new ArrayList<>(updateActivity.getComments());
     comment.setId(UUID.randomUUID());
+    comment.setActivity(updateActivity);
     comment = commentRepository.save(comment);
     comments.add(comment);
-    updateActivity.setComments(comments);
     this.activityRepository.save(updateActivity);
     return modelMapper.map(comment, CommentDto.class);
   }
@@ -148,8 +148,14 @@ public class CommentServiceImpl implements CommentService {
       throw new NotHostOrCreatorException();
   }
 
+    @Override
+    public void deleteAllCommentsOnUser(String creatorEmail) {
+        User user = userRepository.findByEmail(creatorEmail)
+                .orElseThrow(UserNotFoundException::new);
+        commentRepository.deleteCommentsByUser(user);
+    }
 
-  /**
+    /**
    * Retrieve all comments on a given activity
    * @param activityId
    * @param pageable

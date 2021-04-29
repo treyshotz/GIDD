@@ -20,7 +20,7 @@ public interface UserService {
       UserDto updateUser(UUID id, UserDto user);
       UserDto getUserDtoByEmail(String email);
       UserDto saveUser(UserRegistrationDto user);
-      UserDto deleteUser(UUID id);
+      UserDto deleteUser(String email);
       void changePassword(Principal principal, UserPasswordUpdateDto user);
       Page<UserDto> getAll(Predicate predicate, Pageable pageable);
       UserDto getUserByUUID(UUID userId);

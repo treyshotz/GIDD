@@ -91,17 +91,21 @@ public class CommentControllerTest {
 
     comment.setComment("Hey, look at this comment!");
     comment.setUser(user);
-    comment = commentRepository.save(comment);
     activity.setComments(List.of(comment));
 
     activity = activityRepository.save(activity);
 
+    comment.setActivity(activity);
+    comment = commentRepository.save(comment);
+
+
+
 
   }
   @AfterEach
-  public void cleanUp(){
-    activityRepository.deleteAll();
+  public void cleanUp() {
     commentRepository.deleteAll();
+    activityRepository.deleteAll();
     userRepository.deleteAll();
 
   }

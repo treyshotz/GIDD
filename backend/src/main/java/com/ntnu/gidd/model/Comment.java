@@ -26,6 +26,9 @@ public class Comment  extends UUIDModel{
   @ManyToOne
   private User user;
 
+  @ManyToOne
+  private Activity activity;
+  
   @PreRemove
   public void removeRelationships(){
     if(user !=null) user = null;

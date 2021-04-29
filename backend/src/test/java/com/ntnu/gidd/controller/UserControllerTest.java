@@ -259,5 +259,21 @@ public class UserControllerTest {
 				.andExpect(jsonPath("$.id").value(user.getId().toString()));
 	}
 
+	@Test
+	@WithMockUser(value = "spring")
+	public void testDeleteUserAndReturnsOk() throws Exception {
+		User userToDelete = userFactory.getObject();
+		assert userToDelete != null;
+		userToDelete = userRepository.save(userToDelete);
 
+		UserDetails userDetails = UserDetailsImpl.builder().email(userToDelete.getEmail()).build();
+
+		mockMvc.perform(delete(URI + "me/")
+				.with(user(userDetails))
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.message").value("User has been deleted"));;
+	}
+
+	
 }

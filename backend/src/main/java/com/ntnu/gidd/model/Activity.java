@@ -46,11 +46,11 @@ public class Activity extends UUIDModel {
   @JoinColumn(name = "creator_id", referencedColumnName = "id")
   private User creator;
 
-    @ManyToMany
-    @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id" ),
-    inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-    uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
-    private List<User> hosts  = new ArrayList<>();
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+  @JoinTable(name = "hosts", joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+      uniqueConstraints = @UniqueConstraint(columnNames = {"activity_id", "user_id"}))
+  private List<User> hosts;
 
   private int capacity;
 
@@ -60,7 +60,9 @@ public class Activity extends UUIDModel {
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<Equipment> equipment;
-  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+
+  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+  @JoinColumn(name = "activity_id", nullable = false, insertable = false)
   private List<Comment> comments;
 
     @ManyToOne(cascade = CascadeType.MERGE,  fetch = FetchType.LAZY)

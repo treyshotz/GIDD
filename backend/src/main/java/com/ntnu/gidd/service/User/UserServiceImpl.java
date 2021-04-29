@@ -10,7 +10,9 @@ import com.ntnu.gidd.model.*;
 import com.ntnu.gidd.repository.PasswordResetTokenRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
+import com.ntnu.gidd.service.Comment.CommentService;
 import com.ntnu.gidd.service.Email.EmailService;
+import com.ntnu.gidd.service.Registration.RegistrationService;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import com.querydsl.core.types.Predicate;
 import lombok.NoArgsConstructor;
@@ -20,6 +22,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +54,12 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private PasswordResetTokenRepository passwordResetTokenRepository;
+
+	@Autowired
+	private RegistrationService registrationService;
+
+	@Autowired
+	private CommentService commentService;
 	
 	@Override
 	public UserDto getUserDtoByEmail(String email) {
@@ -106,8 +116,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDto deleteUser(UUID id) {
-		return null;
+	public UserDto deleteUser(String username) {
+		User user = userRepository.findByEmail(username).
+				orElseThrow(UserNotFoundException::new);
+
+		registrationService.deleteAllRegistrationsWithUsername(username);
+		commentService.deleteAllCommentsOnUser(username);
+		userRepository.deleteById(user.getId());
+
+		return modelMapper.map(user, UserDto.class);
 	}
 	
 	@Autowired

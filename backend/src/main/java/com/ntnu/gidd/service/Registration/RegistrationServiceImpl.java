@@ -12,6 +12,7 @@ import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.RegistrationRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -161,6 +162,13 @@ public class RegistrationServiceImpl implements RegistrationService {
     User user = userRepository.findByEmail(username).
             orElseThrow(UserNotFoundException::new);
     deleteRegistrationWithCompositeId(user.getId(), activity_id);
+  }
+
+  @Override
+  public void deleteAllRegistrationsWithUsername(String username) {
+    User user = userRepository.findByEmail(username).
+            orElseThrow(UserNotFoundException::new);
+    registrationRepository.deleteRegistrationsByUser_Id(user.getId());
   }
 
   @Override

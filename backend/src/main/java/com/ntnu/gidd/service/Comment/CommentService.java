@@ -16,6 +16,7 @@ public interface CommentService {
   CommentDto saveComment(Comment comment, UUID activityId, String creatorEmail);
   void deleteComment(UUID commentId, String creatorEmail, UUID activityId);
   void deleteAllCommentsOnActivity(UUID activityId, String creatorEmail);
+  void deleteAllCommentsOnUser(String creatorEmail);
   Page<CommentDto> getCommentsOnActivity(Pageable pageable, UUID activityId);
 
 
