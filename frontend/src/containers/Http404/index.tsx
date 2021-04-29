@@ -9,10 +9,14 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
 // Project Components
-import Logo from 'components/miscellaneous/Logo';
+import LogoIcon from 'components/miscellaneous/LogoIcon';
 import Navigation from 'components/navigation/Navigation';
 
 const useStyles = makeStyles((theme) => ({
+  wrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
   img: {
     width: '100%',
     maxHeight: '70vh',
@@ -37,6 +41,14 @@ const useStyles = makeStyles((theme) => ({
       minWidth: '200px',
     },
   },
+  logoWrapper: {
+    display: 'flex',
+    margin: 'auto',
+    marginTop: theme.spacing(2),
+    maxWidth: 200,
+    maxHeight: 200,
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 const Http404 = () => {
@@ -48,19 +60,23 @@ const Http404 = () => {
       <Helmet>
         <title>404</title>
       </Helmet>
-      <Logo className={classes.logo} darkColor={'white'} lightColor={'black'} />
-      <Typography align='center' variant='h2'>
-        {isAuthenticated ? 'Du er innlogget, men vi kunne fremdeles ikke finne siden :(' : 'Kunne ikke finne siden'}
-      </Typography>
-      <div className={classes.buttons}>
-        <Button color='primary' component={Link} to={URLS.LANDING}>
-          Til forsiden
-        </Button>
-        {!isAuthenticated && (
-          <Button color='primary' component={Link} to={URLS.LOGIN} variant='outlined'>
-            Logg inn
+      <div className={classes.wrapper}>
+        <div className={classes.logoWrapper}>
+          <LogoIcon />
+        </div>
+        <Typography align='center' variant='h1'>
+          {isAuthenticated ? 'Du er innlogget, men vi kunne fremdeles ikke finne siden :(' : 'Kunne ikke finne siden'}
+        </Typography>
+        <div className={classes.buttons}>
+          <Button color='primary' component={Link} to={URLS.LANDING}>
+            Til forsiden
           </Button>
-        )}
+          {!isAuthenticated && (
+            <Button color='primary' component={Link} to={URLS.LOGIN} variant='outlined'>
+              Logg inn
+            </Button>
+          )}
+        </div>
       </div>
     </Navigation>
   );

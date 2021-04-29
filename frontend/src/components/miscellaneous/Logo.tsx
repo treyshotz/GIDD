@@ -37,8 +37,9 @@ const Logo = ({ className, darkColor, lightColor }: LogoProps) => {
 
   return (
     <svg
+      aria-label='GIDD Logo'
       className={classnames(classes.logo, className)}
-      id='Layer_1'
+      id='Logo'
       version='1.1'
       viewBox='0 0 143.93 50.69'
       x='0px'

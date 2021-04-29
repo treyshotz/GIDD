@@ -18,6 +18,7 @@ import ActivityCard from 'components/layout/ActivityCard';
 import Container from 'components/layout/Container';
 import MasonryGrid from 'components/layout/MasonryGrid';
 import Feed from 'containers/Feed';
+import LogoIcon from 'components/miscellaneous/LogoIcon';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -59,6 +60,24 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.white,
     borderColor: theme.palette.common.white,
   },
+  logoWrapper: {
+    display: 'flex',
+    margin: 'auto',
+    marginTop: theme.spacing(2),
+    maxWidth: 200,
+    maxHeight: 200,
+    marginBottom: theme.spacing(2),
+  },
+  logo: {
+    minWidth: '250px',
+    width: '46%',
+    maxWidth: '100%',
+    height: 'auto',
+    margin: theme.spacing(5, 'auto'),
+    [theme.breakpoints.down('md')]: {
+      minWidth: '200px',
+    },
+  },
 }));
 
 const Landing = () => {
@@ -82,11 +101,14 @@ const NotAuthedLanding = () => {
       </Helmet>
       <div className={classes.cover}>
         <div className={classes.img} />
-        <Typography align='center' className={classes.header} color='inherit' gutterBottom variant='h1'>
+        <div className={classes.logoWrapper}>
+          <LogoIcon />
+        </div>
+        <Typography align='center' color='inherit' variant='h1'>
           GIDD
         </Typography>
         <Typography align='center' color='inherit' variant='h3'>
-          Det er bare å gidde
+          Det er bare å gidde.
         </Typography>
         <div className={classes.btnGroup}>
           <Button className={classes.button} component={Link} to={URLS.LOGIN} variant='outlined'>
