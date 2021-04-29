@@ -18,7 +18,16 @@ const LogoIcon = () => {
   const classes = useStyles();
 
   return (
-    <svg className={classes.logo} id='Layer_1' version='1.1' viewBox='0 0 500 500' x='0px' xmlns='http://www.w3.org/2000/svg' xmlSpace='preserve' y='0px'>
+    <svg
+      aria-label='GIDD sin logo'
+      className={classes.logo}
+      id='GiddLogo'
+      version='1.1'
+      viewBox='0 0 500 500'
+      x='0px'
+      xmlns='http://www.w3.org/2000/svg'
+      xmlSpace='preserve'
+      y='0px'>
       <g>
         <g>
           <circle cx='250' cy='250' r='250' />
