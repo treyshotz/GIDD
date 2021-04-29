@@ -194,6 +194,8 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
     }
   };
 
+  const isAdmin = data.hosts.some((host) => host.id === user?.id) || data.creator?.id === user?.id;
+
   return (
     <div className={classes.rootGrid}>
       <div className={classes.grid}>
@@ -228,7 +230,7 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
             swipeAreaWidth={56}>
             {user && <ActivityRegistration activity={data} closeDialog={() => setViewSignup(false)} user={user} />}
           </SwipeableDrawer>
-          {!preview && (data.hosts.some((host) => host.id === user?.id) || data.creator?.id === user?.id) && (
+          {!preview && isAdmin && (
             <Button component={Link} fullWidth to={`${URLS.ADMIN_ACTIVITIES}${data.id}/`} variant='outlined'>
               Endre aktivitet
             </Button>
@@ -264,9 +266,11 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
           ))}
         </MasonryGrid>
       </div>
-      <div className={classes.comments}>
-        <Comments activityId={data.id} />
-      </div>
+      {!preview && (
+        <div className={classes.comments}>
+          <Comments id={data.id} isAdmin={isAdmin} type='activity' />
+        </div>
+      )}
     </div>
   );
 };

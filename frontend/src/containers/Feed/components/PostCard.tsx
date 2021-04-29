@@ -19,6 +19,8 @@ import Paper from 'components/layout/Paper';
 import ActivityCard from 'components/layout/ActivityCard';
 import AspectRatioImg from 'components/miscellaneous/AspectRatioImg';
 import PostCreateCard from 'containers/Feed/components/PostCreateCard';
+import PostLike from 'containers/Feed/components/PostLike';
+import Comments from 'components/miscellaneous/Comments';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -28,6 +30,13 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(1),
   },
+  name: {
+    color: theme.palette.get<string>({ light: theme.palette.common.black, dark: theme.palette.common.white }),
+    textDecoration: 'none',
+    '&:hover': {
+      textDecoration: 'underline',
+    },
+  },
   creator: {
     padding: theme.spacing(0, 1),
   },
@@ -36,6 +45,9 @@ const useStyles = makeStyles((theme) => ({
   },
   menu: {
     right: 0,
+  },
+  reactions: {
+    gridTemplateColumns: 'auto auto 1fr',
   },
 }));
 
@@ -49,6 +61,8 @@ const PostCard = ({ post, preview = false }: PostCardProps) => {
   const [openEdit, setOpenEdit] = useState(false);
   const { data: user } = useUser();
 
+  const isAdmin = user?.id === post.creator.id;
+
   return (
     <Paper className={classnames(classes.grid, classes.paper)}>
       <List disablePadding>
@@ -59,10 +73,10 @@ const PostCard = ({ post, preview = false }: PostCardProps) => {
             </Link>
           </ListItemAvatar>
           <ListItemText
-            primary={<Link to={`${URLS.USERS}${post.creator.id}/`}>{`${post.creator.firstName} ${post.creator.surname}`}</Link>}
+            primary={<Link className={classes.name} to={`${URLS.USERS}${post.creator.id}/`}>{`${post.creator.firstName} ${post.creator.surname}`}</Link>}
             secondary={`${getTimeSince(parseISO(post.createdAt))}`}
           />
-          {user?.id === post.creator.id && !preview && (
+          {isAdmin && !preview && (
             <ListItemSecondaryAction className={classes.menu}>
               <PostCreateCard onClose={() => setOpenEdit(false)} open={openEdit} post={post} />
               <IconButton aria-label='Rediger post' onClick={() => setOpenEdit(true)}>
@@ -72,11 +86,15 @@ const PostCard = ({ post, preview = false }: PostCardProps) => {
           )}
         </ListItem>
       </List>
-
       {Boolean(post.content) && <Typography>{post.content}</Typography>}
       {post.image && <AspectRatioImg alt='Bilde' imgClassName={classes.img} src={post.image} />}
       {post.activity && <ActivityCard activity={post.activity} />}
-      <Paper noPadding>{`${post.likesCount} liker - ${post.commentsCount} kommentarer`}</Paper>
+      {!preview && (
+        <Paper className={classnames(classes.grid, classes.reactions)} noPadding>
+          <PostLike post={post} />
+          <Comments id={post.id} isAdmin={isAdmin} type='post' />
+        </Paper>
+      )}
     </Paper>
   );
 };

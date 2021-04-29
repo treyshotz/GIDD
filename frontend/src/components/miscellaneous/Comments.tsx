@@ -1,11 +1,11 @@
-import { useComments, useCreateComment } from 'hooks/Comments';
+import { useComments, useCreateComment, CommentApp } from 'hooks/Comments';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useSnackbar } from 'hooks/Snackbar';
 import { useUser } from 'hooks/User';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Avatar, Divider, InputBase, IconButton, Paper as MuiPaper, Hidden, SwipeableDrawer, Fab, InputBaseProps } from '@material-ui/core';
+import { Button, Typography, Avatar, Divider, InputBase, IconButton, Paper as MuiPaper, Hidden, SwipeableDrawer, Fab, InputBaseProps } from '@material-ui/core';
 import SendRoundedIcon from '@material-ui/icons/SendRounded';
 import ChatRoundedIcon from '@material-ui/icons/ChatRounded';
 
@@ -20,6 +20,7 @@ import { Comment } from 'types/Types';
 const useStyles = makeStyles((theme) => ({
   title: {
     fontSize: '1.5rem',
+    padding: theme.spacing(1),
   },
   addComment: {
     display: 'grid',
@@ -48,6 +49,9 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
   },
   commentsPaper: {
+    maxWidth: theme.breakpoints.values.md,
+    marginLeft: 'auto',
+    marginRight: 'auto',
     borderRadius: `${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0 0`,
     background: theme.palette.background.paper,
     maxHeight: '65vh',
@@ -71,17 +75,25 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(1),
     },
   },
+  postCommentBtn: {
+    height: 39,
+    color: theme.palette.get<string>({ light: theme.palette.common.black, dark: theme.palette.common.white }),
+  },
 }));
 
 type FormValues = Pick<Comment, 'comment'>;
 
-export type CommentsProps = { activityId: string };
+export type CommentsProps = {
+  id: string;
+  type: CommentApp;
+  isAdmin?: boolean;
+};
 
-const Comments = (props: CommentsProps) => {
+const Comments = ({ id, type, isAdmin }: CommentsProps) => {
   const classes = useStyles();
   const { data: user } = useUser();
   const [viewComments, setViewComments] = useState(false);
-  const { data, error, hasNextPage, fetchNextPage, isFetching } = useComments(props.activityId, { sort: 'createdAt,DESC' });
+  const { data, error, hasNextPage, fetchNextPage, isFetching } = useComments(id, type, type === 'activity' || viewComments, { sort: 'createdAt,DESC' });
   const comments = useMemo(
     () =>
       data !== undefined
@@ -94,7 +106,7 @@ const Comments = (props: CommentsProps) => {
   );
   const isEmpty = useMemo(() => !comments.length && !isFetching, [comments, isFetching]);
   const { handleSubmit, register, reset } = useForm<FormValues>();
-  const createComment = useCreateComment(props.activityId);
+  const createComment = useCreateComment(id, type);
   const showSnackbar = useSnackbar();
 
   const submit: SubmitHandler<FormValues> = async (data) => {
@@ -107,11 +119,6 @@ const Comments = (props: CommentsProps) => {
       },
     });
   };
-
-  const Input = forwardRef(({ ...props }: InputBaseProps, ref) => (
-    <InputBase {...props} className={classes.input} inputRef={ref} multiline name={props.name} placeholder='Skriv din kommentar her...' />
-  ));
-  Input.displayName = 'Input';
 
   const AddComment = () => (
     <div className={classes.addComment}>
@@ -129,45 +136,80 @@ const Comments = (props: CommentsProps) => {
       {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen kommentarer'} />}
       <div className={classes.list}>
         {comments.map((comment) => (
-          <CommentCard activityId={props.activityId} comment={comment} key={comment.id} />
+          <CommentCard comment={comment} id={id} isAdmin={isAdmin} key={comment.id} type={type} />
         ))}
       </div>
     </Pagination>
   );
 
-  return (
-    <>
-      <Hidden mdUp>
-        <Fab aria-label='add' className={classes.commentBtn} color='primary' onClick={() => setViewComments(true)}>
-          <ChatRoundedIcon />
-        </Fab>
-        <SwipeableDrawer
-          anchor='bottom'
-          classes={{ paper: classes.commentsPaper }}
-          disableSwipeToOpen
-          onClose={() => setViewComments(false)}
-          onOpen={() => setViewComments(true)}
-          open={viewComments}
-          swipeAreaWidth={56}>
-          <div className={classes.comments}>
-            <Typography className={classes.title} gutterBottom variant='h2'>
+  const Input = forwardRef(({ ...props }: InputBaseProps, ref) => (
+    <InputBase {...props} className={classes.input} inputRef={ref} multiline placeholder='Skriv din kommentar her...' />
+  ));
+  Input.displayName = 'Input';
+
+  if (type === 'activity') {
+    return (
+      <>
+        <Hidden mdUp>
+          <Fab aria-label='Legg til kommentar' className={classes.commentBtn} color='primary' onClick={() => setViewComments(true)}>
+            <ChatRoundedIcon />
+          </Fab>
+          <SwipeableDrawer
+            anchor='bottom'
+            classes={{ paper: classes.commentsPaper }}
+            disableSwipeToOpen
+            onClose={() => setViewComments(false)}
+            onOpen={() => setViewComments(true)}
+            open={viewComments}
+            swipeAreaWidth={56}>
+            <div className={classes.comments}>
+              <Typography className={classes.title} gutterBottom variant='h2'>
+                Kommentarer
+              </Typography>
+              <CommentSection />
+            </div>
+            <AddComment />
+          </SwipeableDrawer>
+        </Hidden>
+        <Hidden mdDown>
+          <Paper>
+            <Typography className={classes.title} variant='h2'>
               Kommentarer
             </Typography>
+            <AddComment />
+            <Divider className={classes.divider} variant='middle' />
             <CommentSection />
-          </div>
-          <AddComment />
-        </SwipeableDrawer>
-      </Hidden>
-      <Hidden mdDown>
-        <Paper>
-          <Typography className={classes.title} variant='h2'>
+          </Paper>
+        </Hidden>
+      </>
+    );
+  }
+  return (
+    <>
+      <Button
+        aria-label='Kommenter innlegget'
+        className={classes.postCommentBtn}
+        endIcon={<ChatRoundedIcon />}
+        onClick={() => setViewComments(true)}
+        variant='text'>
+        {comments.length}
+      </Button>
+      <SwipeableDrawer
+        anchor='bottom'
+        classes={{ paper: classes.commentsPaper }}
+        disableSwipeToOpen
+        onClose={() => setViewComments(false)}
+        onOpen={() => setViewComments(true)}
+        open={viewComments}
+        swipeAreaWidth={56}>
+        <div className={classes.comments}>
+          <Typography className={classes.title} gutterBottom variant='h2'>
             Kommentarer
           </Typography>
-          <AddComment />
-          <Divider className={classes.divider} variant='middle' />
           <CommentSection />
-        </Paper>
-      </Hidden>
+        </div>
+        <AddComment />
+      </SwipeableDrawer>
     </>
   );
 };

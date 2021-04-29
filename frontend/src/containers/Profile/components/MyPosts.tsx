@@ -27,7 +27,7 @@ export type MyPostsProps = {
 
 const MyPosts = ({ userId }: MyPostsProps) => {
   const classes = useStyles();
-  const { data, error, hasNextPage, fetchNextPage, isFetching } = useFeed({ 'creator.id': userId, sort: 'createdAt,DESC' });
+  const { data, error, hasNextPage, fetchNextPage, isFetching } = useFeed(userId);
   const posts = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !posts.length && !isFetching, [posts, isFetching]);
 

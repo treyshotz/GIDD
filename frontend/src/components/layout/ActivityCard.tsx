@@ -50,21 +50,19 @@ const ActivityCard = ({ activity, fullHeight, gutterBottom }: ActivityCardProps)
   const classes = useStyles();
 
   return (
-    <Link className={classes.link} to={`${URLS.ACTIVITIES}${activity.id}/`}>
-      <Card className={classnames(classes.root, fullHeight && classes.fullHeight, gutterBottom && classes.gutterBottom)}>
-        <CardActionArea>
-          <CardMedia className={classes.media} image={activity.images[0]?.url || LOGO} />
-          <CardContent>
-            <Typography className={classes.title} gutterBottom variant='h2'>
-              {activity.title}
-            </Typography>
-            <Typography className={classes.description} variant='body2'>
-              {activity.description}
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    </Link>
+    <Card className={classnames(classes.root, fullHeight && classes.fullHeight, gutterBottom && classes.gutterBottom)}>
+      <CardActionArea component={Link} to={`${URLS.ACTIVITIES}${activity.id}/`}>
+        <CardMedia className={classes.media} image={activity.images[0]?.url || LOGO} />
+        <CardContent>
+          <Typography className={classes.title} gutterBottom variant='h2'>
+            {activity.title}
+          </Typography>
+          <Typography className={classes.description} variant='body2'>
+            {activity.description}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+    </Card>
   );
 };
 

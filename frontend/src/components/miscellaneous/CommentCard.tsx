@@ -4,7 +4,7 @@ import { useSnackbar } from 'hooks/Snackbar';
 import { useUser } from 'hooks/User';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDeleteComment, useEditComment } from 'hooks/Comments';
+import { useDeleteComment, useEditComment, CommentApp } from 'hooks/Comments';
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Avatar, IconButton, ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction, List } from '@material-ui/core';
@@ -33,10 +33,12 @@ const useStyles = makeStyles((theme) => ({
 
 export type CommentProps = {
   comment: Comment;
-  activityId: string;
+  id: string;
+  type: CommentApp;
+  isAdmin?: boolean;
 };
 
-const CommentCard = ({ comment, activityId }: CommentProps) => {
+const CommentCard = ({ comment, isAdmin, id, type }: CommentProps) => {
   const classes = useStyles();
   const showSnackbar = useSnackbar();
   const { data: user } = useUser();
@@ -44,8 +46,8 @@ const CommentCard = ({ comment, activityId }: CommentProps) => {
   const { register, handleSubmit, formState } = useForm<FormValues>({
     defaultValues: comment,
   });
-  const deleteComment = useDeleteComment(activityId, comment.id);
-  const updateComment = useEditComment(activityId, comment.id);
+  const deleteComment = useDeleteComment(id, comment.id, type);
+  const updateComment = useEditComment(id, comment.id, type);
 
   const editComment = async (data: FormValues) => {
     await updateComment.mutate(data, {
@@ -80,17 +82,21 @@ const CommentCard = ({ comment, activityId }: CommentProps) => {
             <Avatar src={comment.user.image} />
           </ListItemAvatar>
           <ListItemText primary={`${comment.user.firstName} ${comment.user.surname}`} secondary={getTimeSince(parseISO(comment.createdAt))} />
-          {comment.user.id === user?.id && (
+          {(comment.user.id === user?.id || isAdmin) && (
             <ListItemSecondaryAction className={classes.btnGroup}>
-              <IconButton aria-label='rediger kommentar' onClick={() => setOpen(true)}>
-                <EditIcon />
-              </IconButton>
-              <Dialog onClose={() => setOpen(false)} open={open}>
-                <form onSubmit={handleSubmit(editComment)}>
-                  <TextField formState={formState} fullWidth label='Tekst' multiline {...register('comment', { required: 'Feltet er påkrevd' })} required />
-                  <SubmitButton formState={formState}>Oppdater kommentar</SubmitButton>
-                </form>
-              </Dialog>
+              {comment.user.id === user?.id && (
+                <>
+                  <IconButton aria-label='rediger kommentar' onClick={() => setOpen(true)}>
+                    <EditIcon />
+                  </IconButton>
+                  <Dialog onClose={() => setOpen(false)} open={open}>
+                    <form onSubmit={handleSubmit(editComment)}>
+                      <TextField formState={formState} fullWidth label='Tekst' multiline {...register('comment', { required: 'Feltet er påkrevd' })} required />
+                      <SubmitButton formState={formState}>Oppdater kommentar</SubmitButton>
+                    </form>
+                  </Dialog>
+                </>
+              )}
               <VerifyDialog aria-label='slett kommentar' contentText='Hvis du sletter kommentaren vil den bli slettet' iconButton={true} onConfirm={remove}>
                 <DeleteIcon />
               </VerifyDialog>

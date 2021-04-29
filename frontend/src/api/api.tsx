@@ -70,6 +70,20 @@ export default {
   updatePost: (postId: string, updatedPost: Partial<Post>) => IFetch<Post>({ method: 'PUT', url: `${POSTS}/${postId}/`, data: updatedPost }),
   deletePost: (postId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${POSTS}/${postId}/` }),
 
+  // Post likes
+  getPostLike: (postId: string, userId: string) => IFetch<Like>({ method: 'GET', url: `${POSTS}/${postId}/${LIKES}/${userId}/` }),
+  createPostLike: (postId: string) => IFetch<Like>({ method: 'POST', url: `${POSTS}/${postId}/${LIKES}/` }),
+  deletePostLike: (postId: string) => IFetch<Like>({ method: 'DELETE', url: `${POSTS}/${postId}/${LIKES}/` }),
+
+  // Post comments
+  getPostComments: (postId: string, filters?: any) =>
+    IFetch<PaginationResponse<Comment>>({ method: 'GET', url: `${POSTS}/${postId}/${COMMENTS}/`, data: filters || {} }),
+  createPostComment: (postId: string, item: Pick<Comment, 'comment'>) =>
+    IFetch<Comment>({ method: 'POST', url: `${POSTS}/${postId}/${COMMENTS}/`, data: item }),
+  deletePostComment: (postId: string, id: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${POSTS}/${postId}/${COMMENTS}/${id}/` }),
+  editPostComment: (postId: string, id: string, item: Pick<Comment, 'comment'>) =>
+    IFetch<Comment>({ method: 'PUT', url: `${POSTS}/${postId}/${COMMENTS}/${id}/`, data: item }),
+
   // Activity
   getActivity: (id: string) => IFetch<Activity>({ method: 'GET', url: `${ACTIVITIES}/${id}/` }),
   getActivities: (filters?: any) => IFetch<PaginationResponse<ActivityList>>({ method: 'GET', url: `${ACTIVITIES}/`, data: filters || {} }),
@@ -119,15 +133,13 @@ export default {
   uploadFile: (file: File | Blob) =>
     IFetch<FileUploadResponse>({ method: 'POST', url: 'https://api.imgbb.com/1/upload?key=909df01fa93bd63405c9a36d662523f3', file, withAuth: false }),
 
-  // Comments
-  getComment: (activityId: string, id: string) => IFetch<PaginationResponse<Comment>>({ method: 'GET', url: `${ACTIVITIES}/${activityId}/${COMMENTS}/${id}/` }),
-  getComments: (activityId: string, filters?: any) =>
+  // Activity comments
+  getActivityComments: (activityId: string, filters?: any) =>
     IFetch<PaginationResponse<Comment>>({ method: 'GET', url: `${ACTIVITIES}/${activityId}/${COMMENTS}/`, data: filters || {} }),
-  createComment: (activityId: string, item: Pick<Comment, 'comment'>) =>
+  createActivityComment: (activityId: string, item: Pick<Comment, 'comment'>) =>
     IFetch<Comment>({ method: 'POST', url: `${ACTIVITIES}/${activityId}/${COMMENTS}/`, data: item }),
-  updateComment: (activityId: string, item: Pick<Comment, 'comment'>) =>
-    IFetch<Comment>({ method: 'PUT', url: `${ACTIVITIES}/${activityId}/${COMMENTS}/`, data: item }),
-  deleteComment: (activityId: string, id: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${ACTIVITIES}/${activityId}/${COMMENTS}/${id}/` }),
-  editComment: (activityId: string, id: string, item: Pick<Comment, 'comment'>) =>
+  deleteActivityComment: (activityId: string, id: string) =>
+    IFetch<RequestResponse>({ method: 'DELETE', url: `${ACTIVITIES}/${activityId}/${COMMENTS}/${id}/` }),
+  editActivityComment: (activityId: string, id: string, item: Pick<Comment, 'comment'>) =>
     IFetch<Comment>({ method: 'PUT', url: `${ACTIVITIES}/${activityId}/${COMMENTS}/${id}/`, data: item }),
 };

@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 const Feed = () => {
   const classes = useStyles();
   const [openCreate, setOpenCreate] = useState(false);
-  const { data, error, hasNextPage, fetchNextPage, isFetching } = useFeed({ sort: 'createdAt,DESC' });
+  const { data, error, hasNextPage, fetchNextPage, isFetching } = useFeed();
   const posts = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !posts.length && !isFetching, [posts, isFetching]);
 

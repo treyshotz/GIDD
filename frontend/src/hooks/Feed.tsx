@@ -1,8 +1,10 @@
-import { useMutation, useInfiniteQuery, useQuery, useQueryClient, UseMutationResult } from 'react-query';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { useMutation, useInfiniteQuery, useQuery, useQueryClient, UseMutationResult, InfiniteData } from 'react-query';
 import API from 'api/api';
 import { getNextPaginationPage } from 'utils';
-import { Post, PostCreate, PaginationResponse, RequestResponse } from 'types/Types';
+import { Like, Post, PostCreate, PaginationResponse, RequestResponse } from 'types/Types';
 export const FEED_QUERY_KEY = 'feed';
+export const FEED_ALL_QUERY_KEY = 'feed_all';
 export const POST_QUERY_KEY = 'post';
 
 /**
@@ -17,11 +19,10 @@ export const usePostById = (postId: string) => {
  * Get the feed with posts, paginated
  * @param filters - Filtering
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const useFeed = (filters?: any) => {
+export const useFeed = (userId?: string) => {
   return useInfiniteQuery<PaginationResponse<Post>, RequestResponse>(
-    [FEED_QUERY_KEY, filters],
-    ({ pageParam = 0 }) => API.getFeed({ ...filters, page: pageParam }),
+    [FEED_QUERY_KEY, userId || FEED_ALL_QUERY_KEY],
+    ({ pageParam = 0 }) => API.getFeed({ ...(userId ? { 'creator.id': userId } : {}), sort: 'createdAt,DESC', page: pageParam }),
     {
       getNextPageParam: getNextPaginationPage,
     },
@@ -64,6 +65,68 @@ export const useDeletePost = (postId: string): UseMutationResult<RequestResponse
   return useMutation(() => API.deletePost(postId), {
     onSuccess: () => {
       queryClient.invalidateQueries(FEED_QUERY_KEY);
+    },
+  });
+};
+
+//////////////////////////////////
+/////////// Post likes ///////////
+//////////////////////////////////
+
+/**
+ * Like a post
+ * @param postId - Id of post
+ */
+export const useCreatePostLike = (postId: string): UseMutationResult<Like, RequestResponse, unknown, unknown> => {
+  const queryClient = useQueryClient();
+  return useMutation(() => API.createPostLike(postId), {
+    onSuccess: () => {
+      queryClient.invalidateQueries([POST_QUERY_KEY, postId]);
+      // @ts-ignore
+      queryClient.setQueryData<InfiniteData<PaginationResponse<Post>>>([FEED_QUERY_KEY, FEED_ALL_QUERY_KEY], (data) => {
+        if (!data) {
+          return undefined;
+        }
+        const newPagesArray: Array<PaginationResponse<Post>> = [];
+        data.pages.forEach((page) => {
+          const newData: Array<Post> = page.content.map((post) => (post.id === postId ? { ...post, hasLiked: true, likesCount: post.likesCount + 1 } : post));
+          const newPage: PaginationResponse<Post> = { ...page, content: newData };
+          newPagesArray.push(newPage);
+        });
+        return {
+          pages: newPagesArray,
+          pageParams: data.pageParams,
+        };
+      });
+    },
+  });
+};
+
+/**
+ * Remove a like to a post
+ * @param postId - Id of post
+ */
+export const useRemovePostLike = (postId: string): UseMutationResult<Like, RequestResponse, unknown, unknown> => {
+  const queryClient = useQueryClient();
+  return useMutation(() => API.deletePostLike(postId), {
+    onSuccess: () => {
+      queryClient.invalidateQueries([POST_QUERY_KEY, postId]);
+      // @ts-ignore
+      queryClient.setQueryData<InfiniteData<PaginationResponse<Post>>>([FEED_QUERY_KEY, FEED_ALL_QUERY_KEY], (data) => {
+        if (!data) {
+          return undefined;
+        }
+        const newPagesArray: Array<PaginationResponse<Post>> = [];
+        data.pages.forEach((page) => {
+          const newData: Array<Post> = page.content.map((post) => (post.id === postId ? { ...post, hasLiked: false, likesCount: post.likesCount - 1 } : post));
+          const newPage: PaginationResponse<Post> = { ...page, content: newData };
+          newPagesArray.push(newPage);
+        });
+        return {
+          pages: newPagesArray,
+          pageParams: data.pageParams,
+        };
+      });
     },
   });
 };
