@@ -63,10 +63,10 @@ public class User extends UUIDModel {
     @JoinTable(name = "follower",
         joinColumns = @JoinColumn(name = "follower_id"),
         inverseJoinColumns = @JoinColumn(name = "following_id"))
-    private List<User> following;
+    private List<User> following = new ArrayList<>();
 
     @ManyToMany(mappedBy = "following", fetch = FetchType.EAGER)
-    private List<User> followers;
+    private List<User> followers = new ArrayList<>();
 
 
     @Transient
@@ -95,6 +95,21 @@ public class User extends UUIDModel {
 
     private void removeFollower(User follower) {
         followers.remove(follower);
+    }
+
+    @Transient
+    public boolean getCurrentUserIsFollowing() {
+        return false;
+    }
+
+    @Transient
+    public Integer getFollowingCount() {
+        return following.size();
+    }
+
+    @Transient
+    public Integer getFollowerCount() {
+        return followers.size();
     }
 
     @PreRemove

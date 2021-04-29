@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -27,6 +28,8 @@ public class UserFactory implements FactoryBean<User> {
                 .firstName(getRandomString(5))
                 .surname(getRandomString(5))
                 .password(encoder.encode(getRandomString(10)))
+                .following(new ArrayList<>())
+                .followers(new ArrayList<>())
                 .birthDate(LocalDate.now())
                 .createdAt(ZonedDateTime.now())
                 .build();

@@ -22,6 +22,7 @@ import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.service.activity.ActivityService;
 import com.ntnu.gidd.service.Comment.CommentService;
 import com.ntnu.gidd.service.Comment.CommentServiceImpl;
+import com.ntnu.gidd.util.ContextAwareModelMapper;
 import com.ntnu.gidd.utils.JpaUtils;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +60,7 @@ public class CommentServiceImplTest {
   private ActivityService activityService;
 
 
-  ModelMapper modelMapper = new ModelMapper();
+  ModelMapper modelMapper = new ContextAwareModelMapper();
 
   private Activity activity;
   private User user;

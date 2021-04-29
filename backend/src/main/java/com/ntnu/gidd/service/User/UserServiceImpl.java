@@ -1,6 +1,5 @@
 package com.ntnu.gidd.service.User;
 
-import com.ntnu.gidd.dto.Registration.RegistrationUserDto;
 import com.ntnu.gidd.dto.User.UserDto;
 import com.ntnu.gidd.dto.User.UserPasswordResetDto;
 import com.ntnu.gidd.dto.User.UserPasswordUpdateDto;
@@ -13,8 +12,10 @@ import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.service.Comment.CommentService;
 import com.ntnu.gidd.service.Email.EmailService;
 import com.ntnu.gidd.service.Registration.RegistrationService;
+import com.ntnu.gidd.util.ContextAwareModelMapper;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import com.querydsl.core.types.Predicate;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.security.Principal;
@@ -38,20 +38,21 @@ import java.util.UUID;
 
 @Slf4j
 @NoArgsConstructor
+@AllArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
-	
+
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
-	
-	private ModelMapper modelMapper = new ModelMapper();
-	
+
+	private ModelMapper modelMapper = new ContextAwareModelMapper();
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private EmailService emailService;
-	
+
 	@Autowired
 	private PasswordResetTokenRepository passwordResetTokenRepository;
 
@@ -60,13 +61,16 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private CommentService commentService;
-	
+
+	@Autowired
+	private TrainingLevelRepository trainingLevelRepository;
+
 	@Override
 	public UserDto getUserDtoByEmail(String email) {
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 		return modelMapper.map(user, UserDto.class);
 	}
-	
+
 	private User getUserByEmail(String email) {
 		return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 	}
@@ -79,18 +83,18 @@ public class UserServiceImpl implements UserService {
 	private boolean emailExist(String email) {
 		return userRepository.findByEmail(email).isPresent();
 	}
-	
+
 	@Override
 	public UserDto saveUser(UserRegistrationDto user) {
 		if (emailExist(user.getEmail())) {
 			throw new EmailInUseException();
 		}
-		
+
 		User userObj = modelMapper.map(user, User.class);
 		userObj.setPassword(passwordEncoder.encode(user.getPassword()));
 		return modelMapper.map(userRepository.save(userObj), UserDto.class);
 	}
-	
+
 	@Override
 	public void changePassword(Principal principal, UserPasswordUpdateDto user) {
 		User userObj = getUserByEmail(principal.getName());
@@ -105,14 +109,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Page<UserDto> getAll(Predicate predicate, Pageable pageable) {
-		return userRepository.findAll(predicate, pageable).map(s -> modelMapper.map(s, UserDto.class));
+		return userRepository.findAll(predicate, pageable).map(user -> modelMapper.map(user, UserDto.class));
 	}
+
 
 	@Override
 	public UserDto getUserByUUID(UUID userId) {
 		return modelMapper.map(userRepository.findById(userId)
-				.orElseThrow(UserNotFoundException::new),
-				UserDto.class);
+												   .orElseThrow(UserNotFoundException::new), UserDto.class);
 	}
 
 	@Override
@@ -126,10 +130,7 @@ public class UserServiceImpl implements UserService {
 
 		return modelMapper.map(user, UserDto.class);
 	}
-	
-	@Autowired
-	private TrainingLevelRepository trainingLevelRepository;
-	
+
 	public UserDto updateUser(UUID id, UserDto user) {
 		User updatedUser = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
 		updatedUser.setFirstName(user.getFirstName());

@@ -1,16 +1,17 @@
 package com.ntnu.gidd.service;
 
-import com.ntnu.gidd.config.ModelMapperConfig;
 import com.ntnu.gidd.dto.User.UserDto;
-import com.ntnu.gidd.dto.User.UserEmailDto;
-import com.ntnu.gidd.dto.User.UserListDto;
 import com.ntnu.gidd.dto.User.UserRegistrationDto;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.User;
+import com.ntnu.gidd.repository.PasswordResetTokenRepository;
+import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.service.Comment.CommentService;
+import com.ntnu.gidd.service.Email.EmailService;
 import com.ntnu.gidd.service.Registration.RegistrationService;
 import com.ntnu.gidd.service.User.UserServiceImpl;
+import com.ntnu.gidd.util.ContextAwareModelMapper;
 import com.ntnu.gidd.utils.JpaUtils;
 import com.querydsl.core.types.Predicate;
 import org.junit.jupiter.api.AfterEach;
@@ -19,17 +20,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,8 +35,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@ContextConfiguration(classes = ModelMapperConfig.class)
-@SpringBootTest
 public class UserServiceImplTest {
 
     @InjectMocks
@@ -55,10 +50,18 @@ public class UserServiceImplTest {
     private CommentService commentService;
 
     @Mock
+    private EmailService emailService;
+
+    @Mock
+    private PasswordResetTokenRepository passwordResetTokenRepository;
+
+    @Mock
+    private TrainingLevelRepository trainingLevelRepository;
+
+    @Mock
     BCryptPasswordEncoder encoder;
 
-    @Autowired
-    ModelMapper modelMapper = new ModelMapper();
+    ModelMapper modelMapper = new ContextAwareModelMapper();
 
     private User user;
     private User secondUser;
@@ -69,6 +72,14 @@ public class UserServiceImplTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        userService = new UserServiceImpl(encoder,
+                                          modelMapper,
+                                          userRepository,
+                                          emailService,
+                                          passwordResetTokenRepository,
+                                          registrationService,
+                                          commentService,
+                                          trainingLevelRepository);
         user = new UserFactory().getObject();
         userRegistrationDto = modelMapper.map(user, UserRegistrationDto.class);
         userRepository.save(user);

@@ -17,7 +17,8 @@ public class ActivityImageServiceImpl implements ActivityImageService {
     @Autowired
     private ActivityImageRepository activityImageRepository;
 
-    ModelMapper modelMapper = new ModelMapper();
+    @Autowired
+    private ModelMapper modelMapper;
 
     public List<ActivityImage> saveActivityImage(List<ActivityImage> images, Activity activity){
         images.forEach(s -> s.setActivityId(activity.getId()));

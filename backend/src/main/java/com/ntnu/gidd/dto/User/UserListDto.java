@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserListDto {
+public class UserListDto extends ContextAwareUserDto {
     private UUID id;
     private String firstName;
     private String surname;
