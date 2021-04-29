@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
       overflowY: 'hidden',
       whiteSpace: 'break-spaces',
     },
+    '& table': {
+      minWidth: 'unset',
+    },
   },
   button: {
     color: theme.palette.get<string>({ light: theme.palette.common.black, dark: theme.palette.common.white }),

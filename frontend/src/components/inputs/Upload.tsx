@@ -44,8 +44,8 @@ export type ImageUploadProps = ButtonProps &
     register: UseFormRegisterReturn;
     label?: string;
   };
-
-export const ImageUpload = forwardRef(({ register, watch, setValue, name, formState, label = 'Last opp fil', ...props }: ImageUploadProps) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const ImageUpload = forwardRef(({ register, watch, setValue, name, formState, label = 'Last opp fil', ...props }: ImageUploadProps, ref) => {
   const classes = useStyles();
   const showSnackbar = useSnackbar();
   const images: Activity['images'] | undefined = watch(name);
@@ -118,7 +118,8 @@ export type SingleImageUploadProps = ButtonProps &
     label?: string;
   };
 
-export const SingleImageUpload = forwardRef(({ register, watch, setValue, name, formState, label = 'Last opp fil', ...props }: SingleImageUploadProps) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const SingleImageUpload = forwardRef(({ register, watch, setValue, name, formState, label = 'Last opp fil', ...props }: SingleImageUploadProps, ref) => {
   const classes = useStyles();
   const showSnackbar = useSnackbar();
   const image: string | undefined = watch(name);

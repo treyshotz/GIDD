@@ -31,6 +31,8 @@ const REGISTRATIONS = 'registrations';
 const INVITES = 'invites';
 const HOSTS = 'hosts';
 const LIKES = 'likes';
+const FOLLOWERS = 'followers';
+const FOLLOWING = 'following';
 const COMMENTS = 'comments';
 
 export default {
@@ -123,6 +125,15 @@ export default {
   getActivityLike: (activityId: string, userId: string) => IFetch<Like>({ method: 'GET', url: `${ACTIVITIES}/${activityId}/${LIKES}/${userId}/` }),
   createActivityLike: (activityId: string) => IFetch<Like>({ method: 'POST', url: `${ACTIVITIES}/${activityId}/${LIKES}/` }),
   deleteActivityLike: (activityId: string) => IFetch<Like>({ method: 'DELETE', url: `${ACTIVITIES}/${activityId}/${LIKES}/` }),
+
+  // Followers
+  getFollowers: (userId?: string, filters?: any) =>
+    IFetch<PaginationResponse<UserList>>({ method: 'GET', url: `${USERS}/${userId || ME}/${FOLLOWERS}/`, data: filters || {} }),
+  getFollowing: (userId?: string, filters?: any) =>
+    IFetch<PaginationResponse<UserList>>({ method: 'GET', url: `${USERS}/${userId || ME}/${FOLLOWING}/`, data: filters || {} }),
+  followUser: (userId: string) => IFetch<RequestResponse>({ method: 'POST', url: `${USERS}/${ME}/${FOLLOWING}/`, data: { id: userId } }),
+  unfollowUser: (userId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${USERS}/${ME}/${FOLLOWING}/${userId}/` }),
+  removeFollower: (userId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${USERS}/${ME}/${FOLLOWERS}/${userId}/` }),
 
   // User
   getUser: (userId?: string) => IFetch<User>({ method: 'GET', url: `${USERS}/${userId || ME}/` }),

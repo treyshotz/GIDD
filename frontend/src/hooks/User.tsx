@@ -20,6 +20,7 @@ export const useUsers = (filters?: any) => {
     ({ pageParam = 0 }) => API.getUsers({ ...filters, page: pageParam }),
     {
       getNextPageParam: getNextPaginationPage,
+      enabled: Boolean(filters.search),
     },
   );
 };

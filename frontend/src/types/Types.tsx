@@ -31,9 +31,12 @@ export type User = {
   birthDate: string | null;
   level: TrainingLevel;
   image: string;
+  currentUserIsFollowing: boolean;
+  followingCount: number;
+  followerCount: number;
 };
 
-export type UserList = Pick<User, 'id' | 'firstName' | 'surname' | 'email' | 'image'>;
+export type UserList = Pick<User, 'id' | 'firstName' | 'surname' | 'email' | 'image' | 'currentUserIsFollowing'>;
 
 export type UserCreate = Pick<User, 'email' | 'firstName' | 'surname'> & {
   password: string;

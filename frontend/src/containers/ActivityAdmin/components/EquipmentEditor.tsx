@@ -42,7 +42,8 @@ export type EquipmentEditorProps = Pick<UseFormReturn, 'formState'> & {
   trigger: UseFormTrigger<any>;
 };
 
-export const EquipmentEditor = forwardRef(({ control, trigger, register, name, formState }: EquipmentEditorProps) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const EquipmentEditor = forwardRef(({ control, trigger, register, name, formState }: EquipmentEditorProps, ref) => {
   const classes = useStyles();
   const [openEquipment, setOpenEquipment] = useState(false);
   const { fields, append, remove } = useFieldArray({

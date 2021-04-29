@@ -10,8 +10,9 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     enableBackground: 'new 0 0 500 500',
   },
-  st0: { fill: '#FFFFFF' },
-  st1: { fill: '#B70000' },
+  outer: { fill: theme.palette.get<string>({ light: '#bfc7f0', dark: '#372729' }) },
+  middle: { fill: theme.palette.get<string>({ light: '#dddddd', dark: '#a4a4a4' }) },
+  inner: { fill: theme.palette.get<string>({ light: '#a4a399', dark: '#231d31' }) },
 }));
 
 const LogoIcon = () => {
@@ -30,10 +31,10 @@ const LogoIcon = () => {
       y='0px'>
       <g>
         <g>
-          <circle cx='250' cy='250' r='250' />
+          <circle className={classes.outer} cx='250' cy='250' r='250' />
         </g>
-        <circle className={classes.st0} cx='250.5' cy='249.5' r='156.5' />
-        <circle className={classes.st1} cx='250.5' cy='249.5' r='61.5' />
+        <circle className={classes.middle} cx='250.5' cy='249.5' r='156.5' />
+        <circle className={classes.inner} cx='250.5' cy='249.5' r='61.5' />
       </g>
     </svg>
   );

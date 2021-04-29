@@ -77,14 +77,20 @@ const Users = () => {
           </Typography>
           <UsersSearch updateFilters={setFilters} />
         </div>
-        <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
-          {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen brukere'} />}
-          <List className={classes.grid}>
-            {users.map((user) => (
-              <UserCard key={user.id} user={user} />
-            ))}
-          </List>
-        </Pagination>
+        {filters.search ? (
+          <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
+            {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen brukere'} />}
+            <List className={classes.grid}>
+              {users.map((user) => (
+                <UserCard key={user.id} user={user} />
+              ))}
+            </List>
+          </Pagination>
+        ) : (
+          <Typography align='center' variant='h3'>
+            Søk for å se brukere
+          </Typography>
+        )}
       </div>
     </Navigation>
   );

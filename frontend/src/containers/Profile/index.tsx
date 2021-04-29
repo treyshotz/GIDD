@@ -17,9 +17,8 @@ import Collapse from '@material-ui/core/Collapse';
 // Icons
 import EditIcon from '@material-ui/icons/EditRounded';
 import AktivitiesIcon from '@material-ui/icons/DateRangeRounded';
-import HistoryIcon from '@material-ui/icons/HistoryRounded';
+import FollowIcon from '@material-ui/icons/ClearAllRounded';
 import PostsIcon from '@material-ui/icons/ViewAgendaRounded';
-import LikedIcon from '@material-ui/icons/FavoriteRounded';
 
 // Project Components
 import Navigation from 'components/navigation/Navigation';
@@ -28,6 +27,8 @@ import Paper from 'components/layout/Paper';
 import Tabs from 'components/layout/Tabs';
 import Http404 from 'containers/Http404';
 import EditProfile from 'containers/Profile/components/EditProfile';
+import FollowButton from 'containers/Profile/components/FollowButton';
+import Follow from 'containers/Profile/components/Follow';
 import MyActivities from 'containers/Profile/components/MyActivities';
 import MyPosts from 'containers/Profile/components/MyPosts';
 
@@ -68,9 +69,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     gridTemplateColumns: '300px 1fr',
     gap: theme.spacing(2),
-    [theme.breakpoints.down('xl')]: {
-      gridTemplateColumns: '250px 1fr',
-    },
     [theme.breakpoints.down('lg')]: {
       gridTemplateColumns: '1fr',
     },
@@ -92,11 +90,10 @@ const Profile = () => {
   const { data: user, isLoading, isError } = useUser(userId);
   const logout = useLogout();
   const posts = { value: 'posts', label: 'Innlegg', icon: PostsIcon };
-  const futureActivitiesTab = { value: 'futureActivities', label: 'Kommende aktiviteter', icon: AktivitiesIcon };
-  const pastActivitiesTab = { value: 'pastActivities', label: 'Tidligere aktiviteter', icon: HistoryIcon };
-  const favouritesTab = { value: 'favourites', label: 'Favoritter', icon: LikedIcon };
+  const activitiesTab = { value: 'activities', label: 'Aktiviteter', icon: AktivitiesIcon };
+  const followTab = { value: 'follow', label: 'Følger', icon: FollowIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
-  const tabs = [posts, futureActivitiesTab, pastActivitiesTab, favouritesTab, ...(userId ? [] : [editTab])];
+  const tabs = [posts, activitiesTab, followTab, ...(userId ? [] : [editTab])];
   const [tab, setTab] = useState(posts.value);
   const navigate = useNavigate();
 
@@ -118,7 +115,7 @@ const Profile = () => {
   return (
     <Navigation maxWidth={false}>
       <Helmet>
-        <title>Profil - GIDD</title>
+        <title>{`${user.firstName} ${user.surname} - GIDD`}</title>
       </Helmet>
       <div className={classes.backgroundImg} />
       <Container className={classnames(classes.grid, classes.root)}>
@@ -131,11 +128,16 @@ const Profile = () => {
                 {user.email}
               </Typography>
               <Typography align='center' variant='subtitle2'>
-                {traningLevelToText(user.level)}
+                Treningsnivå: {traningLevelToText(user.level)}
+              </Typography>
+              <Typography align='center' variant='subtitle2'>
+                {`${user.followerCount} følgere | Følger ${user.followingCount}`}
               </Typography>
             </div>
           </Paper>
-          {!userId && (
+          {userId ? (
+            <FollowButton userId={userId} />
+          ) : (
             <>
               <Button component={Link} fullWidth to={URLS.ADMIN_ACTIVITIES}>
                 Administrer aktiviteter
@@ -152,14 +154,11 @@ const Profile = () => {
             <Collapse in={tab === posts.value}>
               <MyPosts userId={userId || signedInUser?.id} />
             </Collapse>
-            <Collapse in={tab === futureActivitiesTab.value}>
-              <MyActivities type='future' userId={userId} />
+            <Collapse in={tab === activitiesTab.value}>
+              <MyActivities userId={userId} />
             </Collapse>
-            <Collapse in={tab === pastActivitiesTab.value} mountOnEnter>
-              <MyActivities type='past' userId={userId} />
-            </Collapse>
-            <Collapse in={tab === favouritesTab.value} mountOnEnter>
-              <MyActivities type='favourites' userId={userId} />
+            <Collapse in={tab === followTab.value} mountOnEnter>
+              <Follow userId={userId} />
             </Collapse>
             <Collapse in={tab === editTab.value} mountOnEnter>
               <Paper>
