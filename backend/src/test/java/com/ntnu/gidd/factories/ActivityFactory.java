@@ -26,7 +26,7 @@ public class ActivityFactory implements FactoryBean<Activity> {
                 .signupStart(ZonedDateTime.now())
                 .signupEnd(ZonedDateTime.now())
                 .closed(false)
-                .capacity(random.nextInt(1000))
+                .capacity(random.nextInt(1000)+100)
                 .trainingLevel(trainingLevelFactory.getObject())
                 .geoLocation(geoLocationFactory.getObject())
                 .inviteOnly(false)

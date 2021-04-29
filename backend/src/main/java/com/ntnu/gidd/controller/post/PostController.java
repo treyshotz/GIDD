@@ -40,17 +40,20 @@ public class PostController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<PostDto> getAll(@QuerydslPredicate(root = Activity.class) Predicate predicate,
-                                @PageableDefault(size = Constants.PAGINATION_SIZE, sort="content", direction = Sort.Direction.ASC) Pageable pageable){
+                                @PageableDefault(size = Constants.PAGINATION_SIZE, sort="content", direction = Sort.Direction.ASC) Pageable pageable,
+                                Authentication authentication){
         log.debug("[x] Request to get all posts");
-        return postService.findAllPosts(predicate, pageable);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return postService.findAllPosts(predicate, pageable, userDetails.getUsername());
 
     }
     @ApiOperation(value = "Find one post by id")
     @GetMapping("{postId}/")
     @ResponseStatus(HttpStatus.OK)
-    public PostDto get(@PathVariable UUID postId){
+    public PostDto get(Authentication authentication,@PathVariable UUID postId){
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         log.debug("[x] Request to get post by id={}", postId);
-        return postService.getPostById(postId);
+        return postService.getPostById(postId, userDetails.getUsername());
     }
 
     @ApiOperation(value = "Create new post")
@@ -66,9 +69,11 @@ public class PostController {
     @PutMapping("{postId}/")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("@securityService.postPermissions(#postId)")
-    public PostDto update(@PathVariable UUID postId, @RequestBody PostDto post){
+    public PostDto update(Authentication authentication,@PathVariable UUID postId, @RequestBody PostDto post){
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
         log.debug("[x] Request to update a post by id={}", postId);
-        return postService.updatePost(postId, post);
+        return postService.updatePost(postId, post, userDetails.getUsername());
 
     }
 

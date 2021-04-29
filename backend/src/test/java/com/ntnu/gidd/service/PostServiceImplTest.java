@@ -2,6 +2,7 @@ package com.ntnu.gidd.service;
 
 
 import com.ntnu.gidd.config.ModelMapperConfig;
+import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.dto.post.PostCreateDto;
 import com.ntnu.gidd.dto.post.PostDto;
 import com.ntnu.gidd.factories.ActivityFactory;
@@ -11,8 +12,8 @@ import com.ntnu.gidd.model.Post;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.PostRepository;
 import com.ntnu.gidd.repository.UserRepository;
-import com.ntnu.gidd.service.post.PostService;
 import com.ntnu.gidd.service.post.PostServiceImpl;
+import com.ntnu.gidd.service.rating.PostLikeService;
 import com.ntnu.gidd.utils.JpaUtils;
 import com.querydsl.core.types.Predicate;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +50,6 @@ public class PostServiceImplTest {
     @Autowired
     ModelMapper modelMapper;
 
-
     @Mock
     UserRepository userRepository;
 
@@ -60,8 +60,15 @@ public class PostServiceImplTest {
     @Mock
     PostRepository postRepository;
 
+    @Mock
+    PostLikeService postLikeService;
+
     @InjectMocks
     PostServiceImpl postService;
+
+    ModelMapper usemodelMapper = new ModelMapper();
+
+
 
     ActivityFactory activityFactory = new ActivityFactory();
 
@@ -89,7 +96,9 @@ public class PostServiceImplTest {
         List<Post> postList = List.of(post);
         Page<Post> postPage = new PageImpl<>(postList, pageable, postList.size());
         when(postRepository.findAll(predicate, pageable)).thenReturn(postPage);
-        Page<PostDto> actualPosts = postService.findAllPosts(predicate, pageable);
+        lenient().when(postLikeService.checkListLikes(any(), any(String.class)))
+                .thenReturn(postPage.map(s -> usemodelMapper.map(s , PostDto.class)));
+        Page<PostDto> actualPosts = postService.findAllPosts(predicate, pageable, "");
 
         assertThat(postPage.getContent().size()).isEqualTo(actualPosts.getContent().size());
         for (int i = 0; i < postList.size() ; i++) {
@@ -99,7 +108,9 @@ public class PostServiceImplTest {
 
     @Test
     public void testPostServiceGetByID(){
-        PostDto actualPost = postService.getPostById(post.getId());
+        PostDto actualPost = postService.getPostById(post.getId(), "");
+        lenient().when(postLikeService.hasLiked(any(String.class), any()))
+                .thenReturn(false);
         assertThat(actualPost.getId()).isEqualTo(post.getId());
     }
 
@@ -121,7 +132,9 @@ public class PostServiceImplTest {
         PostDto updatePost = PostDto.builder().content(newContent).build();
         lenient().when(activityRepository.findById(post.getActivity().getId())).thenReturn(Optional.of(post.getActivity()));
         lenient().when(postRepository.save(any())).thenReturn(post);
-        PostDto actualPost = postService.updatePost(post.getId(), updatePost);
+        lenient().when(postLikeService.hasLiked(any(String.class), any()))
+                .thenReturn(false);
+        PostDto actualPost = postService.updatePost(post.getId(), updatePost, "");
         assertThat(updatePost.getContent()).isEqualTo(post.getContent());
     }
 

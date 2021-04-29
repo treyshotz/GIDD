@@ -1,19 +1,15 @@
-package com.ntnu.gidd.service.Activity.expression;
+package com.ntnu.gidd.service.activity.expression;
 
 import com.ntnu.gidd.model.GeoLocation;
 import com.ntnu.gidd.model.QActivity;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberPath;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 

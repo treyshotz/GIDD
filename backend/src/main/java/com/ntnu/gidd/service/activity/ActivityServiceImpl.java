@@ -18,7 +18,7 @@ import com.ntnu.gidd.repository.*;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
-import com.ntnu.gidd.service.Activity.expression.ActivityExpression;
+import com.ntnu.gidd.service.activity.expression.ActivityExpression;
 import com.ntnu.gidd.service.ActivityImage.ActivityImageService;
 import com.ntnu.gidd.service.Email.EmailService;
 import com.ntnu.gidd.service.Geolocation.GeolocationService;

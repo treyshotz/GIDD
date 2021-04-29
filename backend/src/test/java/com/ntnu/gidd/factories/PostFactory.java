@@ -2,6 +2,8 @@ package com.ntnu.gidd.factories;
 
 import com.ntnu.gidd.model.Post;
 import org.springframework.beans.factory.FactoryBean;
+
+import java.util.List;
 import java.util.UUID;
 
 import static com.ntnu.gidd.utils.StringRandomizer.getRandomString;
@@ -17,6 +19,7 @@ public class PostFactory implements FactoryBean<Post> {
                 .activity(activityFactory.getObject())
                 .creator(userFactory.getObject())
                 .image(getRandomString(11))
+                .likes(List.of())
                 .id(UUID.randomUUID()).build();
     }
 

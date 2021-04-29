@@ -21,7 +21,6 @@ public class PostDto {
     private String content;
     private int likesCount;
     private boolean hasLiked;
-    @NotNull
     private ActivityListDto activity;
     private int commentsCount;
     @NotNull
