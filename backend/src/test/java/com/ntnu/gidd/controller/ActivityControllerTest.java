@@ -8,6 +8,7 @@ import com.ntnu.gidd.model.*;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.GeoLocation;
 
+import static com.ntnu.gidd.utils.StringRandomizer.getRandomString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import com.ntnu.gidd.model.TrainingLevel;
@@ -34,7 +35,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.hasItem;
@@ -51,14 +54,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class ActivityControllerTest {
 
-    private  String URI = "/activities/";
+    private final String URI = "/activities/";
     private final String TITLE = "Test activity";
 
     @Autowired
     private MockMvc mvc;
 
     private ActivityFactory activityFactory = new ActivityFactory();
+
     private UserFactory userFactory = new UserFactory();
+
     @Autowired
     private ActivityRepository  activityRepository;
 

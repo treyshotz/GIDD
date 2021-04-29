@@ -1,6 +1,9 @@
 package com.ntnu.gidd.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.querydsl.core.annotations.PropertyType;
+import com.querydsl.core.annotations.QueryType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -65,6 +68,11 @@ public class User extends UUIDModel {
     @ManyToMany(mappedBy = "following", fetch = FetchType.EAGER)
     private List<User> followers;
 
+
+    @Transient
+    @QueryType(PropertyType.STRING)
+    private String search;
+    
     public void addFollowing(User userToFollow) {
         if (following == null)
             following = new ArrayList<>();
@@ -96,6 +104,7 @@ public class User extends UUIDModel {
         if(activities != null)
            activities.clear();
     }
+
     private void removeInvites(){
         if(invites != null)
             invites.clear();

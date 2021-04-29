@@ -17,8 +17,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @SuperBuilder
 @Table(name = "activity")
@@ -141,4 +140,8 @@ public class Activity extends UUIDModel {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private ZonedDateTime startDateAfter;
 
+
+    @Transient
+    @QueryType(PropertyType.STRING)
+    private String search;
 }

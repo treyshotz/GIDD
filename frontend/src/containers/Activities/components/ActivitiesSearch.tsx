@@ -121,7 +121,7 @@ const ActivitiesSearch = ({ updateFilters }: ActivitiesSearchProps) => {
       filters.startDateAfter = data.startDate.toJSON();
     }
     if (data.title) {
-      filters.title = data.title;
+      filters.search = data.title;
     }
     if (data.level && data.enableTrainingLevel) {
       filters['trainingLevel.level'] = data.level;

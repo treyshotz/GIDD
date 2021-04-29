@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export type ActivityFilters = {
-  title?: string;
+  search?: string;
   ['trainingLevel.level']?: string;
   startDateAfter?: string;
   startDateBefore?: string;

@@ -3,7 +3,7 @@ package com.ntnu.gidd.controller.rating;
 
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.model.Activity;
-import com.ntnu.gidd.service.Activity.ActivityService;
+import com.ntnu.gidd.service.activity.ActivityService;
 import com.ntnu.gidd.util.Constants;
 import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;

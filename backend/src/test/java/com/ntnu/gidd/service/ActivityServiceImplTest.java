@@ -13,7 +13,7 @@ import com.ntnu.gidd.repository.*;
 import com.ntnu.gidd.service.Email.EmailService;
 import com.ntnu.gidd.service.Geolocation.GeolocationService;
 import com.ntnu.gidd.service.Registration.RegistrationService;
-import com.ntnu.gidd.service.Activity.ActivityServiceImpl;
+import com.ntnu.gidd.service.activity.ActivityServiceImpl;
 import com.ntnu.gidd.service.equipment.EquipmentService;
 import com.ntnu.gidd.service.rating.ActivityLikeService;
 import com.ntnu.gidd.utils.JpaUtils;

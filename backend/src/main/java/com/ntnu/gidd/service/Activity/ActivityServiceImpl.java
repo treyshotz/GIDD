@@ -1,4 +1,4 @@
-package com.ntnu.gidd.service.Activity;
+package com.ntnu.gidd.service.activity;
 
 import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
@@ -47,8 +47,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
-
-import static com.querydsl.core.types.ExpressionUtils.anyOf;
 
 
 @Slf4j
@@ -191,9 +189,6 @@ public class ActivityServiceImpl implements ActivityService {
     }
     @Override
     public Page<ActivityListDto> getActivities(Predicate predicate, Pageable pageable, String email) {
-
-
-
         assert predicate != null;
         Page<ActivityListDto> activities = this.activityRepository.findAll(predicate, pageable)
                 .map(s -> modelMapper.map(s, ActivityListDto.class));

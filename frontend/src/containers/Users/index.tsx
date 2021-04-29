@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export type UsersFilters = {
-  name?: string;
+  search?: string;
   ['trainingLevel.level']?: string;
   sort?: string;
 };

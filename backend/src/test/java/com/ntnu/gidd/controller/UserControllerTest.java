@@ -1,17 +1,16 @@
 package com.ntnu.gidd.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
 import com.ntnu.gidd.dto.User.UserRegistrationDto;
 import com.ntnu.gidd.exception.EmailInUseException;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.UserRepository;
-import com.ntnu.gidd.security.config.JWTConfig;
 import com.ntnu.gidd.security.UserDetailsImpl;
-import com.ntnu.gidd.utils.StringRandomizer;
+import com.ntnu.gidd.security.config.JWTConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -23,19 +22,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static com.ntnu.gidd.utils.StringRandomizer.getRandomString;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-
-import java.time.LocalDate;
-import java.util.stream.Stream;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -67,7 +66,7 @@ public class UserControllerTest {
 	private String surname;
 	
 	private LocalDate birthDate;
-	
+
 	/**
 	 * Setting up variables that is the same for all tests
 	 */
@@ -249,7 +248,7 @@ public class UserControllerTest {
 	@Test
 	@WithMockUser(value = "spring")
 	public void testUpdateUserUpdatesUserAndReturnUpdatedData() throws Exception {
-		String surname = StringRandomizer.getRandomString(8);
+		String surname = getRandomString(8);
 		user.setSurname(surname);
 		UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
 		mockMvc.perform(put(URI + user.getId() + "/")
@@ -259,5 +258,6 @@ public class UserControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(user.getId().toString()));
 	}
-	
+
+
 }

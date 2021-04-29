@@ -70,8 +70,8 @@ export type UsersSearchProps = {
 };
 
 const SORT_OPTIONS = [
-  { name: 'Navn - A-Å', key: 'name,ASC' },
-  { name: 'Navn - Å-A', key: 'name,DESC' },
+  { name: 'Navn - A-Å', key: 'firstName,surname,ASC' },
+  { name: 'Navn - Å-A', key: 'firstName,surname,DESC' },
 ];
 
 const UsersSearch = ({ updateFilters }: UsersSearchProps) => {
@@ -85,7 +85,7 @@ const UsersSearch = ({ updateFilters }: UsersSearchProps) => {
     const filters: UsersFilters = {};
     filters.sort = data.sort;
     if (data.name) {
-      filters.name = data.name;
+      filters.search = data.name;
     }
     if (data.level && data.enableTrainingLevel) {
       filters['trainingLevel.level'] = data.level;

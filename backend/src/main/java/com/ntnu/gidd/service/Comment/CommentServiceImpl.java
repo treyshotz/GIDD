@@ -12,7 +12,7 @@ import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.CommentRepository;
 import com.ntnu.gidd.exception.CommentNotFoundException;
 import com.ntnu.gidd.repository.UserRepository;
-import com.ntnu.gidd.service.Activity.ActivityService;
+import com.ntnu.gidd.service.activity.ActivityService;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;

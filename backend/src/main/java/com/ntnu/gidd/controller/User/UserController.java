@@ -5,6 +5,7 @@ import com.ntnu.gidd.dto.User.UserRegistrationDto;
 import com.ntnu.gidd.exception.EmailInUseException;
 import com.ntnu.gidd.exception.UserNotFoundException;
 import com.ntnu.gidd.model.Activity;
+import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.service.User.UserService;
 import com.ntnu.gidd.util.Constants;
 import com.querydsl.core.types.Predicate;
@@ -50,7 +51,7 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<UserDto> getAllUser(@QuerydslPredicate(root = Activity.class) Predicate predicate,
+    public Page<UserDto> getAllUser(@QuerydslPredicate(root = User.class) Predicate predicate,
                               @PageableDefault(size = Constants.PAGINATION_SIZE, sort="firstName", direction = Sort.Direction.ASC) Pageable pageable){
         log.debug("[X] Request to look up users");
         return this.userService.getAll(predicate, pageable);

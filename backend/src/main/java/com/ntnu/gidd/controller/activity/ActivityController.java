@@ -6,7 +6,7 @@ import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Activity.ActivityListDto;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.GeoLocation;
-import com.ntnu.gidd.service.Activity.ActivityService;
+import com.ntnu.gidd.service.activity.ActivityService;
 import com.ntnu.gidd.util.Constants;
 import com.ntnu.gidd.util.Response;
 import com.querydsl.core.types.Predicate;
