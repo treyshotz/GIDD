@@ -18,6 +18,7 @@ import com.ntnu.gidd.model.Registration;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.CommentRepository;
+import com.ntnu.gidd.repository.PostRepository;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.service.activity.ActivityService;
 import com.ntnu.gidd.service.Comment.CommentService;
@@ -59,6 +60,10 @@ public class CommentServiceImplTest {
   @Mock
   private ActivityService activityService;
 
+  @Mock
+  private PostRepository postRepository;
+
+
 
   ModelMapper modelMapper = new ContextAwareModelMapper();
 
@@ -71,7 +76,7 @@ public class CommentServiceImplTest {
 
   @BeforeEach
   public void setUp() throws Exception {
-    commentService = new CommentServiceImpl(commentRepository, userRepository, activityRepository, modelMapper, activityService);
+    commentService = new CommentServiceImpl(commentRepository, userRepository, activityRepository, modelMapper, postRepository);
     activity = new ActivityFactory().getObject();
     assert activity != null;
 

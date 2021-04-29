@@ -1,15 +1,20 @@
 package com.ntnu.gidd.model;
 
 
+import com.querydsl.core.annotations.PropertyType;
+import com.querydsl.core.annotations.QueryType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -20,7 +25,7 @@ import java.util.List;
 @Table(name = "post")
 public class Post  extends UUIDModel{
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "creator_id", referencedColumnName = "id", columnDefinition = "CHAR(32)")
     private User creator;
 
@@ -40,26 +45,38 @@ public class Post  extends UUIDModel{
             uniqueConstraints = @UniqueConstraint(columnNames = {"post_id", "user_id"}))
     private List<User> likes = new ArrayList<>();
 
-
     @Transient
+
     public int getLikesCount(){
         return likes.size();
     }
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    private List<Comment> comments = new ArrayList<>();
+
+    @Transient
+    public int getCommentsCount(){
+        return comments.size();
+    }
 
     @PreRemove
     public void removeRelationships(){
+        clearComments();
+        clearActivity();
         clearCreator();
-        clearLikes();
     }
 
-    public void clearLikes(){
-        if(likes != null)
-            likes.clear();
+    public void clearComments(){
+        if(comments != null)
+            comments.clear();
     }
-
     public void clearCreator(){
-        if(creator != null)
-            creator = null;
+        creator = null;
     }
+    public void clearActivity(){
+        activity = null;
+    }
+
+
+
 }

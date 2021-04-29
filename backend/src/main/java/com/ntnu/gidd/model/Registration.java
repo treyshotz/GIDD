@@ -45,6 +45,13 @@ public class Registration extends TimeStampedModel{
     @JoinColumn(name="activity_id", referencedColumnName = "id")
     Activity activity;
 
+
+    @PreRemove
+    public void removeRelationship(){
+        activity = null;
+        user = null;
+        registrationId = null;
+    }
     @Transient
     @QueryType(PropertyType.DATETIME)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

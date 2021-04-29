@@ -92,7 +92,7 @@ const PostCard = ({ post, preview = false }: PostCardProps) => {
       {!preview && (
         <Paper className={classnames(classes.grid, classes.reactions)} noPadding>
           <PostLike post={post} />
-          <Comments id={post.id} isAdmin={isAdmin} type='post' />
+          <Comments commentsCount={post.commentsCount} id={post.id} isAdmin={isAdmin} type='post' />
         </Paper>
       )}
     </Paper>

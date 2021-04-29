@@ -4,6 +4,7 @@ import com.ntnu.gidd.dto.User.UserDto;
 import com.ntnu.gidd.dto.User.UserRegistrationDto;
 import com.ntnu.gidd.factories.UserFactory;
 import com.ntnu.gidd.model.User;
+import com.ntnu.gidd.repository.PostRepository;
 import com.ntnu.gidd.repository.PasswordResetTokenRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
@@ -50,6 +51,8 @@ public class UserServiceImplTest {
     private CommentService commentService;
 
     @Mock
+    PostRepository postRepository;
+
     private EmailService emailService;
 
     @Mock
@@ -73,13 +76,13 @@ public class UserServiceImplTest {
     @BeforeEach
     void setUp() throws Exception {
         userService = new UserServiceImpl(encoder,
-                                          modelMapper,
-                                          userRepository,
-                                          emailService,
-                                          passwordResetTokenRepository,
-                                          registrationService,
-                                          commentService,
-                                          trainingLevelRepository);
+                modelMapper,
+                userRepository,
+                emailService,
+                passwordResetTokenRepository, registrationService,
+                commentService,
+                postRepository,
+                trainingLevelRepository);
         user = new UserFactory().getObject();
         userRegistrationDto = modelMapper.map(user, UserRegistrationDto.class);
         userRepository.save(user);
@@ -117,6 +120,7 @@ public class UserServiceImplTest {
         doNothing().when(userRepository).deleteById(user.getId());
         doNothing().when(registrationService).deleteAllRegistrationsWithUsername(user.getEmail());
         doNothing().when(commentService).deleteAllCommentsOnUser(user.getEmail());
+        doNothing().when(postRepository).deletePostsByCreator(user);
         userService.deleteUser(user.getEmail());
 
         List<User> usersExpectedAfterDelete = List.of(secondUser);

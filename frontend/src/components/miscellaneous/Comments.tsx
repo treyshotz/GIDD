@@ -20,7 +20,6 @@ import { Comment } from 'types/Types';
 const useStyles = makeStyles((theme) => ({
   title: {
     fontSize: '1.5rem',
-    padding: theme.spacing(1),
   },
   addComment: {
     display: 'grid',
@@ -28,9 +27,6 @@ const useStyles = makeStyles((theme) => ({
     gap: theme.spacing(1),
     alignItems: 'center',
     paddingTop: theme.spacing(1),
-    [theme.breakpoints.down('md')]: {
-      padding: theme.spacing(1),
-    },
   },
   divider: {
     margin: theme.spacing(2, 1),
@@ -55,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: `${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0 0`,
     background: theme.palette.background.paper,
     maxHeight: '65vh',
+    padding: theme.spacing(1),
   },
   commentBtn: {
     position: 'fixed',
@@ -71,9 +68,6 @@ const useStyles = makeStyles((theme) => ({
   },
   comments: {
     overflow: 'auto',
-    [theme.breakpoints.down('md')]: {
-      padding: theme.spacing(1),
-    },
   },
   postCommentBtn: {
     height: 39,
@@ -87,9 +81,10 @@ export type CommentsProps = {
   id: string;
   type: CommentApp;
   isAdmin?: boolean;
+  commentsCount?: number;
 };
 
-const Comments = ({ id, type, isAdmin }: CommentsProps) => {
+const Comments = ({ id, type, isAdmin, commentsCount }: CommentsProps) => {
   const classes = useStyles();
   const { data: user } = useUser();
   const [viewComments, setViewComments] = useState(false);
@@ -192,7 +187,7 @@ const Comments = ({ id, type, isAdmin }: CommentsProps) => {
         endIcon={<ChatRoundedIcon />}
         onClick={() => setViewComments(true)}
         variant='text'>
-        {comments.length}
+        {commentsCount || comments.length}
       </Button>
       <SwipeableDrawer
         anchor='bottom'

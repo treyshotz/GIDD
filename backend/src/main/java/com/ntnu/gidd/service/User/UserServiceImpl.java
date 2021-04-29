@@ -7,12 +7,14 @@ import com.ntnu.gidd.dto.User.UserRegistrationDto;
 import com.ntnu.gidd.exception.*;
 import com.ntnu.gidd.model.*;
 import com.ntnu.gidd.repository.PasswordResetTokenRepository;
+import com.ntnu.gidd.repository.PostRepository;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.service.Comment.CommentService;
 import com.ntnu.gidd.service.Email.EmailService;
 import com.ntnu.gidd.service.Registration.RegistrationService;
 import com.ntnu.gidd.util.ContextAwareModelMapper;
+import com.ntnu.gidd.service.post.PostService;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import com.querydsl.core.types.Predicate;
 import lombok.AllArgsConstructor;
@@ -61,6 +63,10 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private CommentService commentService;
+
+	@Autowired
+	PostRepository postRepository;
+	
 
 	@Autowired
 	private TrainingLevelRepository trainingLevelRepository;
@@ -125,9 +131,9 @@ public class UserServiceImpl implements UserService {
 				orElseThrow(UserNotFoundException::new);
 
 		registrationService.deleteAllRegistrationsWithUsername(username);
+		postRepository.deletePostsByCreator(user);
 		commentService.deleteAllCommentsOnUser(username);
 		userRepository.deleteById(user.getId());
-
 		return modelMapper.map(user, UserDto.class);
 	}
 

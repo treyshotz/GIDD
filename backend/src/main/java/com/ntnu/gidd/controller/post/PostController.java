@@ -4,6 +4,7 @@ package com.ntnu.gidd.controller.post;
 import com.ntnu.gidd.dto.post.PostCreateDto;
 import com.ntnu.gidd.dto.post.PostDto;
 import com.ntnu.gidd.model.Activity;
+import com.ntnu.gidd.model.Post;
 import com.ntnu.gidd.service.post.PostService;
 import com.ntnu.gidd.util.Constants;
 import com.ntnu.gidd.util.Response;
@@ -39,7 +40,7 @@ public class PostController {
     @ApiOperation(value = "Find all posts")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<PostDto> getAll(@QuerydslPredicate(root = Activity.class) Predicate predicate,
+    public Page<PostDto> getAll(@QuerydslPredicate(root = Post.class) Predicate predicate,
                                 @PageableDefault(size = Constants.PAGINATION_SIZE, sort="content", direction = Sort.Direction.ASC) Pageable pageable,
                                 Authentication authentication){
         log.debug("[x] Request to get all posts");

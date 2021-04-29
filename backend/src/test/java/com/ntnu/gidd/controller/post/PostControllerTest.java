@@ -82,6 +82,8 @@ public class PostControllerTest {
     @AfterEach
     public void cleanup(){
         postRepository.deleteAll();
+        activityRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @WithMockUser(value = "spring")

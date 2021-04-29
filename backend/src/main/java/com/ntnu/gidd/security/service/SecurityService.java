@@ -91,6 +91,10 @@ public class SecurityService {
         return userHasActivityAccess(activityId)|| isOwnComment(commentId);
     }
 
+    public boolean postCommentPermissions(UUID postId, UUID commentId){
+        return postPermissions(postId)|| isOwnComment(commentId);
+    }
+
     public boolean postPermissions(UUID postId){
         return isOwnPost(postId);
     }

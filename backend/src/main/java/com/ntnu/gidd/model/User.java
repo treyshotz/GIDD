@@ -57,6 +57,11 @@ public class User extends UUIDModel {
     private List<Comment> comments;
 
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "creator_id", nullable = false, insertable = false)
+    private List<Post> post;
+
+
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
@@ -86,6 +91,10 @@ public class User extends UUIDModel {
             followers = new ArrayList<>();
 
         followers.add(follower);
+    }
+    private void clearPosts(){
+        if(post != null)
+            post.clear();
     }
 
     public void removeFollowing(User unfollowed) {
@@ -118,6 +127,8 @@ public class User extends UUIDModel {
         removeInvites();
         removeActivitiesFromUsers();
         removeComments();
+        clearPosts();
+
     }
 
     private void removeComments(){
@@ -134,14 +145,5 @@ public class User extends UUIDModel {
             invites.clear();
     }
 
-    private void removeInvitesFromUsers() {
-        if(invites != null)
-            invites.clear();
-    }
-
-    private void removeCommentsFromUsers() {
-        if (comments != null)
-            comments.clear();
-    }
 
 }

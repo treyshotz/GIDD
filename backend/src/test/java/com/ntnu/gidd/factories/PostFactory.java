@@ -20,6 +20,7 @@ public class PostFactory implements FactoryBean<Post> {
                 .creator(userFactory.getObject())
                 .image(getRandomString(11))
                 .likes(List.of())
+                .comments(List.of())
                 .id(UUID.randomUUID()).build();
     }
 

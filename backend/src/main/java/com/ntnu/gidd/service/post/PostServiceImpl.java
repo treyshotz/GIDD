@@ -62,6 +62,7 @@ public class PostServiceImpl implements PostService{
         } else {
             newPost.setActivity(null);
         }
+        newPost.setComments(List.of());
         newPost.setCreator(userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new));
         newPost.setLikes(List.of());
         newPost = postRepository.save(newPost);

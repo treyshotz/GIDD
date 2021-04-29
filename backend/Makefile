@@ -25,7 +25,6 @@ test:
 	mvn test --activate-profiles test -e
 
 PR:
-	mvn package --activate-profiles test -e
 	git add .
 
 run:

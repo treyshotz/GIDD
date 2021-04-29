@@ -2,15 +2,14 @@ package com.ntnu.gidd.service.Comment;
 
 import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Comment.CommentDto;
-import com.ntnu.gidd.exception.ActivityNotFoundException;
-import com.ntnu.gidd.exception.NotHostOrCreatorException;
-import com.ntnu.gidd.exception.UserNotFoundException;
+import com.ntnu.gidd.exception.*;
 import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.model.Comment;
+import com.ntnu.gidd.model.Post;
 import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.CommentRepository;
-import com.ntnu.gidd.exception.CommentNotFoundException;
+import com.ntnu.gidd.repository.PostRepository;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.service.activity.ActivityService;
 import java.time.ZonedDateTime;
@@ -29,6 +28,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import static java.lang.StrictMath.toIntExact;
+
 @Slf4j
 @AllArgsConstructor
 @Service
@@ -44,8 +45,7 @@ public class CommentServiceImpl implements CommentService {
 
  private  ModelMapper modelMapper;
 
- private ActivityService activityService;
-
+ private PostRepository postRepository;
   /**
    * Retrieve a comment by ID
    * @param commentId
@@ -110,8 +110,60 @@ public class CommentServiceImpl implements CommentService {
     return modelMapper.map(comment, CommentDto.class);
   }
 
+    public CommentDto savePostComment(Comment comment, UUID postId, String creatorEmail) {
+        User user = userRepository.findByEmail(creatorEmail).orElseThrow(UserNotFoundException::new);
+        comment.setUser(user);
+        Post updatePost = this.postRepository.findById(postId).orElseThrow(PostNotFoundExecption::new);
+        List<Comment> comments =  new ArrayList<>(updatePost.getComments());
+        comment.setId(UUID.randomUUID());
+        comment = commentRepository.save(comment);
+        comments.add(comment);
+        updatePost.setComments(comments);
+        this.postRepository.save(updatePost);
+        return modelMapper.map(comment, CommentDto.class);
+    }
 
-  /**
+    public void deletePostComment(UUID commentId, UUID postID) {
+            Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
+            Post post = postRepository.findById(postID).orElseThrow(PostNotFoundExecption::new);
+            List<Comment> comments =  new ArrayList<>(post.getComments());
+            comments.remove(comment);
+            post.setComments(comments);
+            this.commentRepository.deleteById(commentId);
+            postRepository.save(post);
+    }
+
+    public CommentDto updatePostComment(UUID commentId, CommentDto comment, UUID postId) {
+            Comment updateComment = this.commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
+            Post updatePost = this.postRepository.findById(postId).orElseThrow(PostNotFoundExecption::new);
+            List<Comment> comments =  new ArrayList<>(updatePost.getComments());
+            comments.remove(updateComment);
+            updateComment.setComment(comment.getComment());
+            updateComment = commentRepository.save(updateComment);
+            comments.add(updateComment);
+            updatePost.setComments(comments);
+            this.postRepository.save(updatePost);
+            return modelMapper.map(updateComment, CommentDto.class);
+    }
+
+    public Page<CommentDto>  getCommentsOnPost(Pageable pageable, UUID postId) {
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundExecption::new);
+
+        int total = post.getComments().size();
+        int start = toIntExact(pageable.getOffset());
+        int end = Math.min((start + pageable.getPageSize()), total);
+        List<Comment> output = new ArrayList<>();
+        if (start <= end) {
+            output = post.getComments().subList(start, end);
+        }
+        Page<Comment> comments = new PageImpl<>(output, pageable, total);
+        return comments.map((s-> modelMapper.map(s, CommentDto.class)));
+
+    }
+
+
+
+    /**
    * Deletes a given comment with given ID
    * @param commentId
    * @param creatorEmail
@@ -165,7 +217,14 @@ public class CommentServiceImpl implements CommentService {
   public Page<CommentDto>  getCommentsOnActivity(Pageable pageable, UUID activityId) {
 
     Activity activityToFind = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new);
-    Page<Comment> comments = new PageImpl<>(activityToFind.getComments(), pageable, activityToFind.getComments().size());
+    int total = activityToFind.getComments().size();
+    int start = toIntExact(pageable.getOffset());
+    int end = Math.min((start + pageable.getPageSize()), total);
+    List<Comment> output = new ArrayList<>();
+    if (start <= end) {
+      output = activityToFind.getComments().subList(start, end);
+    }
+    Page<Comment> comments = new PageImpl<>(output, pageable, total);
     return comments.map((s-> modelMapper.map(s, CommentDto.class)));
 
   }
@@ -196,4 +255,5 @@ public class CommentServiceImpl implements CommentService {
     User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
     return user.getComments().contains(comment);
   }
+
 }

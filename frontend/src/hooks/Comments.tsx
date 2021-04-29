@@ -2,6 +2,7 @@ import { useInfiniteQuery, useQueryClient, useMutation, UseMutationResult } from
 import API from 'api/api';
 import { getNextPaginationPage } from 'utils';
 import { PaginationResponse, RequestResponse, Comment } from 'types/Types';
+import { updateFeedCache } from 'hooks/Feed';
 export const COMMENTS_QUERY_KEY = 'comments';
 
 export type CommentApp = 'activity' | 'post';
@@ -30,6 +31,9 @@ export const useCreateComment = (appId: string, app: CommentApp): UseMutationRes
   return useMutation((comment) => (app === 'activity' ? API.createActivityComment : API.createPostComment)(appId, comment), {
     onSuccess: () => {
       queryClient.invalidateQueries([COMMENTS_QUERY_KEY, appId, app]);
+      if (app === 'post') {
+        updateFeedCache(queryClient, appId, (post) => ({ ...post, commentsCount: post.commentsCount + 1 }));
+      }
     },
   });
 };
@@ -43,6 +47,9 @@ export const useDeleteComment = (appId: string, commentId: string, app: CommentA
   return useMutation(() => (app === 'activity' ? API.deleteActivityComment : API.deletePostComment)(appId, commentId), {
     onSuccess: () => {
       queryClient.invalidateQueries([COMMENTS_QUERY_KEY, appId, app]);
+      if (app === 'post') {
+        updateFeedCache(queryClient, appId, (post) => ({ ...post, commentsCount: post.commentsCount - 1 }));
+      }
     },
   });
 };

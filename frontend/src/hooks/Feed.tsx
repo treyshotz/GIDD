@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useMutation, useInfiniteQuery, useQuery, useQueryClient, UseMutationResult, InfiniteData } from 'react-query';
+import { useMutation, useInfiniteQuery, useQuery, useQueryClient, QueryClient, UseMutationResult, InfiniteData } from 'react-query';
 import API from 'api/api';
 import { getNextPaginationPage } from 'utils';
 import { Like, Post, PostCreate, PaginationResponse, RequestResponse } from 'types/Types';
@@ -82,22 +81,7 @@ export const useCreatePostLike = (postId: string): UseMutationResult<Like, Reque
   return useMutation(() => API.createPostLike(postId), {
     onSuccess: () => {
       queryClient.invalidateQueries([POST_QUERY_KEY, postId]);
-      // @ts-ignore
-      queryClient.setQueryData<InfiniteData<PaginationResponse<Post>>>([FEED_QUERY_KEY, FEED_ALL_QUERY_KEY], (data) => {
-        if (!data) {
-          return undefined;
-        }
-        const newPagesArray: Array<PaginationResponse<Post>> = [];
-        data.pages.forEach((page) => {
-          const newData: Array<Post> = page.content.map((post) => (post.id === postId ? { ...post, hasLiked: true, likesCount: post.likesCount + 1 } : post));
-          const newPage: PaginationResponse<Post> = { ...page, content: newData };
-          newPagesArray.push(newPage);
-        });
-        return {
-          pages: newPagesArray,
-          pageParams: data.pageParams,
-        };
-      });
+      updateFeedCache(queryClient, postId, (post) => ({ ...post, hasLiked: true, likesCount: post.likesCount + 1 }));
     },
   });
 };
@@ -111,22 +95,34 @@ export const useRemovePostLike = (postId: string): UseMutationResult<Like, Reque
   return useMutation(() => API.deletePostLike(postId), {
     onSuccess: () => {
       queryClient.invalidateQueries([POST_QUERY_KEY, postId]);
-      // @ts-ignore
-      queryClient.setQueryData<InfiniteData<PaginationResponse<Post>>>([FEED_QUERY_KEY, FEED_ALL_QUERY_KEY], (data) => {
-        if (!data) {
-          return undefined;
-        }
-        const newPagesArray: Array<PaginationResponse<Post>> = [];
-        data.pages.forEach((page) => {
-          const newData: Array<Post> = page.content.map((post) => (post.id === postId ? { ...post, hasLiked: false, likesCount: post.likesCount - 1 } : post));
-          const newPage: PaginationResponse<Post> = { ...page, content: newData };
-          newPagesArray.push(newPage);
-        });
-        return {
-          pages: newPagesArray,
-          pageParams: data.pageParams,
-        };
-      });
+      updateFeedCache(queryClient, postId, (post) => ({ ...post, hasLiked: false, likesCount: post.likesCount - 1 }));
     },
+  });
+};
+
+/**
+ * Updates a given post in the feed cache
+ * @param queryClient - QueryClient
+ * @param postId - Id of post to update
+ * @param updateFunc - Function which receives the post to update and returns the updated post
+ */
+export const updateFeedCache = (queryClient: QueryClient, postId: string, updateFunc: (post: Post) => Post) => {
+  /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
+  // @ts-ignore
+  queryClient.setQueryData<InfiniteData<PaginationResponse<Post>>>([FEED_QUERY_KEY, FEED_ALL_QUERY_KEY], (data) => {
+    if (!data) {
+      return undefined;
+    }
+    const newPagesArray: Array<PaginationResponse<Post>> = [];
+    data.pages.forEach((page) => {
+      // const newData: Array<Post> = page.content.map((post) => (post.id === postId ? { ...post, hasLiked: false, likesCount: post.likesCount - 1 } : post));
+      const newData: Array<Post> = page.content.map((post) => (post.id === postId ? updateFunc(post) : post));
+      const newPage: PaginationResponse<Post> = { ...page, content: newData };
+      newPagesArray.push(newPage);
+    });
+    return {
+      pages: newPagesArray,
+      pageParams: data.pageParams,
+    };
   });
 };

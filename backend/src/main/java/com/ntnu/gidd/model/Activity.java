@@ -124,8 +124,6 @@ public class Activity extends UUIDModel {
 
     }
 
-
-
     @Transient
     public int getLikesCount(){
         return likes.size();
@@ -143,7 +141,7 @@ public class Activity extends UUIDModel {
   private ZonedDateTime startDateAfter;
 
 
-    @Transient
-    @QueryType(PropertyType.STRING)
-    private String search;
+  @Transient
+  @QueryType(PropertyType.STRING)
+  private String search;
 }

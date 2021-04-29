@@ -103,7 +103,6 @@ public class ActivityServiceImpl implements ActivityService {
         updateActivity.setEndDate(activity.getEndDate());
         updateActivity.setSignupStart(activity.getSignupStart());
         updateActivity.setSignupEnd(activity.getSignupEnd());
-        updateActivity.setClosed(activity.isClosed());
         updateActivity.setCapacity(activity.getCapacity());
         if(activity.getLevel()!=null)updateActivity.setTrainingLevel(getTrainingLevel(activity.getLevel()));
 
@@ -114,9 +113,11 @@ public class ActivityServiceImpl implements ActivityService {
         if (activity.getEquipment() != null)
             setEquipment(activity, updateActivity);
          
-        if(updateActivity.isClosed()){
+        if(!updateActivity.isClosed() && activity.isClosed()){
           closeActivity(activity);
         }
+        updateActivity.setClosed(activity.isClosed());
+
 
         if(!updateActivity.isInviteOnly() && activity.isInviteOnly()){
             inviteService.inviteBatch(activityId,
@@ -129,10 +130,6 @@ public class ActivityServiceImpl implements ActivityService {
 
         }
 
-        if(updateActivity.isClosed()){
-        closeActivity(activity);
-
-        }
         ActivityDto activityDto = modelMapper.map(this.activityRepository.save(updateActivity), ActivityDto.class);
         activityDto.setHasLiked(activityLikeService.hasLiked(email, activityDto.getId()));
         return addRegisteredAmount(activityDto);
