@@ -61,6 +61,7 @@ export default {
       }),
   changePassword: (oldPassword: string, newPassword: string) =>
     IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/change-password/`, data: { oldPassword, newPassword } }),
+  deleteUser: () => IFetch<RequestResponse>({ method: 'DELETE', url: `${USERS}/me/` }),
 
   // Feed
   getPost: (postId: string) => IFetch<Post>({ method: 'GET', url: `${POSTS}/${postId}/` }),

@@ -42,7 +42,7 @@ const ActivityHosts = ({ activityId }: ActivityHostsProps) => {
   const { data: user } = useUser();
   const { data: activity } = useActivityById(activityId);
   const { data: hosts, isLoading } = useActivityHostsById(activityId);
-  const isCreator = useMemo(() => activity?.creator.id === user?.id, [activity, user]);
+  const isCreator = useMemo(() => activity?.creator?.id === user?.id, [activity, user]);
   const addHost = useAddActivityHost(activityId);
   const removeActivityHost = useRemoveActivityHost(activityId);
   const showSnackbar = useSnackbar();
@@ -100,7 +100,7 @@ const ActivityHosts = ({ activityId }: ActivityHostsProps) => {
   return (
     <List className={classes.list}>
       <Typography variant='subtitle1'>Opprettet av:</Typography>
-      {activity !== undefined && <Host host={activity.creator} />}
+      {activity !== undefined && activity?.creator !== null && <Host host={activity.creator} />}
       <Divider />
       {Boolean(hosts?.length) && (
         <>

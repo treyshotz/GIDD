@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useSnackbar } from 'hooks/Snackbar';
-import { useUpdateUser, useChangePassword } from 'hooks/User';
+import { useUpdateUser, useChangePassword, useLogout, useDeleteUser } from 'hooks/User';
 import { User } from 'types/Types';
 import { TrainingLevel } from 'types/Enums';
 import { traningLevelToText, dateAsUTC } from 'utils';
@@ -13,6 +13,8 @@ import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 
 // Project components
+import Paper from 'components/layout/Paper';
+import VerifyDialog from 'components/layout/VerifyDialog';
 import DatePicker from 'components/inputs/DatePicker';
 import Select from 'components/inputs/Select';
 import TextField from 'components/inputs/TextField';
@@ -29,6 +31,13 @@ const useStyles = makeStyles((theme) => ({
   btnRow: {
     display: 'grid',
     gap: theme.spacing(2),
+  },
+  red: {
+    color: theme.palette.error.main,
+    borderColor: theme.palette.error.main,
+    '&:hover': {
+      borderColor: theme.palette.error.light,
+    },
   },
 }));
 
@@ -52,6 +61,8 @@ const EditProfile = ({ user }: EditProfileProps) => {
   const { getValues, register: passwordRegister, formState: passwordFormState, handleSubmit: passwordHandleSubmit } = useForm<ChangePasswordData>();
   const updateUser = useUpdateUser();
   const changePassword = useChangePassword();
+  const logout = useLogout();
+  const deleteUser = useDeleteUser();
   const showSnackbar = useSnackbar();
   const { register, control, formState, handleSubmit, setValue, watch } = useForm<UserEditData>({
     defaultValues: {
@@ -91,6 +102,16 @@ const EditProfile = ({ user }: EditProfileProps) => {
       },
     );
   };
+
+  const confirmedDeleteUser = async () => {
+    deleteUser.mutate(null, {
+      onSuccess: () => {
+        showSnackbar('Brukeren din ble slettet. Du vil nå bli sendt til forsiden.', 'success');
+        setTimeout(() => logout(), 5000);
+      },
+    });
+  };
+
   return (
     <>
       <form className={classes.list} onSubmit={handleSubmit(submit)}>
@@ -142,6 +163,17 @@ const EditProfile = ({ user }: EditProfileProps) => {
             Endre passord
           </Button>
         </div>
+        <Paper className={classes.list}>
+          <Typography variant='h3'>Faresone!</Typography>
+          <VerifyDialog
+            className={classes.red}
+            closeText='Avbryt'
+            confirmText='Slett brukeren min'
+            contentText='Sikker på at du vil slette brukeren din? Du kan ikke angre dette. Dine innlegg, likes, kommentarer, påmeldinger, invitasjoner og brukeren din vil slettes. Aktiviteter du har opprettet vil bli værende, men vil bli stående uten eier.'
+            onConfirm={confirmedDeleteUser}>
+            Slett bruker
+          </VerifyDialog>
+        </Paper>
       </form>
       <Dialog onClose={() => setOpen(false)} open={open} titleText='Endre Passord'>
         <form className={classes.list} onSubmit={passwordHandleSubmit(onChangePassword)}>

@@ -70,7 +70,7 @@ const ActivityAdmin = () => {
   };
 
   useEffect(() => {
-    if (isError || !user || (activityId && data && !isUserLoading && !data.hosts.some((host) => host.id === user.id) && data.creator.id !== user.id)) {
+    if (isError || !user || (activityId && data && !isUserLoading && !data.hosts.some((host) => host.id === user.id) && data.creator?.id !== user.id)) {
       goToActivity(null);
     }
   }, [isError, data, user, isUserLoading, activityId]);

@@ -134,7 +134,7 @@ public class ActivityServiceImpl implements ActivityService {
 
         }
         ActivityDto activityDto = modelMapper.map(this.activityRepository.save(updateActivity), ActivityDto.class);
-        activityDto.setHasLiked(activityLikeService.hasLiked(email, activity.getId()));
+        activityDto.setHasLiked(activityLikeService.hasLiked(email, activityDto.getId()));
         return addRegisteredAmount(activityDto);
 
     }

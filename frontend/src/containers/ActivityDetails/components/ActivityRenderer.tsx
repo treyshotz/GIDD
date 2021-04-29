@@ -228,7 +228,7 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
             swipeAreaWidth={56}>
             {user && <ActivityRegistration activity={data} closeDialog={() => setViewSignup(false)} user={user} />}
           </SwipeableDrawer>
-          {!preview && (data.hosts.some((host) => host.id === user?.id) || data.creator.id === user?.id) && (
+          {!preview && (data.hosts.some((host) => host.id === user?.id) || data.creator?.id === user?.id) && (
             <Button component={Link} fullWidth to={`${URLS.ADMIN_ACTIVITIES}${data.id}/`} variant='outlined'>
               Endre aktivitet
             </Button>
@@ -246,7 +246,7 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
               </ul>
             </Paper>
           )}
-          {isMapLoaded && (
+          {isMapLoaded && data.geoLocation && (
             <GoogleMap center={data.geoLocation} mapContainerClassName={classes.containerStyle} zoom={14}>
               <Marker position={data.geoLocation} />
             </GoogleMap>

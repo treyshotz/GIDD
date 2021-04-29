@@ -12,7 +12,7 @@ import { traningLevelToText } from 'utils';
 
 // Material-UI
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid, LinearProgress, MenuItem, Button, TextField as MuiTextField, Typography } from '@material-ui/core';
+import { Grid, LinearProgress, MenuItem, Button, TextField as MuiTextField, Typography, Collapse } from '@material-ui/core';
 
 // Project components
 import DatePicker from 'components/inputs/DatePicker';
@@ -154,10 +154,6 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
       setError('endDate', { message: 'Slutt på aktivitet må være etter start på aktivitet' });
       return;
     }
-    if (geoLocation === null) {
-      showSnackbar('Du må velge en plassering for aktiviteten', 'warning');
-      return;
-    }
     const activity = {
       ...data,
       geoLocation: geoLocation,
@@ -291,6 +287,11 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
                     }}
                   />
                 </GoogleMap>
+                <Collapse in={Boolean(geoLocation)}>
+                  <Button className={classes.mapFilter} fullWidth onClick={() => setValue('geoLocation', null)} variant='outlined'>
+                    Fjern plassering
+                  </Button>
+                </Collapse>
               </>
             )}
           </Paper>
@@ -299,12 +300,14 @@ const ActivityEditor = ({ activityId, goToActivity }: ActivityEditorProps) => {
           </SubmitButton>
           {Boolean(activityId) && (
             <div className={classes.grid}>
-              <VerifyDialog
-                className={classnames(classes.margin, classes.red)}
-                contentText='Hvis du avlyser aktiviteten så er det ikke mulig å aktivere den igjen'
-                onConfirm={cancelActivity}>
-                Avlys aktivitet
-              </VerifyDialog>
+              {!data?.closed && (
+                <VerifyDialog
+                  className={classnames(classes.margin, classes.red)}
+                  contentText='Hvis du avlyser aktiviteten så er det ikke mulig å aktivere den igjen'
+                  onConfirm={cancelActivity}>
+                  Avlys aktivitet
+                </VerifyDialog>
+              )}
               <VerifyDialog
                 className={classnames(classes.margin, classes.red)}
                 contentText='Hvis du sletter aktiviteten så er det ikke mulig å gjenopprette den igjen'

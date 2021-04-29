@@ -45,7 +45,7 @@ export type Activity = {
   capacity: number;
   closed: boolean;
   createdAt: string;
-  creator: UserList;
+  creator: UserList | null;
   description: string;
   endDate: string;
   registered: number;
@@ -53,7 +53,7 @@ export type Activity = {
     name: string;
     amount: number;
   }>;
-  geoLocation: LatLng;
+  geoLocation: LatLng | null;
   hasLiked: boolean;
   hosts: Array<UserList>;
   id: string;
