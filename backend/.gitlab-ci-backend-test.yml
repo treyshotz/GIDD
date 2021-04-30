@@ -17,3 +17,10 @@ backend-test-mr:
   extends: .backend-test
   stage: test
   script: mvn package --activate-profiles test
+  artifacts:
+    when: always
+    paths:
+      - backend/target/site/jacoco
+    reports:
+      junit:
+        - backend/target/surefire-reports/TEST-*.xml
