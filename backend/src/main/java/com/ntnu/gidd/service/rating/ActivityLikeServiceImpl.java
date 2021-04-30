@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
-
+/**
+ * Implementation of activity like service
+ */
 @Service
 @AllArgsConstructor
 public class ActivityLikeServiceImpl  implements ActivityLikeService{
@@ -23,6 +25,12 @@ public class ActivityLikeServiceImpl  implements ActivityLikeService{
 
     UserRepository userRepository;
 
+    /**
+     * Methos to check if a user has liked a given activity by user email
+     * @param email
+     * @param ActivityId
+     * @return true/false
+     */
     @Override
     public boolean hasLiked(String email, UUID ActivityId) {
         Activity activity = activityRepository.findById(ActivityId).orElse(null);
@@ -33,6 +41,12 @@ public class ActivityLikeServiceImpl  implements ActivityLikeService{
         return false;
     }
 
+    /**
+     * Methos to check if a user has liked a given activity by user userid
+     * @param userId
+     * @param ActivityId
+     * @return true/false
+     */
     @Override
     public boolean hasLiked(UUID userId, UUID ActivityId) {
         Activity activity = activityRepository.findById(ActivityId).orElse(null);
@@ -43,6 +57,12 @@ public class ActivityLikeServiceImpl  implements ActivityLikeService{
         return false;
     }
 
+    /**
+     * Method to add a like to an activity by a user
+     * @param email
+     * @param ActivityId
+     * @return true/false
+     */
     public boolean addLike(String email, UUID ActivityId){
         Activity activity = activityRepository.findById(ActivityId).orElseThrow(ActivityNotFoundException::new);
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
@@ -57,6 +77,12 @@ public class ActivityLikeServiceImpl  implements ActivityLikeService{
         return false;
     }
 
+    /**
+     * Metohd to remove a like form a activity by a user
+     * @param email
+     * @param ActivityId
+     * @return true/false
+     */
     public boolean removeLike(String email, UUID ActivityId){
         Activity activity = activityRepository.findById(ActivityId).orElseThrow(ActivityNotFoundException::new);
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
@@ -70,11 +96,23 @@ public class ActivityLikeServiceImpl  implements ActivityLikeService{
         return true;
     }
 
+    /**
+     * Method to check if a user has liked a list of activities by user email
+     * @param activities
+     * @param email
+     * @return
+     */
     public Page<ActivityListDto> checkListLikes(Page<ActivityListDto> activities, String email){
         activities.forEach(s -> s.setHasLiked(hasLiked(email, s.getId())));
         return activities;
     }
 
+     /**
+     * Method to check if a user has liked a list of activities by user id
+     * @param activities
+     * @param id
+     * @return
+     */
     @Override
     public Page<ActivityListDto> checkListLikes(Page<ActivityListDto> activities, UUID id) {
         activities.forEach(s -> s.setHasLiked(hasLiked(id, s.getId())));

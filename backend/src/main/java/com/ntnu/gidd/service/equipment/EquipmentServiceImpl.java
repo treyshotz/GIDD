@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Implementaion of a equipment service
+ */
 @Service
 public class EquipmentServiceImpl implements EquipmentService{
 
@@ -19,6 +22,11 @@ public class EquipmentServiceImpl implements EquipmentService{
 
     ModelMapper modelMapper = new ModelMapper();
 
+    /**
+     * Method to save a list of equipments
+     * @param equipmentDtos
+     * @return the saved list of equipment
+     */
     @Override
     public List<Equipment> saveAndReturnEquipments(List<EquipmentDto> equipmentDtos) {
         List<Equipment> equipment = equipmentDtos.stream().map(s -> modelMapper.map(s, Equipment.class)).collect(Collectors.toList());

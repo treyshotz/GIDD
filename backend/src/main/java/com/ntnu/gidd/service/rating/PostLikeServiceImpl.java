@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Implementation of post like service
+ */
 @AllArgsConstructor
 @Service
 public class PostLikeServiceImpl implements PostLikeService {
@@ -22,7 +25,12 @@ public class PostLikeServiceImpl implements PostLikeService {
 
     PostRepository postRepository;
 
-
+    /**
+     * Method to check if a user has liked a post
+     * @param email
+     * @param postId
+     * @return true/false
+     */
     @Override
     public boolean hasLiked(String email, UUID postId) {
         Post post = postRepository.findById(postId).orElse(null);
@@ -33,6 +41,12 @@ public class PostLikeServiceImpl implements PostLikeService {
         return false;
     }
 
+    /**
+     * Method to add a like to a post by a user
+     * @param email
+     * @param postId
+     * @return
+     */
     @Override
     public boolean addLike(String email, UUID postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundExecption::new);
@@ -48,6 +62,12 @@ public class PostLikeServiceImpl implements PostLikeService {
         return false;
     }
 
+    /**
+     * Method to remove a like by a user on a post
+     * @param email
+     * @param postId
+     * @return true/false
+     */
     @Override
     public boolean removeLike(String email, UUID postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundExecption::new);
@@ -62,18 +82,35 @@ public class PostLikeServiceImpl implements PostLikeService {
         return true;
     }
 
+    /**
+     * Method to check if a user has liked a list of posts by email
+     * @param posts
+     * @param email
+     * @return updated list of posts DTOS
+     */
     @Override
     public Page<PostDto> checkListLikes(Page<PostDto> posts, String email) {
         posts.forEach(s -> s.setHasLiked(hasLiked(email, s.getId())));
         return posts;
     }
-
+    /**
+     * Method to check if a user has liked a list of posts by user Id
+     * @param posts
+     * @param id
+     * @return updated list of posts DTOS
+     */
     @Override
     public Page<PostDto> checkListLikes(Page<PostDto> posts, UUID id) {
         posts.forEach(s -> s.setHasLiked(hasLiked(id, s.getId())));
         return posts;
     }
 
+    /**
+     * Method to check if a user has liked a given post
+     * @param userId
+     * @param postId
+     * @return true/false
+     */
     @Override
     public boolean hasLiked(UUID userId, UUID postId) {
         Post post = postRepository.findById(postId).orElse(null);

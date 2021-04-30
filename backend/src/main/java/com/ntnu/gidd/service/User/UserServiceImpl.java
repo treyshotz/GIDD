@@ -38,6 +38,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Implantation of a User Service
+ */
 @Slf4j
 @NoArgsConstructor
 @AllArgsConstructor
@@ -71,25 +74,51 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private TrainingLevelRepository trainingLevelRepository;
 
+	/**
+	 * Method to get a user dto by email
+	 * @param email
+	 * @return the requested user
+	 */
 	@Override
 	public UserDto getUserDtoByEmail(String email) {
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 		return modelMapper.map(user, UserDto.class);
 	}
 
+	/**
+	 * Get user by email
+	 * @param email
+	 * @return requested user
+	 */
 	private User getUserByEmail(String email) {
 		return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 	}
 
+	/**
+	 * Get user by id
+	 * @param id
+	 * @return requested user
+	 */
 	@Override
 	public User getUserById(UUID id) {
 		return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
 	}
 
+	/**
+	 * Helper method to check if a user with given email all ready exists
+	 * @param email
+	 * @return true/false
+	 */
 	private boolean emailExist(String email) {
 		return userRepository.findByEmail(email).isPresent();
 	}
 
+
+	/**
+	 * Method to create a user
+	 * @param user
+	 * @return User created
+	 */
 	@Override
 	public UserDto saveUser(UserRegistrationDto user) {
 		if (emailExist(user.getEmail())) {
@@ -101,6 +130,11 @@ public class UserServiceImpl implements UserService {
 		return modelMapper.map(userRepository.save(userObj), UserDto.class);
 	}
 
+	/**
+	 * Method to change passowrd on a user
+	 * @param principal
+	 * @param user
+	 */
 	@Override
 	public void changePassword(Principal principal, UserPasswordUpdateDto user) {
 		User userObj = getUserByEmail(principal.getName());
@@ -113,18 +147,34 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	/**
+	 * Method to get all users
+	 * @param predicate
+	 * @param pageable
+	 * @return list of users
+	 */
 	@Override
 	public Page<UserDto> getAll(Predicate predicate, Pageable pageable) {
 		return userRepository.findAll(predicate, pageable).map(user -> modelMapper.map(user, UserDto.class));
 	}
 
-
+	/**
+	 * Method to get a user by id
+	 * @param userId
+	 * @return requested user
+	 */
 	@Override
 	public UserDto getUserByUUID(UUID userId) {
 		return modelMapper.map(userRepository.findById(userId)
 												   .orElseThrow(UserNotFoundException::new), UserDto.class);
 	}
 
+
+	/**
+	 * Method to deletes a user by email(username)
+	 * @param username
+	 * @return deleted user
+	 */
 	@Override
 	public UserDto deleteUser(String username) {
 		User user = userRepository.findByEmail(username).
@@ -137,6 +187,12 @@ public class UserServiceImpl implements UserService {
 		return modelMapper.map(user, UserDto.class);
 	}
 
+	/**
+	 * Method to update a user by id
+	 * @param id
+	 * @param user
+	 * @return Updated user info
+	 */
 	public UserDto updateUser(UUID id, UserDto user) {
 		User updatedUser = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
 		updatedUser.setFirstName(user.getFirstName());

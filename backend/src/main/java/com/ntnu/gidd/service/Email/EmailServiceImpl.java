@@ -12,6 +12,9 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+/**
+ * Implementation of a email service
+ */
 @Slf4j
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -22,7 +25,14 @@ public class EmailServiceImpl implements EmailService {
       @Autowired
       private SpringTemplateEngine templateEngine;
 
-
+      /**
+       * Method to send a mail
+       * @param from
+       * @param to
+       * @param subject
+       * @param content
+       * @throws MessagingException
+       */
       @Override
       public void sendEmail(String from, String to, String subject, String content) throws MessagingException {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -35,6 +45,11 @@ public class EmailServiceImpl implements EmailService {
             this.mailSender.send(mimeMessage);
       }
 
+      /**
+       * Method to send a mail by a mail object
+       * @param mail
+       * @throws MessagingException
+       */
       @Override
       public void sendEmail(Mail mail) throws MessagingException {
             MimeMessage message = mailSender.createMimeMessage();
@@ -50,6 +65,11 @@ public class EmailServiceImpl implements EmailService {
             mailSender.send(message);
       }
 
+      /**
+       * Helper method to get the html styling for the email
+       * @param mail
+       * @return
+       */
       private String getHtmlContent(Mail mail) {
             Context context = new Context();
             context.setVariables(mail.getHtmlTemplate().getProps());

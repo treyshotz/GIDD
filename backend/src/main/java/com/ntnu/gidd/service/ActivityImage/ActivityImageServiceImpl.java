@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of a activity Service
+ */
 @Service
 public class ActivityImageServiceImpl implements ActivityImageService {
     @Autowired
@@ -20,10 +23,23 @@ public class ActivityImageServiceImpl implements ActivityImageService {
     @Autowired
     private ModelMapper modelMapper;
 
+    /**
+     * Method to save all images on a activity
+     * @param images the images to save
+     * @param activity the activity that the images belongs to
+     * @return the list of the saved images
+     */
     public List<ActivityImage> saveActivityImage(List<ActivityImage> images, Activity activity){
         images.forEach(s -> s.setActivityId(activity.getId()));
        return activityImageRepository.saveAll(images);
     }
+
+    /**
+     * Method to update images on a activity
+     * @param images the images to save
+     * @param activity the activity that the images belongs to
+     * @return the list of the updated images
+     */
 
     public  List<ActivityImage> updateActivityImage(List<ActivityImageDto> images, Activity activity) {
         activityImageRepository.deleteActivityImageByActivityId(activity.getId());

@@ -14,6 +14,7 @@ import lombok.Setter;
 public class UserPasswordResetDto {
 	
 	String email;
+	@ValidPassword
 	String newPassword;
 	
 }

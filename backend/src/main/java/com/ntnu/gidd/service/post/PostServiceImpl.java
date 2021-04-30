@@ -24,6 +24,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Implementation of a post service
+ */
 @Service
 @AllArgsConstructor
 public class PostServiceImpl implements PostService{
@@ -38,7 +41,13 @@ public class PostServiceImpl implements PostService{
 
     ModelMapper modelMapper;
 
-
+    /**
+     * Method to get all posts for a logged in users feed
+     * @param predicate
+     * @param pageable
+     * @param email
+     * @return list of posts relevant to the user
+     */
     @Override
     public Page<PostDto> findAllPosts(Predicate predicate, Pageable pageable, String email) {
         QPost post = QPost.post;
@@ -47,6 +56,12 @@ public class PostServiceImpl implements PostService{
         return postLikeService.checkListLikes(postDtos, email);
     }
 
+    /**
+     * Method to get a post by id
+     * @param postId
+     * @param email
+     * @return the requested post
+     */
     @Override
     public PostDto getPostById(UUID postId, String email) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundExecption::new);
@@ -55,6 +70,12 @@ public class PostServiceImpl implements PostService{
         return postDto;
     }
 
+    /**
+     * Method to create a new post
+     * @param post
+     * @param email
+     * @return the saved post
+     */
     @Override
     public PostDto savePost(PostCreateDto post, String email) {
         Post newPost = Post.builder().id(UUID.randomUUID()).content(post.getContent()).image(post.getImage()).build();
@@ -73,6 +94,13 @@ public class PostServiceImpl implements PostService{
         return postDto;
     }
 
+    /**
+     * Method to update a post by id
+     * @param postId
+     * @param updatePost
+     * @param email
+     * @return the updated post
+     */
     @Override
     public PostDto updatePost(UUID postId, PostDto updatePost, String email) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundExecption::new);
@@ -86,12 +114,24 @@ public class PostServiceImpl implements PostService{
         return postDto;
     }
 
+    /**
+     * Method to delete a post by id
+     * @param postId
+     */
     @Override
     public void deletePost(UUID postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundExecption::new);
         postRepository.delete(post);
 
     }
+
+    /**
+     * Methos to get all liked posts by a user by id
+     * @param predicate
+     * @param pageable
+     * @param id
+     * @return list of liked posts
+     */
     public Page<PostDto> getPostsLikes(Predicate predicate, Pageable pageable, UUID id){
         QPost post = QPost.post;
         predicate = ExpressionUtils.allOf(predicate, post.likes.any().id.eq(id));
@@ -100,7 +140,13 @@ public class PostServiceImpl implements PostService{
 
         return postLikeService.checkListLikes(posts,id);
     }
-
+    /**
+     * Methos to get all liked posts by a user by email
+     * @param predicate
+     * @param pageable
+     * @param email
+     * @return list of liked posts
+     */
     public Page<PostDto> getPostsLikes(Predicate predicate, Pageable pageable, String email){
         QPost post = QPost.post;
         predicate = ExpressionUtils.allOf(predicate, post.likes.any().email.eq(email));

@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Implementation of a invite service
+ */
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -36,6 +39,14 @@ public class InviteServiceImpl  implements InviteService{
 
     RegistrationService registrationService;
 
+    /**
+     * Method to invite a user to an activity
+     * @param predicate
+     * @param pageable
+     * @param activityId
+     * @param user
+     * @return updated lis tof invited users
+     */
     @Override
     public Page<UserListDto> inviteUser(Predicate predicate, Pageable pageable, UUID activityId, UserEmailDto user) {
         Activity activity = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new);
@@ -47,6 +58,14 @@ public class InviteServiceImpl  implements InviteService{
         return userRepository.findUserByInvites(activity, pageable).map(s-> modelMapper.map(s, UserListDto.class));
     }
 
+    /**
+     * Method to univte a users to an activity
+     * @param predicate
+     * @param pageable
+     * @param activityId
+     * @param userId
+     * @return updated lis tof invited users
+     */
     @Override
     public Page<UserListDto> unInviteUser(Predicate predicate, Pageable pageable, UUID activityId, UUID userId) {
 
@@ -66,6 +85,12 @@ public class InviteServiceImpl  implements InviteService{
         return userRepository.findUserByInvites(activity, pageable).map(s-> modelMapper.map(s, UserListDto.class));
     }
 
+    /**
+     * Method to invite a list of users
+     * @param activityId
+     * @param users
+     * @return true/false
+     */
     @Override
     public boolean inviteBatch(UUID activityId, List<User> users) {
         Activity activity = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new);
@@ -77,6 +102,13 @@ public class InviteServiceImpl  implements InviteService{
         return true;
     }
 
+    /**
+     * Method to get all ivited users on an activity
+     * @param predicate
+     * @param pageable
+     * @param activityId
+     * @return list of invited users
+     */
     @Override
     public Page<UserListDto> getAllInvites(Predicate predicate, Pageable pageable, UUID activityId) {
         Activity activity = activityRepository.findById(activityId).orElseThrow(ActivityNotFoundException::new);

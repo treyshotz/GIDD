@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.UUID;
 
@@ -43,7 +44,7 @@ public class AuthenticationController {
 	
 	@PostMapping("/change-password/")
 	@ResponseStatus(HttpStatus.OK)
-	public Response updatePassword(Principal principal, @RequestBody UserPasswordUpdateDto user) {
+	public Response updatePassword(Principal principal, @RequestBody @Valid UserPasswordUpdateDto user) {
 		userService.changePassword(principal, user);
 		return new Response("Password was successfully changed");
 	}
@@ -72,7 +73,7 @@ public class AuthenticationController {
 **/
 	@PostMapping("/reset-password/{passwordResetTokenId}/")
 	@ResponseStatus(HttpStatus.OK)
-	public Response resetPassword(@RequestBody UserPasswordResetDto userPasswordResetDto, @PathVariable UUID passwordResetTokenId) {
+	public Response resetPassword(@RequestBody @Valid UserPasswordResetDto userPasswordResetDto, @PathVariable UUID passwordResetTokenId) {
 		userService.validateResetPassword(userPasswordResetDto, passwordResetTokenId);
 		log.info("Password was changed for user {}", userPasswordResetDto.getEmail());
 		return new Response("Password was changed successfully");

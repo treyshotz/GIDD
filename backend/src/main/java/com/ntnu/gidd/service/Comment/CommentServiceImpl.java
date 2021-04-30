@@ -1,6 +1,5 @@
 package com.ntnu.gidd.service.Comment;
 
-import com.ntnu.gidd.dto.Activity.ActivityDto;
 import com.ntnu.gidd.dto.Comment.CommentDto;
 import com.ntnu.gidd.exception.*;
 import com.ntnu.gidd.model.Activity;
@@ -11,18 +10,13 @@ import com.ntnu.gidd.repository.ActivityRepository;
 import com.ntnu.gidd.repository.CommentRepository;
 import com.ntnu.gidd.repository.PostRepository;
 import com.ntnu.gidd.repository.UserRepository;
-import com.ntnu.gidd.service.activity.ActivityService;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +24,9 @@ import org.springframework.stereotype.Service;
 
 import static java.lang.StrictMath.toIntExact;
 
+/**
+ * Implementation  of a comment service
+ */
 @Slf4j
 @AllArgsConstructor
 @Service
@@ -110,6 +107,13 @@ public class CommentServiceImpl implements CommentService {
     return modelMapper.map(comment, CommentDto.class);
   }
 
+    /**
+     * Method to save a comment on a post
+     * @param comment content of the comment to be created
+     * @param postId id of the post the comment belongs to
+     * @param creatorEmail email of the user that executed the create request
+     * @return the saved comment
+     */
     public CommentDto savePostComment(Comment comment, UUID postId, String creatorEmail) {
         User user = userRepository.findByEmail(creatorEmail).orElseThrow(UserNotFoundException::new);
         comment.setUser(user);
@@ -123,6 +127,11 @@ public class CommentServiceImpl implements CommentService {
         return modelMapper.map(comment, CommentDto.class);
     }
 
+    /**
+     * Method to delete a comment on a post
+     * @param commentId id of the comment to delete
+     * @param postID id of the post the comment belongs to
+     */
     public void deletePostComment(UUID commentId, UUID postID) {
             Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
             Post post = postRepository.findById(postID).orElseThrow(PostNotFoundExecption::new);
@@ -133,6 +142,13 @@ public class CommentServiceImpl implements CommentService {
             postRepository.save(post);
     }
 
+    /**
+     * Method to update a comment on a post
+     * @param commentId id of the comment to update
+     * @param comment the new content of the comment
+     * @param postId the id of the post that the comment belongs to
+     * @return the updated comment
+     */
     public CommentDto updatePostComment(UUID commentId, CommentDto comment, UUID postId) {
             Comment updateComment = this.commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
             Post updatePost = this.postRepository.findById(postId).orElseThrow(PostNotFoundExecption::new);
@@ -146,6 +162,12 @@ public class CommentServiceImpl implements CommentService {
             return modelMapper.map(updateComment, CommentDto.class);
     }
 
+    /**
+     * Get all comments on a post
+     * @param pageable pagination params for the request
+     * @param postId id of the posts
+     * @return paginated list of comments n given post
+     */
     public Page<CommentDto>  getCommentsOnPost(Pageable pageable, UUID postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundExecption::new);
 

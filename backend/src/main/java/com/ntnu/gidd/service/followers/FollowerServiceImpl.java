@@ -17,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+/**
+ * Implementation of a follower service
+ */
 @Slf4j
 @Service
 @Transactional
@@ -29,6 +32,11 @@ public class FollowerServiceImpl implements FollowerService {
 
     private ModelMapper modelMapper;
 
+    /**
+     * Method to register a follower on a user
+     * @param followRequest
+     * @return success response
+     */
     @Override
     public Response registerFollow(FollowRequest followRequest) {
         log.debug("[X] Registering request to follow: {}", followRequest);
@@ -45,6 +53,12 @@ public class FollowerServiceImpl implements FollowerService {
         return new Response("Successfully followed user");
     }
 
+    /**
+     * Method to get all users a user is following
+     * @param id the id of the user
+     * @param pageable pagiantion params
+     * @return List of users
+     */
     @Override
     public Page<UserDto> getFollowingFor(UUID id, Pageable pageable) {
         log.debug("[X] Retrieving all users this user is following (id:{})", id);
@@ -54,6 +68,12 @@ public class FollowerServiceImpl implements FollowerService {
                 .map(user -> modelMapper.map(user, UserDto.class));
     }
 
+    /**
+     * Method to get all users that is following a given user
+     * @param id id of the user
+     * @param pageable pagiantion params
+     * @return List of followers
+     */
     @Override
     public Page<UserDto> getFollowersOf(UUID id, Pageable pageable) {
         log.debug("[X] Retrieving followers of user with id {}", id);
@@ -63,6 +83,12 @@ public class FollowerServiceImpl implements FollowerService {
                 .map(user -> modelMapper.map(user, UserDto.class));
     }
 
+    /**
+     * Method to unfollow a user
+     * @param actorId the user that is executing the request
+     * @param subjectId the user to unfollow
+     * @return success response
+     */
     @Override
     public Response unfollowUser(UUID actorId, UUID subjectId) {
         log.debug("[X] Unfollowing user with id:{}, actor:{}", subjectId, actorId);

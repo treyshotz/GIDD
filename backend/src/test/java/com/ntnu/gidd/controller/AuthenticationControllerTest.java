@@ -36,6 +36,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -49,6 +50,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -243,13 +245,13 @@ class AuthenticationControllerTest {
 	 */
 	@Test
 	public void testChangePasswordWithToken() throws Exception {
-		LoginRequest loginRequest = new LoginRequest(user.getEmail(), "newPassword");
+		LoginRequest loginRequest = new LoginRequest(user.getEmail(), "19newPassword");
 		String loginJson = objectMapper.writeValueAsString(loginRequest);
-		UserPasswordUpdateDto update = new UserPasswordUpdateDto(password, "newPassword");
-		
-		
+		UserPasswordUpdateDto update = new UserPasswordUpdateDto(password, "19newPassword");
+
+		UserDetails userDetails = UserDetailsImpl.builder().email(user.getEmail()).build();
 		mvc.perform(post("/auth/change-password/")
-				.contentType(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON).with(user(userDetails))
 				.content(objectMapper.writeValueAsString(update))
 				.header(jwtConfig.getHeader(), jwtConfig.getPrefix() + rawAccessToken))
 				.andExpect(status().isOk());
@@ -267,7 +269,7 @@ class AuthenticationControllerTest {
 	 */
 	@Test
 	public void testChangePasswordWithoutTokenFails() throws Exception {
-		UserPasswordUpdateDto update = new UserPasswordUpdateDto(password, "newPassword");
+		UserPasswordUpdateDto update = new UserPasswordUpdateDto(password, "19newPassword");
 		mvc.perform(post("/auth/change-password/")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header(jwtConfig.getHeader(), jwtConfig.getPrefix() + rawRefreshToken))
@@ -283,7 +285,7 @@ class AuthenticationControllerTest {
 	public void testChangePasswordWithWrongOldPasswordFails() throws Exception {
 		LoginRequest loginRequest = new LoginRequest(user.getEmail(), "newPassword");
 		String loginJson = objectMapper.writeValueAsString(loginRequest);
-		UserPasswordUpdateDto update = new UserPasswordUpdateDto("newPassword", "newPassword");
+		UserPasswordUpdateDto update = new UserPasswordUpdateDto("newPassword", "19newPassword");
 		
 		
 		mvc.perform(post("/auth/change-password/")
