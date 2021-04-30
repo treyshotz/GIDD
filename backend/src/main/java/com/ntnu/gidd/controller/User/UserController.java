@@ -10,6 +10,8 @@ import com.ntnu.gidd.service.User.UserService;
 import com.ntnu.gidd.util.Constants;
 import com.ntnu.gidd.util.Response;
 import com.querydsl.core.types.Predicate;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +33,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/users/")
+@Api(tags = "User management")
 public class UserController {
 
     @Autowired
@@ -39,6 +42,7 @@ public class UserController {
     @PutMapping("{userId}/")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("@securityService.isUser(#userId)")
+    @ApiOperation(value = "Update a users info")
     public UserDto updateUser(@PathVariable UUID userId, @RequestBody UserDto user){
         log.debug("[X] Request to update user with id={}", user.getId());
         return this.userService.updateUser(userId, user);
@@ -46,6 +50,7 @@ public class UserController {
 
     @GetMapping("{userId}/")
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get a users info")
     public UserDto getUser(@PathVariable UUID userId){
         log.debug("[X] Request to get user with id={}", userId);
         return userService.getUserByUUID(userId);
@@ -53,6 +58,7 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get all users info")
     public Page<UserDto> getAllUser(@QuerydslPredicate(root = User.class) Predicate predicate,
                               @PageableDefault(size = Constants.PAGINATION_SIZE, sort="firstName", direction = Sort.Direction.ASC) Pageable pageable){
         log.debug("[X] Request to look up users");
@@ -61,6 +67,7 @@ public class UserController {
 
     @GetMapping("me/")
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get a logged in users info")
     public UserDto getUser(Authentication authentication){
         UserDetails user = (UserDetails) authentication.getPrincipal();
 
@@ -68,15 +75,10 @@ public class UserController {
         return this.userService.getUserDtoByEmail(user.getUsername());
     }
 
-    /**
-     * Deletes current user found with authentication
-     * All userdata is also deleted
-     * @param authentication
-     * @return
-     */
     @DeleteMapping("me/")
     @Transactional
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Delete the logged in users info")
     public Response deleteUser(Authentication authentication){
         UserDetails user = (UserDetails) authentication.getPrincipal();
         log.debug("[X] Request to delete User with username={}", user.getUsername());

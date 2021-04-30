@@ -12,6 +12,8 @@ import com.ntnu.gidd.util.Constants;
 import com.ntnu.gidd.service.Registration.RegistrationService;
 import com.ntnu.gidd.util.Response;
 import com.querydsl.core.types.Predicate;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 @RestController
 @RequestMapping("users/me/registrations/")
+@Api(tags = "User registration management")
 public class UserRegistrationController {
 
   @Autowired
@@ -36,6 +39,7 @@ public class UserRegistrationController {
 
   @GetMapping("")
   @ResponseStatus(HttpStatus.OK)
+  @ApiOperation(value = "Get all activities a user is registered on")
   public Page<ActivityListDto> getRegistrationsForUser(@QuerydslPredicate(root = Registration.class) Predicate predicate,
                                                                    @PageableDefault(size = Constants.PAGINATION_SIZE,
                                                                sort="activity.startDate", direction = Sort.Direction.ASC) Pageable pageable,
@@ -48,6 +52,7 @@ public class UserRegistrationController {
 
   @GetMapping("{activityId}/")
   @ResponseStatus(HttpStatus.OK)
+  @ApiOperation(value = "Get one activity a user is registered on")
   public ActivityDto getRegistrationWithCompositeIdUser(Authentication authentication, @PathVariable UUID activityId) {
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
@@ -56,6 +61,7 @@ public class UserRegistrationController {
 
   @DeleteMapping("{activityId}/")
   @ResponseStatus(HttpStatus.OK)
+  @ApiOperation(value = "Delete one registration on a user")
   public Response deleteRegistration(Authentication authentication, @PathVariable UUID activityId){
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 

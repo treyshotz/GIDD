@@ -1,5 +1,6 @@
 package com.ntnu.gidd.dto.User;
 
+import com.ntnu.gidd.validation.ValidPassword;
 import lombok.*;
 
 
@@ -11,5 +12,6 @@ public class UserPasswordUpdateDto {
 	@NonNull
 	private String oldPassword;
 	@NonNull
+	@ValidPassword
 	private String newPassword;
 }

@@ -13,6 +13,8 @@ import com.ntnu.gidd.model.Registration;
 import com.ntnu.gidd.util.Constants;
 import com.ntnu.gidd.util.Response;
 import com.querydsl.core.types.Predicate;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +33,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 @RestController
 @RequestMapping("activities/{activityId}/registrations/")
+@Api(tags = "Activity registration management")
 public class ActivityRegistrationController {
 
   @Autowired
@@ -38,6 +41,7 @@ public class ActivityRegistrationController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
+  @ApiOperation(value = "Add a registration to a activity")
   public RegistrationUserDto postRegistration(@PathVariable UUID activityId, @RequestBody UserEmailDto user) {
     try{
 
@@ -54,6 +58,7 @@ public class ActivityRegistrationController {
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
+  @ApiOperation(value = "Get all registrations on a activity")
   public Page<RegistrationUserDto> getRegistrationForActivity(@QuerydslPredicate(root = Registration.class) Predicate predicate,
                                                               @PageableDefault(size = Constants.PAGINATION_SIZE, sort="activity.startDate", direction = Sort.Direction.ASC) Pageable pageable,
                                                               @PathVariable UUID activityId) {
@@ -64,6 +69,7 @@ public class ActivityRegistrationController {
   @GetMapping("{userId}/")
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("@securityService.registrationPermissions(#activityId, #userId)")
+  @ApiOperation(value = "Get one registration on a activity")
   public RegistrationUserDto getRegistrationWithCompositeIdActivity(@PathVariable UUID userId, @PathVariable UUID activityId) {
     return registrationService.getRegistrationWithCompositeId(userId, activityId);
   }
@@ -71,6 +77,7 @@ public class ActivityRegistrationController {
   @DeleteMapping("{userId}/")
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("@securityService.registrationPermissions(#activityId, #userId)")
+  @ApiOperation(value = "Delete one registration on a activity")
   public Response deleteRegistration(@PathVariable UUID activityId, @PathVariable UUID userId){
     log.debug("[X] Request to delete Registration with userId={} ", userId);
     registrationService.deleteRegistrationWithCompositeId(userId, activityId);

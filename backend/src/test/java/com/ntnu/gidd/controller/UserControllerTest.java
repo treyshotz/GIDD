@@ -146,26 +146,29 @@ public class UserControllerTest {
 	}
 
 	@Test
+	@WithMockUser(value = "spring")
 	public void testGetUserByUserId() throws Exception {
 
 		User testUser = userRepository.save(userFactory.getObject());
 		mockMvc.perform(get(URI + testUser.getId().toString()+ "/")
-				.contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON).with(csrf()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.firstName").value(testUser.getFirstName()));
 	}
 
 	@Test
+	@WithMockUser(value = "spring")
 	public void testGetUserByUserIdReturnsResponseIncludingFollowerCounts() throws Exception {
 		User testUser = userRepository.save(userFactory.getObject());
 		mockMvc.perform(get(URI + testUser.getId().toString()+ "/")
-								.contentType(MediaType.APPLICATION_JSON))
+								.contentType(MediaType.APPLICATION_JSON).with(csrf()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.followerCount").value(0))
 				.andExpect(jsonPath("$.followingCount").value(0));
 	}
 
 	@Test
+	@WithMockUser(value = "spring")
 	public void testGetUserByUserIdReturnsResponseIncludingFollowerCount() throws Exception {
 		User testUser = userRepository.save(userFactory.getObject());
 		user.addFollowing(testUser);
@@ -179,6 +182,7 @@ public class UserControllerTest {
 	}
 
 	@Test
+	@WithMockUser(value = "spring")
 	public void testGetUserByUserIdReturnsResponseIncludingFollowingCount() throws Exception {
 		User testUser = userRepository.save(userFactory.getObject());
 		testUser.addFollowing(user);
@@ -186,25 +190,26 @@ public class UserControllerTest {
 		userRepository.save(testUser);
 
 		mockMvc.perform(get(URI + testUser.getId().toString()+ "/")
-								.contentType(MediaType.APPLICATION_JSON))
+								.contentType(MediaType.APPLICATION_JSON).with(csrf()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.followingCount").value(testUser.getFollowing().size()));
 	}
 
 	@Test
+	@WithMockUser(value = "spring")
 	public void testGetUserByUserIdWhenCurrentUserIsFollowingAndUnauthenticatedReturnsCorrectIsCurrentUserFollowing() throws Exception {
 		User testUser = userRepository.save(userFactory.getObject());
 		user.addFollowing(testUser);
 		userRepository.save(user);
 
 		mockMvc.perform(get(URI + testUser.getId().toString()+ "/")
-								.contentType(MediaType.APPLICATION_JSON))
+								.contentType(MediaType.APPLICATION_JSON).with(csrf()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.currentUserIsFollowing").value(false));
 	}
 
 	@Test
-	@WithMockUser
+	@WithMockUser(value = "spring")
 	public void testGetUserByUserIdWhenCurrentUserIsFollowingReturnsCorrectIsCurrentUserFollowing() throws Exception {
 		User testUser = userRepository.save(userFactory.getObject());
 		user.addFollowing(testUser);
@@ -218,10 +223,11 @@ public class UserControllerTest {
 	}
 
 	@Test
+	@WithMockUser(value = "spring")
 	public void testGetAllUsers() throws Exception {
 
 		mockMvc.perform(get(URI)
-				.contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON).with(csrf()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.content.[*].firstName", hasItem(user.getFirstName())));
 	}

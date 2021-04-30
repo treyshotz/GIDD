@@ -6,6 +6,7 @@ import com.ntnu.gidd.model.Activity;
 import com.ntnu.gidd.service.activity.ActivityService;
 import com.ntnu.gidd.util.Constants;
 import com.querydsl.core.types.Predicate;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("users/{userId}/activity-likes/")
+@Api(tags = "User activity like Management")
 public class UserActivityLikeController {
 
     @Autowired

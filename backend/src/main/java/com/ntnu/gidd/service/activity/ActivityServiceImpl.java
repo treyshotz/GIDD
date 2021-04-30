@@ -180,6 +180,19 @@ public class ActivityServiceImpl implements ActivityService {
 
     }
 
+    @Override
+    public ActivityDto getActivityById(UUID id) {
+        Activity activity = this.activityRepository.findById(id).
+                orElseThrow(ActivityNotFoundException::new);
+        if(activity.isInviteOnly()){
+            throw new NotInvitedException();
+        }
+
+        ActivityDto activityDto = modelMapper.map(activity, ActivityDto.class);
+        activityDto.setGeoLocation(null);
+        return activityDto;
+    }
+
     private boolean checkReadAccess(Activity activity, String email){
         User user = userRepository.findByEmail(email).orElse(null);
         return (activity.getInvites().contains(user) | activity.getCreator().equals(user) | activity.getHosts().contains(user));
