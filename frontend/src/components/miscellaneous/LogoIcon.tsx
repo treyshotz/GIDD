@@ -10,9 +10,9 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     enableBackground: 'new 0 0 500 500',
   },
-  outer: { fill: theme.palette.get<string>({ light: '#bfc7f0', dark: '#372729' }) },
-  middle: { fill: theme.palette.get<string>({ light: '#dddddd', dark: '#a4a4a4' }) },
-  inner: { fill: theme.palette.get<string>({ light: '#a4a399', dark: '#231d31' }) },
+  outer: { fill: theme.palette.get<string>({ light: '#31445e', dark: '#31445e' }) },
+  middle: { fill: theme.palette.get<string>({ light: '#fff', dark: '#fff' }) },
+  inner: { fill: theme.palette.get<string>({ light: '#f28500', dark: '#f28500' }) },
 }));
 
 const LogoIcon = () => {
