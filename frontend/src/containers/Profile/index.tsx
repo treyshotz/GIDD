@@ -127,9 +127,11 @@ const Profile = () => {
               <Typography align='center' variant='subtitle2'>
                 {user.email}
               </Typography>
-              <Typography align='center' variant='subtitle2'>
-                Treningsnivå: {traningLevelToText(user.level)}
-              </Typography>
+              {user.level && (
+                <Typography align='center' variant='subtitle2'>
+                  Treningsnivå: ${traningLevelToText(user.level)}
+                </Typography>
+              )}
               <Typography align='center' variant='subtitle2'>
                 {`${user.followerCount} følgere | Følger ${user.followingCount}`}
               </Typography>

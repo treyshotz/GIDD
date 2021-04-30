@@ -266,7 +266,7 @@ const ActivityRenderer = ({ data, preview = false }: ActivityRendererProps) => {
           ))}
         </MasonryGrid>
       </div>
-      {!preview && (
+      {!preview && Boolean(user) && (
         <div className={classes.comments}>
           <Comments id={data.id} isAdmin={isAdmin} type='activity' />
         </div>

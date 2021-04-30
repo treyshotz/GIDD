@@ -22,18 +22,18 @@ import {
   Comment,
 } from 'types/Types';
 
-const USERS = 'users';
-const ME = 'me';
-const AUTH = 'auth';
-const POSTS = 'posts';
-const ACTIVITIES = 'activities';
-const REGISTRATIONS = 'registrations';
-const INVITES = 'invites';
-const HOSTS = 'hosts';
-const LIKES = 'likes';
-const FOLLOWERS = 'followers';
-const FOLLOWING = 'following';
-const COMMENTS = 'comments';
+export const USERS = 'users';
+export const ME = 'me';
+export const AUTH = 'auth';
+export const POSTS = 'posts';
+export const ACTIVITIES = 'activities';
+export const REGISTRATIONS = 'registrations';
+export const INVITES = 'invites';
+export const HOSTS = 'hosts';
+export const LIKES = 'likes';
+export const FOLLOWERS = 'followers';
+export const FOLLOWING = 'following';
+export const COMMENTS = 'comments';
 
 export default {
   // Auth

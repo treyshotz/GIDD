@@ -29,7 +29,7 @@ export type User = {
   surname: string;
   email: string;
   birthDate: string | null;
-  level: TrainingLevel;
+  level: TrainingLevel | null;
   image: string;
   currentUserIsFollowing: boolean;
   followingCount: number;
@@ -47,7 +47,6 @@ export type ActivityRequired = Partial<Activity> & Pick<Activity, 'title' | 'sta
 export type Activity = {
   capacity: number;
   closed: boolean;
-  createdAt: string;
   creator: UserList | null;
   description: string;
   endDate: string;
