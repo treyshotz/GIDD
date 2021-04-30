@@ -1,14 +1,12 @@
 package com.ntnu.gidd.config;
 
 import com.ntnu.gidd.model.TrainingLevel;
-import com.ntnu.gidd.model.User;
 import com.ntnu.gidd.repository.TrainingLevelRepository;
 import com.ntnu.gidd.repository.UserRepository;
 import com.ntnu.gidd.util.TrainingLevelEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -21,23 +19,13 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private boolean alreadySetup = false;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     TrainingLevelRepository trainingLevelRepository;
-
-    @Autowired
-    private BCryptPasswordEncoder encoder;
 
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (alreadySetup)
             return;
-
-        User account = new User();
-        account.setEmail("admin@test.com");
-        account.setPassword(encoder.encode("admin"));
 
         if (trainingLevelRepository.findTrainingLevelByLevel(TrainingLevelEnum.High).isEmpty()){
             trainingLevelRepository.save(TrainingLevel.builder().id(1L).level(TrainingLevelEnum.High).build());
@@ -47,9 +35,6 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         }
         if (trainingLevelRepository.findTrainingLevelByLevel(TrainingLevelEnum.Low).isEmpty()){
             trainingLevelRepository.save(TrainingLevel.builder().id(3L).level(TrainingLevelEnum.Low).build());
-        }
-        if(userRepository.findByEmail(account.getEmail()).isEmpty()){
-            log.info("[x] Preloading {}", userRepository.save(account));
         }
 
         alreadySetup = true;
